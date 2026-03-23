@@ -1,0 +1,12 @@
+{
+    "buildCommand": "cd m3-color-token-builder && npm run build",
+    "outputDirectory": "m3-color-token-builder/dist",
+    "framework": null,
+    "installCommand": "cd m3-color-token-builder && npm install",
+    "rewrites": [
+        {
+            "source": "/(.*)",
+            "destination": "/index.html"
+        }
+    ]
+}
