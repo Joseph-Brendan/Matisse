@@ -13,7 +13,7 @@ export function generateTones(value: string): { tone: number; value: string }[] 
             tone,
             value: hexToHsl(hexFromArgb(palette.tone(tone))),
         }));
-    } catch (error) {
+    } catch {
         console.error("Invalid color:", value);
         return DEFAULT_TONE_SCALE.map((tone) => ({
             tone,

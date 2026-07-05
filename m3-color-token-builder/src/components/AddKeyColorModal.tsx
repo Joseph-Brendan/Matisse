@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { PopoverColorPicker } from './PopoverColorPicker';
 
 interface AddKeyColorModalProps {
@@ -10,13 +10,6 @@ interface AddKeyColorModalProps {
 export const AddKeyColorModal: React.FC<AddKeyColorModalProps> = ({ isOpen, onClose, onAdd }) => {
     const [name, setName] = useState<string>('');
     const [value, setValue] = useState<string>('hsl(200, 50%, 50%)');
-
-    useEffect(() => {
-        if (isOpen) {
-            setName('');
-            setValue('hsl(200, 50%, 50%)');
-        }
-    }, [isOpen]);
 
     if (!isOpen) return null;
 

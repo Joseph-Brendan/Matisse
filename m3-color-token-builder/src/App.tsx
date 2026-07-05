@@ -1,40 +1,41 @@
-import { useState } from 'react';
-import { Header } from './components/Header';
-import { KeyColorCard } from './components/KeyColorCard';
-import { TonalPaletteEditor } from './components/TonalPaletteEditor';
-import { RoleMappingTable } from './components/RoleMappingTable';
-import { PreviewPanel } from './components/PreviewPanel';
-import { ExportPanel } from './components/ExportPanel';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { useColorStore } from './store/useColorStore';
+import { ToastContainer } from './design-system/components/Toast/ToastContainer';
+import { Landing } from './pages/Landing';
+import { SignUp } from './pages/SignUp';
+import { Dashboard } from './pages/Dashboard';
+import { ColorBuilder } from './pages/ColorBuilder';
 
-function App() {
-  const [isExportOpen, setIsExportOpen] = useState(false);
+function AppShell() {
   const { theme } = useColorStore();
 
   return (
-    <div className={theme === 'dark' ? 'dark-theme' : ''} style={{ minHeight: '100vh', transition: 'all 0.3s ease' }}>
-      <Header onExport={() => setIsExportOpen(true)} />
-
-      <main className="container" style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-
-        {/* Core Settings Layer */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-          <KeyColorCard />
-          <TonalPaletteEditor />
-        </div>
-
-        {/* Roles */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-          <RoleMappingTable />
-        </div>
-
-        {/* Live Preview */}
-        <PreviewPanel />
-
-      </main>
-
-      <ExportPanel isOpen={isExportOpen} onClose={() => setIsExportOpen(false)} />
+    <div
+      data-theme={theme}
+      style={{
+        minHeight: '100vh',
+        background: 'var(--md-ref-role-background)',
+        color: 'var(--md-ref-role-onBackground)',
+        fontFamily: "'Open Sans', system-ui, -apple-system, sans-serif",
+        transition: 'background 0.3s ease, color 0.3s ease',
+      }}
+    >
+      <Routes>
+        <Route path="/" element={<Landing />} />
+        <Route path="/signup" element={<SignUp />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/color-builder" element={<ColorBuilder />} />
+      </Routes>
+      <ToastContainer />
     </div>
+  );
+}
+
+function App() {
+  return (
+    <BrowserRouter>
+      <AppShell />
+    </BrowserRouter>
   );
 }
 

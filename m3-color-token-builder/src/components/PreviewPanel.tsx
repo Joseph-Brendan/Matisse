@@ -21,7 +21,7 @@ export const PreviewPanel: React.FC = () => {
     };
 
     activeRoles.forEach(r => {
-        (previewStyle as any)[`--role-${r.name}`] = r.resolvedValue;
+        (previewStyle as Record<string, string>)[`--role-${r.name}`] = r.resolvedValue;
     });
 
     const [email, setEmail] = useState('user@example.com');
