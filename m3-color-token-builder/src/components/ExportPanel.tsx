@@ -1,5 +1,8 @@
 import React from 'react';
 import { useColorStore } from '../store/useColorStore';
+import { typography } from '../design-system/tokens/typography';
+import { spacing, borderRadius } from '../design-system/tokens/spacing';
+import { shadows, elevation } from '../design-system/tokens/shadows';
 
 interface ExportPanelProps {
     isOpen: boolean;
@@ -37,7 +40,12 @@ export const ExportPanel: React.FC<ExportPanelProps> = ({ isOpen, onClose }) => 
                     light: roleLightMap,
                     dark: roleDarkMap
                 }
-            }
+            },
+            typography,
+            spacing,
+            borderRadius,
+            shadows,
+            elevation
         };
 
         return JSON.stringify(exportData, null, 2);

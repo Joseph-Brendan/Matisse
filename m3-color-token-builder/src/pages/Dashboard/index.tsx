@@ -148,7 +148,7 @@ export const Dashboard: React.FC = () => {
           {[
             { icon: <Activity size={18} />, label: 'Overview', active: true },
             { icon: <Palette size={18} />, label: 'Color Builder', onClick: () => navigate('/color-builder') },
-            { icon: <Sparkles size={18} />, label: 'Components' },
+            { icon: <Sparkles size={18} />, label: 'Components', onClick: () => navigate('/components') },
             { icon: <Users size={18} />, label: 'Team' },
             { icon: <Settings size={18} />, label: 'Settings' },
           ].map((item) => (

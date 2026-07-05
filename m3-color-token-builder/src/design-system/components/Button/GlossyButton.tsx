@@ -15,28 +15,28 @@ export interface GlossyButtonProps extends React.ButtonHTMLAttributes<HTMLButton
 
 const variantStyles: Record<GlossyVariant, React.CSSProperties> = {
   primary: {
-    background: 'linear-gradient(180deg, hsl(256, 40%, 58%) 0%, hsl(256, 34%, 48%) 40%, hsl(256, 38%, 42%) 100%)',
-    color: 'hsl(0, 0%, 100%)',
-    border: '1px solid hsla(256, 34%, 38%, 0.5)',
-    boxShadow: '0 1px 2px hsla(256, 34%, 48%, 0.3), inset 0 1px 1px hsla(0, 0%, 100%, 0.25), inset 0 -1px 1px hsla(256, 34%, 28%, 0.2)',
+    background: 'linear-gradient(180deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 50%, rgba(0, 0, 0, 0.15) 100%), var(--md-ref-role-primary)',
+    color: 'var(--md-ref-role-onPrimary)',
+    border: '1px solid hsla(0, 0%, 0%, 0.15)',
+    boxShadow: '0 1px 3px rgba(0, 0, 0, 0.15), inset 0 1px 1px rgba(255, 255, 255, 0.35), inset 0 -1px 1px rgba(0, 0, 0, 0.2)',
   },
   secondary: {
-    background: 'linear-gradient(180deg, hsl(262, 17%, 72%) 0%, hsl(259, 11%, 40%) 40%, hsl(260, 14%, 34%) 100%)',
-    color: 'hsl(0, 0%, 100%)',
-    border: '1px solid hsla(259, 11%, 30%, 0.5)',
-    boxShadow: '0 1px 2px hsla(259, 11%, 40%, 0.3), inset 0 1px 1px hsla(0, 0%, 100%, 0.25), inset 0 -1px 1px hsla(259, 11%, 28%, 0.2)',
+    background: 'linear-gradient(180deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 50%, rgba(0, 0, 0, 0.15) 100%), var(--md-ref-role-secondary)',
+    color: 'var(--md-ref-role-onSecondary)',
+    border: '1px solid hsla(0, 0%, 0%, 0.15)',
+    boxShadow: '0 1px 3px rgba(0, 0, 0, 0.15), inset 0 1px 1px rgba(255, 255, 255, 0.35), inset 0 -1px 1px rgba(0, 0, 0, 0.2)',
   },
   tertiary: {
-    background: 'linear-gradient(180deg, hsl(343, 37%, 72%) 0%, hsl(341, 21%, 41%) 40%, hsl(341, 25%, 35%) 100%)',
-    color: 'hsl(0, 0%, 100%)',
-    border: '1px solid hsla(341, 21%, 31%, 0.5)',
-    boxShadow: '0 1px 2px hsla(341, 21%, 41%, 0.3), inset 0 1px 1px hsla(0, 0%, 100%, 0.25), inset 0 -1px 1px hsla(341, 21%, 28%, 0.2)',
+    background: 'linear-gradient(180deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 50%, rgba(0, 0, 0, 0.15) 100%), var(--md-ref-role-tertiary)',
+    color: 'var(--md-ref-role-onTertiary)',
+    border: '1px solid hsla(0, 0%, 0%, 0.15)',
+    boxShadow: '0 1px 3px rgba(0, 0, 0, 0.15), inset 0 1px 1px rgba(255, 255, 255, 0.35), inset 0 -1px 1px rgba(0, 0, 0, 0.2)',
   },
   error: {
-    background: 'linear-gradient(180deg, hsl(0, 63%, 62%) 0%, hsl(0, 54%, 41%) 40%, hsl(0, 55%, 35%) 100%)',
-    color: 'hsl(0, 0%, 100%)',
-    border: '1px solid hsla(0, 54%, 31%, 0.5)',
-    boxShadow: '0 1px 2px hsla(0, 54%, 41%, 0.3), inset 0 1px 1px hsla(0, 0%, 100%, 0.25), inset 0 -1px 1px hsla(0, 54%, 28%, 0.2)',
+    background: 'linear-gradient(180deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 50%, rgba(0, 0, 0, 0.15) 100%), var(--md-ref-role-error)',
+    color: 'var(--md-ref-role-onError)',
+    border: '1px solid hsla(0, 0%, 0%, 0.15)',
+    boxShadow: '0 1px 3px rgba(0, 0, 0, 0.15), inset 0 1px 1px rgba(255, 255, 255, 0.35), inset 0 -1px 1px rgba(0, 0, 0, 0.2)',
   },
   ghost: {
     background: 'transparent',
@@ -99,7 +99,7 @@ export const GlossyButton: React.FC<GlossyButtonProps> = ({
     left: 0,
     right: 0,
     height: '50%',
-    background: 'linear-gradient(180deg, hsla(0, 0%, 100%, 0.3) 0%, transparent 100%)',
+    background: 'linear-gradient(180deg, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0.05) 60%, transparent 100%)',
     borderRadius: 'inherit',
     borderBottomLeftRadius: 0,
     borderBottomRightRadius: 0,
@@ -134,7 +134,20 @@ export const GlossyButton: React.FC<GlossyButtonProps> = ({
         />
       )}
       {!loading && icon && iconPosition === 'left' && <span style={{ display: 'inline-flex', flexShrink: 0 }}>{icon}</span>}
-      {children && <span style={{ position: 'relative', zIndex: 1 }}>{children}</span>}
+      {children && (
+        <span
+          style={{
+            position: 'relative',
+            zIndex: 1,
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: sizeStyles[size].gap,
+          }}
+        >
+          {children}
+        </span>
+      )}
       {!loading && icon && iconPosition === 'right' && <span style={{ display: 'inline-flex', flexShrink: 0 }}>{icon}</span>}
     </button>
   );
