@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Download } from 'lucide-react';
-import { KeyColorCard } from '../components/KeyColorCard';
-import { TonalPaletteEditor } from '../components/TonalPaletteEditor';
-import { RoleMappingTable } from '../components/RoleMappingTable';
-import { PreviewPanel } from '../components/PreviewPanel';
-import { ExportPanel } from '../components/ExportPanel';
-import { useColorStore } from '../store/useColorStore';
-import { GlossyButton } from '../design-system/components/Button/GlossyButton';
+import { KeyColorCard } from '../../components/KeyColorCard';
+import { TonalPaletteEditor } from '../../components/TonalPaletteEditor';
+import { RoleMappingTable } from '../../components/RoleMappingTable';
+import { PreviewPanel } from '../../components/PreviewPanel';
+import { ExportPanel } from '../../components/ExportPanel';
+import { useColorStore } from '../../store/useColorStore';
+import { GlossyButton } from '../../design-system/components/Button/GlossyButton';
 
 export const ColorBuilder: React.FC = () => {
   const [isExportOpen, setIsExportOpen] = useState(false);

@@ -2,7 +2,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { useColorStore } from './store/useColorStore';
 import { ToastContainer } from './design-system/components/Toast/ToastContainer';
 import { Landing } from './pages/Landing';
-import { SignUp } from './pages/SignUp';
+import { Auth } from './pages/Auth';
 import { Dashboard } from './pages/Dashboard';
 import { ColorBuilder } from './pages/ColorBuilder';
 
@@ -22,7 +22,7 @@ function AppShell() {
     >
       <Routes>
         <Route path="/" element={<Landing />} />
-        <Route path="/signup" element={<SignUp />} />
+        <Route path="/auth" element={<Auth />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/color-builder" element={<ColorBuilder />} />
       </Routes>

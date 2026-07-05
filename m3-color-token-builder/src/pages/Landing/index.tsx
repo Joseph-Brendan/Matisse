@@ -1,8 +1,12 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Palette, Layers, Paintbrush, Grid3x3, Type, Download, ArrowRight } from 'lucide-react';
-import { GlossyButton } from '../design-system/components/Button/GlossyButton';
-import { Badge } from '../design-system/components/Badge/Badge';
+import {
+  Palette, Layers, Paintbrush, Grid3x3, Type, Download, ArrowRight,
+} from 'lucide-react';
+import { GlossyButton } from '../../design-system/components/Button/GlossyButton';
+import type { GlossyVariant } from '../../design-system/components/Button/GlossyButton';
+import { Badge } from '../../design-system/components/Badge/Badge';
+import { Card } from '../../design-system/components/Card/Card';
 
 const features = [
   { icon: <Palette size={24} />, title: 'Color System', desc: 'Full Material 3 tonal palette with semantic role mapping for light and dark modes.' },
@@ -14,6 +18,15 @@ const features = [
 ];
 
 const palette = ['hsl(256, 34%, 48%)', 'hsl(259, 11%, 40%)', 'hsl(340, 21%, 41%)', 'hsl(276, 3%, 37%)', 'hsl(260, 4%, 38%)'];
+
+const buttonVariants: { variant: GlossyVariant; label: string }[] = [
+  { variant: 'primary', label: 'Primary' },
+  { variant: 'secondary', label: 'Secondary' },
+  { variant: 'tertiary', label: 'Tertiary' },
+  { variant: 'error', label: 'Error' },
+  { variant: 'ghost', label: 'Ghost' },
+  { variant: 'outline', label: 'Outline' },
+];
 
 export const Landing: React.FC = () => {
   const navigate = useNavigate();
@@ -55,8 +68,8 @@ export const Landing: React.FC = () => {
           <GlossyButton variant="ghost" size="sm" onClick={() => navigate('/color-builder')}>
             Color Builder
           </GlossyButton>
-          <GlossyButton variant="outline" size="sm" onClick={() => navigate('/signup')}>
-            Sign Up
+          <GlossyButton variant="outline" size="sm" onClick={() => navigate('/auth')}>
+            Sign In
           </GlossyButton>
           <GlossyButton size="sm" onClick={() => navigate('/dashboard')}>
             Dashboard
@@ -77,9 +90,7 @@ export const Landing: React.FC = () => {
           gap: '1.5rem',
         }}
       >
-        <Badge variant="primary" size="md" dot>
-          v1.0 — Design System
-        </Badge>
+        <Badge variant="primary" size="md" dot>v1.0 — Design System</Badge>
         <h1
           style={{
             fontSize: 'clamp(2.5rem, 6vw, 4.5rem)',
@@ -100,8 +111,7 @@ export const Landing: React.FC = () => {
         </p>
         <div style={{ display: 'flex', gap: '1rem', marginTop: '0.5rem' }}>
           <GlossyButton size="lg" onClick={() => navigate('/dashboard')}>
-            Get Started
-            <ArrowRight size={20} />
+            Get Started <ArrowRight size={20} />
           </GlossyButton>
           <GlossyButton variant="outline" size="lg" onClick={() => navigate('/color-builder')}>
             Explore Colors
@@ -138,12 +148,45 @@ export const Landing: React.FC = () => {
         </div>
       </section>
 
+      {/* Button Variants Showcase */}
+      <section
+        style={{
+          maxWidth: '1280px',
+          margin: '0 auto',
+          padding: '0 2rem 4rem',
+        }}
+      >
+        <Card variant="outlined" padding="lg">
+          <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
+            <h2 style={{ fontSize: '1.25rem', fontWeight: 700, margin: 0 }}>Glossy Button Variants</h2>
+            <p style={{ margin: '0.25rem 0 0', fontSize: '0.8125rem', color: 'var(--md-ref-role-onSurfaceVariant)' }}>
+              All six variants displayed in a row — primary, secondary, tertiary, error, ghost, and outline.
+            </p>
+          </div>
+          <div
+            style={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              gap: '0.75rem',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
+          >
+            {buttonVariants.map(({ variant, label }) => (
+              <GlossyButton key={variant} variant={variant} size="md">
+                {label}
+              </GlossyButton>
+            ))}
+          </div>
+        </Card>
+      </section>
+
       {/* Features */}
       <section
         style={{
           maxWidth: '1280px',
           margin: '0 auto',
-          padding: '3rem 2rem 5rem',
+          padding: '0 2rem 5rem',
         }}
       >
         <div style={{ textAlign: 'center', marginBottom: '3rem' }}>

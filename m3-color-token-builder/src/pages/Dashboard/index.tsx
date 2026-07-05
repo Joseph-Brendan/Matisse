@@ -4,13 +4,13 @@ import {
   Palette, Sparkles, Activity, Settings, Users, LogOut,
   Sun, Moon, Bell, Search,
 } from 'lucide-react';
-import { GlossyButton } from '../design-system/components/Button/GlossyButton';
-import { Card } from '../design-system/components/Card/Card';
-import { Badge } from '../design-system/components/Badge/Badge';
-import { Tabs, TabPanel } from '../design-system/components/Tabs/Tabs';
-import { Input } from '../design-system/components/Input/Input';
-import { showToast } from '../store/useToastStore';
-import { useColorStore } from '../store/useColorStore';
+import { GlossyButton } from '../../design-system/components/Button/GlossyButton';
+import { Card } from '../../design-system/components/Card/Card';
+import { Badge } from '../../design-system/components/Badge/Badge';
+import { Tabs, TabPanel } from '../../design-system/components/Tabs/Tabs';
+import { Input } from '../../design-system/components/Input/Input';
+import { showToast } from '../../store/useToastStore';
+import { useColorStore } from '../../store/useColorStore';
 
 const statCards = [
   { label: 'Active Colors', value: '5', change: '+2 this week', icon: <Palette size={20} />, color: 'hsl(256, 34%, 48%)' },
@@ -82,12 +82,7 @@ export const Dashboard: React.FC = () => {
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
           <div style={{ width: '200px' }}>
-            <Input
-              placeholder="Search..."
-              inputSize="sm"
-              variant="filled"
-              icon={<Search size={16} />}
-            />
+            <Input placeholder="Search..." inputSize="sm" variant="filled" icon={<Search size={16} />} />
           </div>
 
           <button
