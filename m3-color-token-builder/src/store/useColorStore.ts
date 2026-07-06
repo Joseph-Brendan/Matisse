@@ -3,17 +3,30 @@ import type { KeyColor, TonalPalette, RoleToken, KeyColorName } from '../types';
 import { DEFAULT_KEY_COLORS, DEFAULT_LIGHT_ROLES, DEFAULT_DARK_ROLES } from '../lib/defaults';
 import { generateTones } from '../lib/material';
 
+export interface ProjectSnapshot {
+    id: string;
+    name: string;
+    timestamp: number;
+}
+
 interface ColorState {
     keyColors: KeyColor[];
     palettes: TonalPalette[];
     roles: { light: RoleToken[]; dark: RoleToken[] };
     theme: 'light' | 'dark';
+    projectName: string;
+    history: ProjectSnapshot[];
+    checklist: { color: boolean; typography: boolean; spacing: boolean };
 
     updateKeyColor: (name: KeyColorName, value: string) => void;
     addOptionalColor: (name: string, value: string) => void;
     removeOptionalColor: (name: string) => void;
     updateRoleReference: (theme: 'light' | 'dark', name: string, reference: string) => void;
     setTheme: (theme: 'light' | 'dark') => void;
+    setProjectName: (name: string) => void;
+    pushHistory: (snapshot: ProjectSnapshot) => void;
+    clearHistory: () => void;
+    toggleChecklist: (key: 'color' | 'typography' | 'spacing') => void;
 
     // Tone editing
     addTone: (keyColor: string, tone: number, value: string) => void;
@@ -70,6 +83,26 @@ export const useColorStore = create<ColorState>((set) => {
         palettes: initPalettes,
         roles: { light: initLightRoles, dark: initDarkRoles },
         theme: 'light',
+        projectName: 'Untitled Project',
+        history: JSON.parse(localStorage.getItem('matisse_history') || '[]'),
+        checklist: { color: false, typography: false, spacing: false },
+
+        setProjectName: (name) => set({ projectName: name }),
+
+        pushHistory: (snapshot) => set((state) => {
+            const updated = [snapshot, ...state.history].slice(0, 20);
+            localStorage.setItem('matisse_history', JSON.stringify(updated));
+            return { history: updated };
+        }),
+
+        clearHistory: () => {
+            localStorage.removeItem('matisse_history');
+            set({ history: [] });
+        },
+
+        toggleChecklist: (key) => set((state) => ({
+            checklist: { ...state.checklist, [key]: !state.checklist[key] }
+        })),
 
         updateKeyColor: (name, value) => {
             set((state) => {

@@ -1,0 +1,154 @@
+/* ── Tonal Palette Editor ─────────────────────────────── */
+
+.tonal-editor {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+/* Collapsible header row */
+.tonal-editor-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+}
+
+.tonal-editor-header-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.tonal-editor-title {
+  font-size: 1.125rem;
+  font-weight: 700;
+  margin: 0;
+  color: #111827;
+  letter-spacing: -0.02em;
+}
+
+.tonal-editor-subtitle {
+  margin: 0;
+  color: #6b7280;
+  font-size: 0.8125rem;
+  line-height: 1.4;
+}
+
+/* Chevron toggle button */
+.tonal-editor-toggle {
+  background: rgba(0, 0, 0, 0.04);
+  border: none;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #6b7280;
+  transition: background 0.15s, color 0.15s;
+  flex-shrink: 0;
+}
+
+.tonal-editor-toggle:hover {
+  background: rgba(0, 0, 0, 0.08);
+  color: #374151;
+}
+
+/* Palette list */
+.tonal-editor-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+/* Single palette row */
+.tonal-palette-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.tonal-palette-name {
+  margin: 0;
+  font-size: 0.875rem;
+  text-transform: capitalize;
+  font-weight: 600;
+  color: #374151;
+}
+
+/* Horizontal scroll wrapper */
+.tonal-palette-scroll {
+  overflow-x: auto;
+  border-radius: 0.75rem;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  width: 100%;
+}
+
+.tonal-palette-scroll::-webkit-scrollbar {
+  height: 4px;
+}
+
+.tonal-palette-scroll::-webkit-scrollbar-track {
+  background: #f3f4f6;
+}
+
+.tonal-palette-scroll::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 2px;
+}
+
+/* Tone strip */
+.tonal-strip {
+  display: flex;
+  min-width: 800px;
+}
+
+/* Individual tone cell */
+.tonal-cell {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem 0;
+  position: relative;
+  transition: opacity 0.15s;
+}
+
+.tonal-cell:hover {
+  opacity: 0.9;
+}
+
+.tonal-cell--first {
+  border-top-left-radius: calc(0.75rem - 1px);
+  border-bottom-left-radius: calc(0.75rem - 1px);
+}
+
+.tonal-cell--last {
+  border-top-right-radius: calc(0.75rem - 1px);
+  border-bottom-right-radius: calc(0.75rem - 1px);
+}
+
+/* Tone number label */
+.tonal-cell-label {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  line-height: 1;
+  pointer-events: none;
+}
+
+.tonal-cell-label--dark {
+  color: #000000;
+}
+
+.tonal-cell-label--light {
+  color: #ffffff;
+}

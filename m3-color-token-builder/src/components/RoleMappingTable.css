@@ -1,0 +1,204 @@
+/* ── Role Mapping Table ───────────────────────────────── */
+
+.role-table-card {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+/* Header row */
+.role-table-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.role-table-header-left {
+  cursor: pointer;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  user-select: none;
+}
+
+.role-table-title-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.role-table-title {
+  font-size: 1.125rem;
+  font-weight: 700;
+  margin: 0;
+  color: #111827;
+  letter-spacing: -0.02em;
+}
+
+.role-table-subtitle {
+  margin: 0;
+  color: #6b7280;
+  font-size: 0.8125rem;
+}
+
+/* Light/Dark segmented toggle */
+.role-table-theme-toggle {
+  display: flex;
+  background: #f3f4f6;
+  padding: 0.25rem;
+  border-radius: 0.625rem;
+  flex-shrink: 0;
+}
+
+.role-table-theme-btn {
+  padding: 0.4rem 1rem;
+  background: transparent;
+  border: none;
+  border-radius: 0.375rem;
+  font-weight: 600;
+  font-size: 0.8125rem;
+  cursor: pointer;
+  color: #6b7280;
+  transition: all 0.15s;
+  font-family: inherit;
+}
+
+.role-table-theme-btn.active {
+  background: #ffffff;
+  color: #111827;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Scroll wrapper */
+.role-table-scroll {
+  overflow-x: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #e5e7eb transparent;
+}
+
+.role-table-scroll::-webkit-scrollbar {
+  height: 4px;
+}
+
+.role-table-scroll::-webkit-scrollbar-thumb {
+  background: #e5e7eb;
+  border-radius: 2px;
+}
+
+/* Table */
+.role-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  min-width: 600px;
+}
+
+.role-table thead tr {
+  border-bottom: 2px solid #f3f4f6;
+}
+
+.role-table th {
+  padding: 0.75rem 1rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #9ca3af;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.role-table tbody tr {
+  border-bottom: 1px solid #f9fafb;
+  transition: background 0.1s;
+}
+
+.role-table tbody tr:hover {
+  background: #fafafa;
+}
+
+.role-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.role-table td {
+  padding: 0.75rem 1rem;
+  vertical-align: middle;
+}
+
+/* Role name cell */
+.role-name {
+  font-weight: 600;
+  font-family: 'JetBrains Mono', 'Fira Mono', 'Courier New', monospace;
+  font-size: 0.8125rem;
+  color: #374151;
+}
+
+/* Swatch cell */
+.role-swatch-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.role-swatch {
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  flex-shrink: 0;
+}
+
+.role-swatch-value {
+  font-size: 0.8125rem;
+  color: #6b7280;
+  font-family: 'JetBrains Mono', 'Fira Mono', 'Courier New', monospace;
+}
+
+/* Override badge */
+.role-override-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.role-reference-badge {
+  padding: 0.35rem 0.625rem;
+  background: #fef3c7;
+  color: #92400e;
+  border-radius: 0.375rem;
+  font-size: 0.75rem;
+  font-family: 'JetBrains Mono', 'Fira Mono', 'Courier New', monospace;
+}
+
+.role-override-label {
+  font-size: 0.75rem;
+  color: #d97706;
+}
+
+/* Select dropdown */
+.role-select {
+  padding: 0.45rem 0.625rem;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 0.5rem;
+  width: 100%;
+  font-family: 'JetBrains Mono', 'Fira Mono', 'Courier New', monospace;
+  font-size: 0.8125rem;
+  color: #374151;
+  background: #fafafa;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.role-select:focus {
+  border-color: hsl(256, 34%, 55%);
+  box-shadow: 0 0 0 3px hsla(256, 34%, 55%, 0.12);
+  background: #ffffff;
+}

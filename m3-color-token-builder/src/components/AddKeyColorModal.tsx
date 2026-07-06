@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { PopoverColorPicker } from './PopoverColorPicker';
+import { GlossyButton } from '../design-system/components/Button/GlossyButton';
+import './AddKeyColorModal.css';
 
 interface AddKeyColorModalProps {
     isOpen: boolean;
@@ -17,7 +19,7 @@ export const AddKeyColorModal: React.FC<AddKeyColorModalProps> = ({ isOpen, onCl
         e.preventDefault();
         const trimmed = name.trim();
         if (!trimmed) {
-            alert("Please enter a valid name.");
+            alert('Please enter a valid name.');
             return;
         }
         onAdd(trimmed, value);
@@ -25,47 +27,65 @@ export const AddKeyColorModal: React.FC<AddKeyColorModalProps> = ({ isOpen, onCl
     };
 
     return (
-        <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100 }}>
-            <div className="card" style={{ width: '90%', maxWidth: '400px', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <h2 style={{ margin: 0, fontSize: '1.25rem' }}>Add Key Color</h2>
-                    <button onClick={onClose} style={{ background: 'none', border: 'none', fontSize: '1.5rem', cursor: 'pointer', color: '#6b7280' }}>&times;</button>
+        <div className="modal-overlay" onClick={(e) => e.target === e.currentTarget && onClose()}>
+            <div className="modal-glass-card">
+                {/* Header */}
+                <div className="modal-header">
+                    <h2 className="modal-title">Add Key Color</h2>
+                    <button className="modal-close-btn" onClick={onClose} aria-label="Close">×</button>
                 </div>
 
-                <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                        <label style={{ fontSize: '0.875rem', fontWeight: 600 }}>Color Role Name</label>
+                {/* Form */}
+                <form onSubmit={handleSubmit} className="modal-form">
+                    {/* Color Role Name */}
+                    <div className="modal-field">
+                        <label className="modal-label">Color Role Name</label>
                         <input
+                            className="modal-input"
                             type="text"
                             value={name}
-                            onChange={e => setName(e.target.value)}
+                            onChange={(e) => setName(e.target.value)}
                             required
-                            style={{ padding: '0.75rem', border: '1px solid #d1d5db', borderRadius: '6px', fontSize: '1rem' }}
                             placeholder="e.g. success, info, warning"
                         />
                     </div>
 
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                        <label style={{ fontSize: '0.875rem', fontWeight: 600 }}>Seed Color</label>
-                        <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                    {/* Seed Color */}
+                    <div className="modal-field">
+                        <label className="modal-label">Seed Color</label>
+                        <div className="modal-color-row">
                             <PopoverColorPicker
                                 color={value}
                                 onChange={setValue}
-                                style={{ width: '48px', height: '48px', borderRadius: '6px', cursor: 'pointer' }}
+                                style={{ width: '48px', height: '48px', borderRadius: '10px', cursor: 'pointer', flexShrink: 0 }}
                             />
                             <input
+                                className="modal-input modal-input--mono"
                                 type="text"
                                 value={value}
-                                onChange={e => setValue(e.target.value)}
+                                onChange={(e) => setValue(e.target.value)}
                                 required
-                                style={{ flex: 1, padding: '0.75rem', border: '1px solid #d1d5db', borderRadius: '6px', fontFamily: 'monospace', fontSize: '1rem' }}
                             />
                         </div>
                     </div>
 
-                    <div style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-end', marginTop: '1rem' }}>
-                        <button type="button" onClick={onClose} style={{ padding: '0.75rem 1.5rem', border: '1px solid #d1d5db', background: '#fff', borderRadius: '6px', fontWeight: 600, cursor: 'pointer' }}>Cancel</button>
-                        <button type="submit" style={{ padding: '0.75rem 1.5rem', border: 'none', background: '#3b82f6', color: '#fff', borderRadius: '6px', fontWeight: 600, cursor: 'pointer' }}>Add Key Color</button>
+                    {/* Actions */}
+                    <div className="modal-actions">
+                        <GlossyButton
+                            type="button"
+                            variant="ghost"
+                            size="md"
+                            onClick={onClose}
+                        >
+                            Cancel
+                        </GlossyButton>
+                        <GlossyButton
+                            type="submit"
+                            variant="primary"
+                            size="md"
+                        >
+                            Add Key Color
+                        </GlossyButton>
                     </div>
                 </form>
             </div>

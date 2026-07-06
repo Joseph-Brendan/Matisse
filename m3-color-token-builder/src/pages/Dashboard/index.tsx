@@ -1,317 +1,407 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-  Palette, Sparkles, Activity, Settings, Users, LogOut,
-  Sun, Moon, Bell, Search,
+  Palette, Type, LayoutGrid, Download, Save, Plus,
+  Bell, LogOut, ChevronDown, Eye, Check,
+  History, FolderOpen, Settings, Zap, Layers, Box, Wind, Sparkles,
 } from 'lucide-react';
-import { GlossyButton } from '../../design-system/components/Button/GlossyButton';
-import { Card } from '../../design-system/components/Card/Card';
-import { Badge } from '../../design-system/components/Badge/Badge';
-import { Tabs, TabPanel } from '../../design-system/components/Tabs/Tabs';
-import { Input } from '../../design-system/components/Input/Input';
-import { showToast } from '../../store/useToastStore';
+import { KeyColorCard } from '../../components/KeyColorCard';
+import { TonalPaletteEditor } from '../../components/TonalPaletteEditor';
+import { RoleMappingTable } from '../../components/RoleMappingTable';
+import { PreviewPanel } from '../../components/PreviewPanel';
+import { ExportPanel } from '../../components/ExportPanel';
 import { useColorStore } from '../../store/useColorStore';
+import { useAuthStore } from '../../store/useAuthStore';
+import { showToast } from '../../store/useToastStore';
+import './Dashboard.css';
 
-const statCards = [
-  { label: 'Active Colors', value: '5', change: '+2 this week', icon: <Palette size={20} />, color: 'hsl(256, 34%, 48%)' },
-  { label: 'Components', value: '12', change: '3 new', icon: <Sparkles size={20} />, color: 'hsl(259, 11%, 40%)' },
-  { label: 'Tokens Generated', value: '1,284', change: '+156 today', icon: <Activity size={20} />, color: 'hsl(340, 21%, 41%)' },
-  { label: 'Export Formats', value: '3', change: 'JSON, CSS, Tailwind', icon: <Settings size={20} />, color: 'hsl(276, 3%, 37%)' },
+type Feature = 'color' | 'typography' | 'spacing' | 'shadows' | 'elevation' | 'borderRadius' | 'motion' | 'components';
+type WorkspaceTab = 'builder' | 'preview';
+
+const featureNav: { id: Feature; label: string; icon: React.ReactNode; soon?: boolean }[] = [
+  { id: 'color',        label: 'Color',         icon: <Palette size={15} /> },
+  { id: 'typography',   label: 'Typography',    icon: <Type size={15} />,       soon: true },
+  { id: 'spacing',      label: 'Spacing',       icon: <LayoutGrid size={15} />, soon: true },
+  { id: 'shadows',      label: 'Shadows',       icon: <Layers size={15} />,     soon: true },
+  { id: 'elevation',    label: 'Elevation',     icon: <Box size={15} />,        soon: true },
+  { id: 'borderRadius', label: 'Border Radius', icon: <Sparkles size={15} />,   soon: true },
+  { id: 'motion',       label: 'Motion',        icon: <Wind size={15} />,       soon: true },
+  { id: 'components',   label: 'Components',    icon: <Sparkles size={15} />,   soon: true },
 ];
 
-const recentProjects = [
-  { name: 'Brand Refresh Q3', colors: 5, lastEdited: '2 hours ago', status: 'active' as const },
-  { name: 'Mobile App Theme', colors: 3, lastEdited: 'Yesterday', status: 'draft' as const },
-  { name: 'Marketing Site', colors: 4, lastEdited: '3 days ago', status: 'active' as const },
-  { name: 'Dashboard Redesign', colors: 6, lastEdited: '1 week ago', status: 'archived' as const },
-];
+const featureLabels: Record<Feature, string> = {
+  color:        'Color Builder',
+  typography:   'Typography',
+  spacing:      'Spacing',
+  shadows:      'Shadows',
+  elevation:    'Elevation',
+  borderRadius: 'Border Radius',
+  motion:       'Motion',
+  components:   'Components',
+};
 
-const tabData = [
-  { id: 'overview', label: 'Overview' },
-  { id: 'projects', label: 'Projects', badge: 4 as string | number },
-  { id: 'activity', label: 'Activity' },
-  { id: 'team', label: 'Team', badge: '3' as string | number },
-];
+function formatRelativeTime(timestamp: number): string {
+  const diff = Date.now() - timestamp;
+  const mins = Math.floor(diff / 60000);
+  if (mins < 1) return 'Just now';
+  if (mins < 60) return `${mins}m ago`;
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24) return `${hrs}h ago`;
+  return `${Math.floor(hrs / 24)}d ago`;
+}
 
 export const Dashboard: React.FC = () => {
   const navigate = useNavigate();
-  const { theme, setTheme } = useColorStore();
-  const [activeTab, setActiveTab] = useState('overview');
+  const { user, logout } = useAuthStore();
+  const {
+    projectName, setProjectName,
+    history, pushHistory, clearHistory,
+    checklist, toggleChecklist,
+  } = useColorStore();
+
+  const [activeFeature, setActiveFeature] = useState<Feature>('color');
+  const [activeTab, setActiveTab] = useState<WorkspaceTab>('builder');
+  const [isExportOpen, setIsExportOpen] = useState(false);
+  const [showExportMenu, setShowExportMenu] = useState(false);
+  const [showUserMenu, setShowUserMenu] = useState(false);
+  const [mobileNav, setMobileNav] = useState<Feature | 'preview'>('color');
+
+  const exportRef = useRef<HTMLDivElement>(null);
+  const userRef = useRef<HTMLDivElement>(null);
+
+  // Close dropdowns on outside click
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (exportRef.current && !exportRef.current.contains(e.target as Node)) {
+        setShowExportMenu(false);
+      }
+      if (userRef.current && !userRef.current.contains(e.target as Node)) {
+        setShowUserMenu(false);
+      }
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, []);
+
+  const handleSave = () => {
+    const snapshot = {
+      id: Date.now().toString(),
+      name: projectName,
+      timestamp: Date.now(),
+    };
+    pushHistory(snapshot);
+    showToast('success', `"${projectName}" saved`);
+  };
+
+  const handleNewProject = () => {
+    const name = `Project ${history.length + 1}`;
+    setProjectName(name);
+    showToast('info', `Started new project: ${name}`);
+  };
+
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+  };
+
+  const handleFeatureClick = (f: Feature) => {
+    setActiveFeature(f);
+    setActiveTab('builder');
+  };
+
+  const handleMobileNav = (nav: Feature | 'preview') => {
+    setMobileNav(nav);
+    if (nav === 'preview') {
+      setActiveTab('preview');
+    } else {
+      handleFeatureClick(nav as Feature);
+    }
+  };
+
+  const displayName = user?.name ?? 'User';
+  const displayInitials = user?.initials ?? 'U';
+  const displayEmail = user?.email ?? '';
 
   return (
-    <div
-      style={{
-        minHeight: '100vh',
-        background: 'var(--md-ref-role-background)',
-        display: 'flex',
-        flexDirection: 'column',
-      }}
-    >
-      {/* Header */}
-      <header
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          padding: '0.75rem 2rem',
-          borderBottom: '1px solid var(--md-ref-role-outlineVariant)',
-          background: 'var(--md-ref-role-surface)',
-        }}
-      >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-          <div
-            style={{
-              width: '32px',
-              height: '32px',
-              borderRadius: '8px',
-              background: 'linear-gradient(135deg, hsl(256, 34%, 48%), hsl(340, 21%, 41%))',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: 'white',
-              fontWeight: 700,
-              fontSize: '1rem',
-              cursor: 'pointer',
-            }}
-            onClick={() => navigate('/')}
-          >
-            M
-          </div>
-          <span style={{ fontWeight: 600 }}>Dashboard</span>
+    <div className="dashboard-root">
+      {/* ── Dark Header ──────────────────────────────── */}
+      <header className="dashboard-header">
+        <div className="dashboard-header-left">
+          <div className="dashboard-logo" onClick={() => navigate('/')}>M</div>
+          <input
+            className="dashboard-project-name"
+            value={projectName}
+            onChange={(e) => setProjectName(e.target.value)}
+            aria-label="Project name"
+          />
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          <div style={{ width: '200px' }}>
-            <Input placeholder="Search..." inputSize="sm" variant="filled" icon={<Search size={16} />} />
+        <div className="dashboard-header-right">
+          <button className="dash-header-btn" onClick={handleSave}>
+            <Save size={14} />
+            <span>Save</span>
+          </button>
+
+          {/* Export dropdown */}
+          <div className="dash-export-wrapper" ref={exportRef}>
+            <button
+              className="dash-header-btn dash-header-btn--primary"
+              onClick={() => setShowExportMenu((v) => !v)}
+            >
+              <Download size={14} />
+              <span>Export</span>
+              <ChevronDown size={12} />
+            </button>
+            {showExportMenu && (
+              <div className="dash-export-dropdown">
+                <button className="dash-export-item" onClick={() => { setIsExportOpen(true); setShowExportMenu(false); }}>
+                  <Palette size={14} /> Export Color Tokens
+                </button>
+                <button className="dash-export-item" onClick={() => { showToast('info', 'Full export coming soon'); setShowExportMenu(false); }}>
+                  <Download size={14} /> Export All Tokens
+                </button>
+              </div>
+            )}
           </div>
 
-          <button
-            onClick={() => {
-              setTheme(theme === 'light' ? 'dark' : 'light');
-              showToast('info', `Switched to ${theme === 'light' ? 'dark' : 'light'} mode`);
-            }}
-            style={{
-              background: 'none',
-              border: '1px solid var(--md-ref-role-outlineVariant)',
-              borderRadius: '0.5rem',
-              padding: '0.5rem',
-              cursor: 'pointer',
-              color: 'var(--md-ref-role-onSurfaceVariant)',
-              display: 'flex',
-            }}
-          >
-            {theme === 'light' ? <Moon size={18} /> : <Sun size={18} />}
+          <button className="dash-header-icon-btn" onClick={() => showToast('info', 'No new notifications')}>
+            <Bell size={15} />
+            <span className="dash-notif-dot" />
           </button>
 
-          <button
-            onClick={() => showToast('info', 'No new notifications')}
-            style={{
-              background: 'none',
-              border: '1px solid var(--md-ref-role-outlineVariant)',
-              borderRadius: '0.5rem',
-              padding: '0.5rem',
-              cursor: 'pointer',
-              color: 'var(--md-ref-role-onSurfaceVariant)',
-              display: 'flex',
-              position: 'relative',
-            }}
-          >
-            <Bell size={18} />
-            <span
-              style={{
-                position: 'absolute',
-                top: '4px',
-                right: '4px',
-                width: '8px',
-                height: '8px',
-                borderRadius: '50%',
-                background: 'hsl(0, 54%, 41%)',
-              }}
-            />
-          </button>
+          {/* User avatar + dropdown */}
+          <div className="dash-user-dropdown-wrapper" ref={userRef}>
+            <div
+              className="dash-user-avatar"
+              style={{ background: user?.avatarColor ?? 'hsl(256, 34%, 48%)' }}
+              onClick={() => setShowUserMenu((v) => !v)}
+              title={displayName}
+            >
+              {displayInitials}
+            </div>
+            {showUserMenu && (
+              <div className="dash-user-dropdown">
+                <div className="dash-user-info">
+                  <p className="dash-user-name">{displayName}</p>
+                  <p className="dash-user-email">{displayEmail}</p>
+                </div>
+                <button className="dash-user-menu-item" onClick={() => { showToast('info', 'Settings coming soon'); setShowUserMenu(false); }}>
+                  <Settings size={14} /> Settings
+                </button>
+                <button className="dash-user-menu-item dash-user-menu-item--danger" onClick={handleLogout}>
+                  <LogOut size={14} /> Sign out
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </header>
 
-      <div style={{ display: 'flex', flex: 1 }}>
-        {/* Sidebar */}
-        <aside
-          style={{
-            width: '220px',
-            borderRight: '1px solid var(--md-ref-role-outlineVariant)',
-            padding: '1rem',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '0.25rem',
-            background: 'var(--md-ref-role-surface)',
-          }}
-        >
-          {[
-            { icon: <Activity size={18} />, label: 'Overview', active: true },
-            { icon: <Palette size={18} />, label: 'Color Builder', onClick: () => navigate('/color-builder') },
-            { icon: <Sparkles size={18} />, label: 'Components', onClick: () => navigate('/components') },
-            { icon: <Users size={18} />, label: 'Team' },
-            { icon: <Settings size={18} />, label: 'Settings' },
-          ].map((item) => (
-            <button
-              key={item.label}
-              onClick={item.onClick}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.625rem',
-                padding: '0.625rem 0.75rem',
-                borderRadius: '0.5rem',
-                border: 'none',
-                background: item.active ? 'var(--md-ref-role-primaryContainer)' : 'transparent',
-                color: item.active ? 'var(--md-ref-role-onPrimaryContainer)' : 'var(--md-ref-role-onSurfaceVariant)',
-                fontWeight: item.active ? 600 : 400,
-                cursor: 'pointer',
-                fontSize: '0.875rem',
-                transition: 'all 0.15s',
-                width: '100%',
-                textAlign: 'left',
-              }}
-            >
-              {item.icon}
-              {item.label}
-            </button>
-          ))}
+      {/* ── Body ─────────────────────────────────────── */}
+      <div className="dashboard-body">
+        {/* ── Floating Left Sidenav ─────────────────── */}
+        <aside className="dashboard-sidenav">
+          {/* Feature Navigation */}
+          <div className="sidenav-panel">
+            <p className="sidenav-section-label">Features</p>
+            {featureNav.map((f) => (
+              <button
+                key={f.id}
+                className={`sidenav-feature-btn${activeFeature === f.id ? ' active' : ''}`}
+                onClick={() => handleFeatureClick(f.id)}
+              >
+                <span className="sidenav-feature-icon">{f.icon}</span>
+                {f.label}
+                {f.soon && <span className="sidenav-soon-badge">Soon</span>}
+              </button>
+            ))}
 
-          <div style={{ flex: 1 }} />
+            <div className="sidenav-divider" />
 
-          <button
-            onClick={() => navigate('/')}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.625rem',
-              padding: '0.625rem 0.75rem',
-              borderRadius: '0.5rem',
-              border: 'none',
-              background: 'transparent',
-              color: 'var(--md-ref-role-onSurfaceVariant)',
-              cursor: 'pointer',
-              fontSize: '0.875rem',
-              width: '100%',
-              textAlign: 'left',
-            }}
-          >
-            <LogOut size={18} />
-            Sign out
+            {/* Progress Checklist */}
+            <p className="sidenav-section-label">Progress</p>
+            <div className="sidenav-checklist">
+              {(Object.keys(checklist) as (keyof typeof checklist)[]).map((key) => (
+                <div
+                  key={key}
+                  className={`checklist-item${checklist[key] ? ' done' : ''}`}
+                  onClick={() => toggleChecklist(key)}
+                >
+                  <div className={`checklist-box${checklist[key] ? ' checked' : ''}`}>
+                    {checklist[key] && <Check size={11} strokeWidth={3} />}
+                  </div>
+                  <span className="checklist-label">
+                    {key.charAt(0).toUpperCase() + key.slice(1)}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* History */}
+          <div className="sidenav-panel">
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingRight: '0.25rem' }}>
+              <p className="sidenav-section-label" style={{ margin: 0 }}>History</p>
+              {history.length > 0 && (
+                <button
+                  style={{ background: 'none', border: 'none', fontSize: '0.6875rem', color: '#9ca3af', cursor: 'pointer', padding: '0.25rem 0.5rem', borderRadius: '4px', fontFamily: 'inherit' }}
+                  onClick={clearHistory}
+                >
+                  Clear
+                </button>
+              )}
+            </div>
+            <div className="sidenav-history">
+              {history.length === 0 ? (
+                <p className="history-empty">No saves yet</p>
+              ) : (
+                history.slice(0, 5).map((h) => (
+                  <div key={h.id} className="history-item" onClick={() => setProjectName(h.name)}>
+                    <span className="history-item-name">{h.name}</span>
+                    <span className="history-item-time">
+                      <History size={10} style={{ display: 'inline', marginRight: '3px', verticalAlign: 'middle' }} />
+                      {formatRelativeTime(h.timestamp)}
+                    </span>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+
+          {/* New Project */}
+          <button className="sidenav-new-project-btn" onClick={handleNewProject}>
+            <Plus size={16} />
+            New Project
           </button>
         </aside>
 
-        {/* Main Content */}
-        <main style={{ flex: 1, padding: '2rem', overflow: 'auto' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '2rem' }}>
-            <div>
-              <h1 style={{ margin: 0, fontSize: '1.75rem', fontWeight: 700 }}>Welcome back, Jane</h1>
-              <p style={{ margin: '0.25rem 0 0', color: 'var(--md-ref-role-onSurfaceVariant)', fontSize: '0.875rem' }}>
-                Here's what's happening with your design system.
-              </p>
-            </div>
-            <GlossyButton size="sm" onClick={() => showToast('success', 'New project created!')}>
-              <Sparkles size={16} />
-              New Project
-            </GlossyButton>
+        {/* ── Workspace ─────────────────────────────── */}
+        <div className="dashboard-workspace">
+          {/* Tab Bar */}
+          <div className="workspace-tab-bar">
+            <button
+              className={`workspace-tab${activeTab === 'builder' ? ' active' : ''}`}
+              onClick={() => setActiveTab('builder')}
+            >
+              {activeFeature === 'color' && <span className="workspace-tab-dot" />}
+              {featureLabels[activeFeature]}
+            </button>
+            <button
+              className={`workspace-tab${activeTab === 'preview' ? ' active' : ''}`}
+              onClick={() => setActiveTab('preview')}
+            >
+              <Eye size={14} />
+              Preview
+            </button>
           </div>
 
-          {/* Stats */}
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-              gap: '1rem',
-              marginBottom: '2rem',
-            }}
-          >
-            {statCards.map((stat) => (
-              <Card key={stat.label} variant="outlined" padding="md">
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                  <div>
-                    <p style={{ margin: 0, fontSize: '0.75rem', color: 'var(--md-ref-role-onSurfaceVariant)', fontWeight: 500 }}>{stat.label}</p>
-                    <p style={{ margin: '0.25rem 0 0', fontSize: '1.75rem', fontWeight: 700, letterSpacing: '-0.02em' }}>{stat.value}</p>
-                    <p style={{ margin: '0.125rem 0 0', fontSize: '0.75rem', color: 'var(--md-ref-role-onSurfaceVariant)' }}>{stat.change}</p>
+          {/* Panel */}
+          <div className="workspace-panel">
+            {activeTab === 'builder' && (
+              <>
+                {activeFeature === 'color' && (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                    <KeyColorCard />
+                    <TonalPaletteEditor />
+                    <RoleMappingTable />
                   </div>
-                  <div
-                    style={{
-                      width: '40px',
-                      height: '40px',
-                      borderRadius: '10px',
-                      background: `${stat.color}15`,
-                      color: stat.color,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                    }}
-                  >
-                    {stat.icon}
+                )}
+                {activeFeature === 'typography' && (
+                  <div className="workspace-placeholder">
+                    <div className="workspace-placeholder-icon"><Type size={26} /></div>
+                    <h3 className="workspace-placeholder-title">Typography Builder</h3>
+                    <p className="workspace-placeholder-desc">Define font families, size scales, and weights for your design system tokens.</p>
+                    <span className="workspace-placeholder-badge"><Zap size={11} /> Coming soon — Early Access</span>
                   </div>
-                </div>
-              </Card>
-            ))}
+                )}
+                {activeFeature === 'spacing' && (
+                  <div className="workspace-placeholder">
+                    <div className="workspace-placeholder-icon"><LayoutGrid size={26} /></div>
+                    <h3 className="workspace-placeholder-title">Spacing System</h3>
+                    <p className="workspace-placeholder-desc">Build a base unit grid and generate tonal spacing scales for consistent layouts.</p>
+                    <span className="workspace-placeholder-badge"><Zap size={11} /> Coming soon — Early Access</span>
+                  </div>
+                )}
+                {activeFeature === 'shadows' && (
+                  <div className="workspace-placeholder">
+                    <div className="workspace-placeholder-icon"><Layers size={26} /></div>
+                    <h3 className="workspace-placeholder-title">Shadow Design System</h3>
+                    <p className="workspace-placeholder-desc">Define elevation levels and shadow tokens — from subtle cards to modal overlays.</p>
+                    <span className="workspace-placeholder-badge"><Zap size={11} /> Coming soon — Early Access</span>
+                  </div>
+                )}
+                {activeFeature === 'elevation' && (
+                  <div className="workspace-placeholder">
+                    <div className="workspace-placeholder-icon"><Box size={26} /></div>
+                    <h3 className="workspace-placeholder-title">Elevation Levels</h3>
+                    <p className="workspace-placeholder-desc">Map Material 3 elevation tiers with layered surfaces and tonal color overlays.</p>
+                    <span className="workspace-placeholder-badge"><Zap size={11} /> Coming soon — Early Access</span>
+                  </div>
+                )}
+                {activeFeature === 'borderRadius' && (
+                  <div className="workspace-placeholder">
+                    <div className="workspace-placeholder-icon"><Sparkles size={26} /></div>
+                    <h3 className="workspace-placeholder-title">Border Radius Scale</h3>
+                    <p className="workspace-placeholder-desc">Create a consistent corner radius scale from sharp to fully rounded elements.</p>
+                    <span className="workspace-placeholder-badge"><Zap size={11} /> Coming soon — Early Access</span>
+                  </div>
+                )}
+                {activeFeature === 'motion' && (
+                  <div className="workspace-placeholder">
+                    <div className="workspace-placeholder-icon"><Wind size={26} /></div>
+                    <h3 className="workspace-placeholder-title">Motion & Animation</h3>
+                    <p className="workspace-placeholder-desc">Define easing curves, durations, and spring configs for consistent transitions.</p>
+                    <span className="workspace-placeholder-badge"><Zap size={11} /> Coming soon — Early Access</span>
+                  </div>
+                )}
+                {activeFeature === 'components' && (
+                  <div className="workspace-placeholder">
+                    <div className="workspace-placeholder-icon"><Sparkles size={26} /></div>
+                    <h3 className="workspace-placeholder-title">Component Library</h3>
+                    <p className="workspace-placeholder-desc">Browse and preview all design system components styled with your current tokens.</p>
+                    <span className="workspace-placeholder-badge"><Zap size={11} /> Coming soon — Early Access</span>
+                  </div>
+                )}
+              </>
+            )}
+            {activeTab === 'preview' && (
+              <PreviewPanel />
+            )}
           </div>
-
-          {/* Tabs Section */}
-          <Card variant="outlined" padding="md">
-            <Tabs tabs={tabData} activeTab={activeTab} onChange={setActiveTab} variant="underline">
-              <TabPanel tabId="overview">
-                <div style={{ padding: '1rem 0' }}>
-                  <h3 style={{ margin: '0 0 1rem', fontSize: '1rem', fontWeight: 600 }}>Recent Projects</h3>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                    {recentProjects.map((project) => (
-                      <div
-                        key={project.name}
-                        style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'space-between',
-                          padding: '0.875rem 1rem',
-                          borderRadius: '0.75rem',
-                          background: 'var(--md-ref-role-surfaceContainerHighest)',
-                          cursor: 'pointer',
-                          transition: 'all 0.15s',
-                        }}
-                        onMouseEnter={(e) => (e.currentTarget.style.transform = 'translateX(4px)')}
-                        onMouseLeave={(e) => (e.currentTarget.style.transform = 'translateX(0)')}
-                      >
-                        <div>
-                          <span style={{ fontWeight: 500, fontSize: '0.9375rem' }}>{project.name}</span>
-                          <div style={{ display: 'flex', gap: '0.75rem', marginTop: '0.25rem' }}>
-                            <span style={{ fontSize: '0.75rem', color: 'var(--md-ref-role-onSurfaceVariant)' }}>{project.colors} colors</span>
-                            <span style={{ fontSize: '0.75rem', color: 'var(--md-ref-role-onSurfaceVariant)' }}>{project.lastEdited}</span>
-                          </div>
-                        </div>
-                        <Badge
-                          variant={project.status === 'active' ? 'success' : project.status === 'draft' ? 'warning' : 'neutral'}
-                          size="sm"
-                        >
-                          {project.status}
-                        </Badge>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </TabPanel>
-              <TabPanel tabId="projects">
-                <div style={{ padding: '1rem 0', color: 'var(--md-ref-role-onSurfaceVariant)' }}>
-                  Project management view coming soon.
-                </div>
-              </TabPanel>
-              <TabPanel tabId="activity">
-                <div style={{ padding: '1rem 0', color: 'var(--md-ref-role-onSurfaceVariant)' }}>
-                  Activity feed coming soon.
-                </div>
-              </TabPanel>
-              <TabPanel tabId="team">
-                <div style={{ padding: '1rem 0', color: 'var(--md-ref-role-onSurfaceVariant)' }}>
-                  Team management coming soon.
-                </div>
-              </TabPanel>
-            </Tabs>
-          </Card>
-        </main>
+        </div>
       </div>
+
+      {/* ── Mobile Bottom Nav ─────────────────────── */}
+      <nav className="dashboard-mobile-nav">
+        <div className="mobile-nav-inner">
+          {featureNav.map((f) => (
+            <button
+              key={f.id}
+              className={`mobile-nav-btn${mobileNav === f.id ? ' active' : ''}`}
+              onClick={() => handleMobileNav(f.id)}
+            >
+              {f.icon}
+              {f.label}
+            </button>
+          ))}
+          <button
+            className={`mobile-nav-btn${mobileNav === 'preview' ? ' active' : ''}`}
+            onClick={() => handleMobileNav('preview')}
+          >
+            <Eye size={16} />
+            Preview
+          </button>
+          <button
+            className="mobile-nav-btn"
+            onClick={() => { showToast('info', 'Projects panel coming soon'); }}
+          >
+            <FolderOpen size={16} />
+            Projects
+          </button>
+        </div>
+      </nav>
+
+      <ExportPanel isOpen={isExportOpen} onClose={() => setIsExportOpen(false)} />
     </div>
   );
 };

@@ -4,8 +4,10 @@ import { Mail, Lock, User, ArrowLeft, LogIn, UserPlus } from 'lucide-react';
 import { GlossyButton } from '../../design-system/components/Button/GlossyButton';
 import { Input } from '../../design-system/components/Input/Input';
 import { Alert } from '../../design-system/components/Alert/Alert';
-import { Card } from '../../design-system/components/Card/Card';
 import { Tabs, TabPanel } from '../../design-system/components/Tabs/Tabs';
+import { useAuthStore } from '../../store/useAuthStore';
+import './Auth.css';
+
 const authTabs = [
   { id: 'login', label: 'Sign In', icon: <LogIn size={16} /> },
   { id: 'signup', label: 'Create Account', icon: <UserPlus size={16} /> },
@@ -16,6 +18,7 @@ const LoginForm: React.FC<{ onSuccess: () => void }> = ({ onSuccess }) => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const login = useAuthStore((state) => state.login);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -25,23 +28,32 @@ const LoginForm: React.FC<{ onSuccess: () => void }> = ({ onSuccess }) => {
       return;
     }
     setLoading(true);
-    setTimeout(() => { setLoading(false); onSuccess(); }, 1200);
+    setTimeout(() => {
+      setLoading(false);
+      const parsedName = email
+        .split('@')[0]
+        .split(/[._-]/)
+        .map((s) => s.charAt(0).toUpperCase() + s.slice(1))
+        .join(' ');
+      login(parsedName, email);
+      onSuccess();
+    }, 1200);
   };
 
   return (
-    <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+    <form onSubmit={handleSubmit} className="auth-form">
       {error && <Alert variant="error" dismissible onDismiss={() => setError('')}>{error}</Alert>}
       <Input label="Email address" type="email" placeholder="jane@example.com" value={email} onChange={(e) => setEmail(e.target.value)} icon={<Mail size={18} />} fullWidth />
       <Input label="Password" type="password" placeholder="Enter your password" value={password} onChange={(e) => setPassword(e.target.value)} icon={<Lock size={18} />} fullWidth />
-      <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-        <button type="button" style={{ background: 'none', border: 'none', color: 'var(--md-ref-role-primary)', fontSize: '0.8125rem', fontWeight: 600, cursor: 'pointer', padding: 0 }}>
-          Forgot password?
-        </button>
+      <div className="auth-form-row">
+        <button type="button" className="auth-forgot-btn">Forgot password?</button>
       </div>
-      <GlossyButton type="submit" loading={loading} fullWidth size="lg" style={{ marginTop: '0.5rem' }}>
-        <LogIn size={18} />
-        Sign In
-      </GlossyButton>
+      <div className="auth-submit-row">
+        <GlossyButton type="submit" loading={loading} fullWidth size="lg">
+          <LogIn size={18} />
+          Sign In
+        </GlossyButton>
+      </div>
     </form>
   );
 };
@@ -53,6 +65,7 @@ const SignUpForm: React.FC<{ onSuccess: () => void }> = ({ onSuccess }) => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const login = useAuthStore((state) => state.login);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -61,20 +74,26 @@ const SignUpForm: React.FC<{ onSuccess: () => void }> = ({ onSuccess }) => {
     if (password.length < 8) { setError('Password must be at least 8 characters.'); return; }
     if (password !== confirmPassword) { setError('Passwords do not match.'); return; }
     setLoading(true);
-    setTimeout(() => { setLoading(false); onSuccess(); }, 1500);
+    setTimeout(() => {
+      setLoading(false);
+      login(name, email);
+      onSuccess();
+    }, 1500);
   };
 
   return (
-    <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+    <form onSubmit={handleSubmit} className="auth-form">
       {error && <Alert variant="error" dismissible onDismiss={() => setError('')}>{error}</Alert>}
       <Input label="Full name" placeholder="Jane Doe" value={name} onChange={(e) => setName(e.target.value)} icon={<User size={18} />} fullWidth />
       <Input label="Email address" type="email" placeholder="jane@example.com" value={email} onChange={(e) => setEmail(e.target.value)} icon={<Mail size={18} />} fullWidth />
       <Input label="Password" type="password" placeholder="At least 8 characters" value={password} onChange={(e) => setPassword(e.target.value)} icon={<Lock size={18} />} fullWidth />
       <Input label="Confirm password" type="password" placeholder="Repeat your password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} icon={<Lock size={18} />} fullWidth />
-      <GlossyButton type="submit" loading={loading} fullWidth size="lg" style={{ marginTop: '0.5rem' }}>
-        <UserPlus size={18} />
-        Create Account
-      </GlossyButton>
+      <div className="auth-submit-row">
+        <GlossyButton type="submit" loading={loading} fullWidth size="lg">
+          <UserPlus size={18} />
+          Create Account
+        </GlossyButton>
+      </div>
     </form>
   );
 };
@@ -98,88 +117,53 @@ export const Auth: React.FC = () => {
   };
 
   return (
-    <div
-      style={{
-        minHeight: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: '2rem',
-        background: 'var(--md-ref-role-background)',
-      }}
-    >
-      <div style={{ width: '100%', maxWidth: '440px' }}>
-        <button
-          onClick={() => navigate('/')}
-          style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '0.375rem',
-            background: 'none',
-            border: 'none',
-            cursor: 'pointer',
-            color: 'var(--md-ref-role-onSurfaceVariant)',
-            fontSize: '0.875rem',
-            padding: '0.5rem 0',
-            marginBottom: '1rem',
-          }}
-        >
+    <div className="auth-page">
+      <div className="auth-wrapper">
+        <button className="auth-back-btn" onClick={() => navigate('/')}>
           <ArrowLeft size={16} />
           Back to home
         </button>
 
-        <Card variant="elevated" padding="lg">
-          <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
-            <div
-              style={{
-                width: '48px',
-                height: '48px',
-                borderRadius: '14px',
-                background: 'linear-gradient(135deg, hsl(256, 34%, 48%), hsl(340, 21%, 41%))',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: 'white',
-                fontWeight: 700,
-                fontSize: '1.25rem',
-                margin: '0 auto 0.75rem',
-              }}
-            >
-              M
-            </div>
-            <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 700 }}>
+        <div className="auth-glass-card">
+          <div className="auth-brand">
+            <div className="auth-brand-icon">M</div>
+            <h1 className="auth-brand-title">
               {activeTab === 'login' ? 'Welcome back' : 'Create your account'}
             </h1>
-            <p style={{ margin: '0.375rem 0 0', fontSize: '0.875rem', color: 'var(--md-ref-role-onSurfaceVariant)' }}>
-              {activeTab === 'login' ? 'Sign in to continue to your dashboard.' : 'Join Matisse and start building beautiful interfaces.'}
+            <p className="auth-brand-subtitle">
+              {activeTab === 'login'
+                ? 'Sign in to continue building your design system.'
+                : 'Join Matisse and start building beautiful interfaces.'}
             </p>
           </div>
 
           {success ? (
-            <div style={{ textAlign: 'center', padding: '1rem 0' }}>
+            <div className="auth-success">
               <Alert variant="success" title="Success!">{successMessage}</Alert>
             </div>
           ) : (
-            <Tabs
-              tabs={authTabs}
-              activeTab={activeTab}
-              onChange={setActiveTab}
-              variant="segmented"
-              size="sm"
-            >
-              <TabPanel tabId="login">
-                <div style={{ marginTop: '1.25rem' }}>
-                  <LoginForm onSuccess={handleSuccess} />
-                </div>
-              </TabPanel>
-              <TabPanel tabId="signup">
-                <div style={{ marginTop: '1.25rem' }}>
-                  <SignUpForm onSuccess={handleSuccess} />
-                </div>
-              </TabPanel>
-            </Tabs>
+            <div className="auth-tab-area">
+              <Tabs
+                tabs={authTabs}
+                activeTab={activeTab}
+                onChange={setActiveTab}
+                variant="segmented"
+                size="sm"
+              >
+                <TabPanel tabId="login">
+                  <div style={{ marginTop: '1.25rem' }}>
+                    <LoginForm onSuccess={handleSuccess} />
+                  </div>
+                </TabPanel>
+                <TabPanel tabId="signup">
+                  <div style={{ marginTop: '1.25rem' }}>
+                    <SignUpForm onSuccess={handleSuccess} />
+                  </div>
+                </TabPanel>
+              </Tabs>
+            </div>
           )}
-        </Card>
+        </div>
       </div>
     </div>
   );
