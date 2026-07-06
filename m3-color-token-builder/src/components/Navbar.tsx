@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Menu, X, ChevronDown, LogOut, LayoutDashboard } from 'lucide-react';
 import { useAuthStore } from '../store/useAuthStore';
-import { GlossyButton } from '../design-system/components/Button/GlossyButton';
+import { GlossyButton } from '../design-system/components';
 
 export const Navbar: React.FC = () => {
   const navigate = useNavigate();
@@ -60,8 +60,8 @@ export const Navbar: React.FC = () => {
       <div className="navbar-container">
         {/* Brand Logo */}
         <div className="navbar-brand" onClick={() => navigate('/')}>
-          <div className="navbar-logo-badge">M</div>
-          <span className="navbar-brand-name">Matisse</span>
+          
+          <img src="/logo-drk.svg" alt="Matisse" style={{ height: '54px', display: 'block', objectFit: 'contain' }} />
         </div>
 
         {/* Desktop Menu Links */}

@@ -12,7 +12,7 @@
   "dependencies": {
     "@material/material-color-utilities": "^0.4.0",
     "clsx": "^2.1.1",
-    "lucide-react": "^1.0.1",
+    "lucide-react": "^1.23.0",
     "react": "^19.2.4",
     "react-colorful": "^5.6.1",
     "react-dom": "^19.2.4",

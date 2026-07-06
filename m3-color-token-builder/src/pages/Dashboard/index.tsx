@@ -127,7 +127,7 @@ export const Dashboard: React.FC = () => {
       {/* ── Dark Header ──────────────────────────────── */}
       <header className="dashboard-header">
         <div className="dashboard-header-left">
-          <div className="dashboard-logo" onClick={() => navigate('/')}>M</div>
+          <img src="/logo-wt.svg" alt="Matisse" onClick={() => navigate('/')} style={{ height: '54px', cursor: 'pointer', objectFit: 'contain' }} />
           <input
             className="dashboard-project-name"
             value={projectName}

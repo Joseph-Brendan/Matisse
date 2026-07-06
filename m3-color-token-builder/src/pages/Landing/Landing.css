@@ -75,8 +75,8 @@
 }
 
 .hero-brand-icon {
-  width: 36px;
-  height: 36px;
+  width: 64px;
+  height: 64px;
   border-radius: 10px;
   background: linear-gradient(135deg, hsl(256, 34%, 48%), hsl(340, 21%, 41%));
   display: flex;
