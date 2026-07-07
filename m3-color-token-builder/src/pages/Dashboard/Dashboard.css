@@ -458,6 +458,8 @@
 /* Workspace tab bar — floating, separated from panel, sticky */
 .workspace-tab-bar {
   display: flex;
+  width: fit-content;
+  max-width: 100%;
   align-items: center;
   gap: 0.25rem;
   padding: 0.5rem 0.75rem;
@@ -767,4 +769,175 @@
 .dash-user-menu-item--danger:hover {
   background: rgba(239, 68, 68, 0.12);
   color: rgb(248, 113, 113);
+}
+
+/* ── Builder Panels Styling ───────────────────────────── */
+.builder-split-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  align-items: start;
+}
+
+@media (max-width: 991px) {
+  .builder-split-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+}
+
+.builder-controls-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.builder-preview-panel {
+  position: sticky;
+  top: 140px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.builder-section {
+  background: #ffffff;
+  border-radius: 1rem;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.builder-section-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #111827;
+  margin: 0;
+}
+
+/* Inline button wrapper — prevents flex-column stretch */
+.builder-btn-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.builder-section-desc {
+  font-size: 0.8125rem;
+  color: #6b7280;
+  line-height: 1.5;
+  margin: 0 0 0.5rem 0;
+}
+
+.builder-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.builder-grid-2col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.builder-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.builder-field-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #4b5563;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.builder-field-input {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  background: #fcfcfd;
+  color: #111827;
+  outline: none;
+  transition: all 0.15s ease;
+}
+
+.builder-field-input:focus {
+  border-color: var(--md-ref-role-primary);
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(103, 81, 164, 0.1);
+}
+
+.builder-slider {
+  width: 100%;
+  accent-color: var(--md-ref-role-primary);
+  cursor: pointer;
+  margin: 0.5rem 0;
+}
+
+.builder-specimen-card {
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: 1.5rem;
+  padding: 2rem;
+  box-shadow: 
+    0 4px 6px rgba(0, 0, 0, 0.02),
+    0 10px 20px rgba(0, 0, 0, 0.03);
+}
+
+/* ── Dropdown user info header ─────────────────────────── */
+.dash-user-info {
+  padding-bottom: 0.25rem;
+}
+
+.dash-user-name {
+  margin: 0;
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: var(--md-ref-role-onSurface);
+}
+
+.dash-user-email {
+  margin: 0.125rem 0 0;
+  font-size: 0.75rem;
+  color: var(--md-ref-role-onSurfaceVariant);
+}
+
+/* ── Sidenav history clear button ──────────────────────── */
+.sidenav-history-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-right: 0.25rem;
+}
+
+.sidenav-clear-btn {
+  background: none;
+  border: none;
+  font-size: 0.6875rem;
+  color: #9ca3af;
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-family: inherit;
+  transition: color 0.15s, background 0.15s;
+}
+
+.sidenav-clear-btn:hover {
+  color: #6b7280;
+  background: rgba(0,0,0,0.05);
+}
+
+/* ── Sidenav history icon ───────────────────────────────── */
+.history-item-icon {
+  display: inline;
+  margin-right: 3px;
+  vertical-align: middle;
 }

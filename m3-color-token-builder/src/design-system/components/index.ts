@@ -22,3 +22,6 @@ export type { CardProps } from './Card/Card';
 
 export { Input } from './Input/Input';
 export type { InputProps } from './Input/Input';
+
+export { Dropdown } from './Dropdown/Dropdown';
+export type { DropdownProps, DropdownItem } from './Dropdown/Dropdown';

@@ -1,0 +1,134 @@
+/* ============================================================
+   Toast — Vanilla CSS
+   All inline styles extracted from Toast.tsx + ToastContainer.tsx
+   ============================================================ */
+
+/* ── Backdrop ── */
+.toast-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(4px);
+  z-index: 9998;
+  animation: toastBackdropIn 0.2s ease;
+}
+
+/* ── Stack container ── */
+.toast-stack {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+  align-items: center;
+  width: 100%;
+  max-width: 440px;
+  padding: 0 1rem;
+  box-sizing: border-box;
+}
+
+.toast-stack__item {
+  width: 100%;
+}
+
+/* ── Individual toast ── */
+.toast-item {
+  display: flex;
+  gap: 0.75rem;
+  padding: 0.875rem 1rem;
+  border-radius: 0.75rem;
+  border: 1px solid hsla(0, 0%, 80%, 0.5);
+  box-shadow: 0 8px 24px hsla(0, 0%, 0%, 0.08);
+  position: relative;
+  overflow: hidden;
+  animation: toastSlideIn 0.35s ease;
+  min-width: 300px;
+  max-width: 420px;
+}
+
+/* Variant backgrounds */
+.toast--info    { background: hsl(259, 100%, 97%); }
+.toast--success { background: hsl(145, 80%, 95%); }
+.toast--warning { background: hsl(40, 100%, 94%); }
+.toast--error   { background: hsl(0, 100%, 95%); }
+
+/* ── Accent bar (left edge) ── */
+.toast__accent {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  border-radius: 0.75rem 0 0 0.75rem;
+}
+
+.toast--info    .toast__accent { background: hsl(256, 34%, 48%); }
+.toast--success .toast__accent { background: hsl(145, 60%, 38%); }
+.toast--warning .toast__accent { background: hsl(38, 85%, 42%); }
+.toast--error   .toast__accent { background: hsl(0, 54%, 41%); }
+
+/* ── Icon ── */
+.toast__icon {
+  flex-shrink: 0;
+  margin-top: 0.125rem;
+}
+
+.toast--info    .toast__icon { color: hsl(256, 34%, 48%); }
+.toast--success .toast__icon { color: hsl(145, 60%, 38%); }
+.toast--warning .toast__icon { color: hsl(38, 85%, 42%); }
+.toast--error   .toast__icon { color: hsl(0, 54%, 41%); }
+
+/* ── Content ── */
+.toast__content {
+  flex: 1;
+  min-width: 0;
+  padding-left: 0.25rem;
+}
+
+.toast__title {
+  margin: 0 0 0.125rem;
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: #111827;
+}
+
+.toast__message {
+  margin: 0;
+  font-size: 0.8125rem;
+  color: #374151;
+  line-height: 1.4;
+}
+
+/* ── Dismiss button ── */
+.toast__dismiss {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #9ca3af;
+  padding: 0.125rem;
+  flex-shrink: 0;
+  align-self: flex-start;
+  border-radius: 0.25rem;
+  transition: color 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.toast__dismiss:hover {
+  color: #374151;
+}
+
+/* ── Animations ── */
+@keyframes toastSlideIn {
+  from { opacity: 0; transform: translateY(-10px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes toastBackdropIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}

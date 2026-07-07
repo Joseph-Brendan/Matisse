@@ -1,8 +1,8 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Palette, Type, LayoutGrid, Download, Save, Plus,
-  Bell, LogOut, ChevronDown, Eye, Check,
+  Bell, LogOut, Eye, Check,
   History, FolderOpen, Settings, Zap, Layers, Box, Wind, Sparkles,
 } from 'lucide-react';
 import { KeyColorCard } from '../../components/KeyColorCard';
@@ -10,9 +10,13 @@ import { TonalPaletteEditor } from '../../components/TonalPaletteEditor';
 import { RoleMappingTable } from '../../components/RoleMappingTable';
 import { PreviewPanel } from '../../components/PreviewPanel';
 import { ExportPanel } from '../../components/ExportPanel';
+import { ComponentExplorer } from '../../components/ComponentExplorer';
 import { useColorStore } from '../../store/useColorStore';
 import { useAuthStore } from '../../store/useAuthStore';
 import { showToast } from '../../store/useToastStore';
+import { GlossyButton } from '../../design-system/components/Button/GlossyButton';
+import { FontPicker } from '../../design-system/components/FontPicker/FontPicker';
+import { Dropdown } from '../../design-system/components';
 import './Dashboard.css';
 
 type Feature = 'color' | 'typography' | 'spacing' | 'shadows' | 'elevation' | 'borderRadius' | 'motion' | 'components';
@@ -20,13 +24,13 @@ type WorkspaceTab = 'builder' | 'preview';
 
 const featureNav: { id: Feature; label: string; icon: React.ReactNode; soon?: boolean }[] = [
   { id: 'color',        label: 'Color',         icon: <Palette size={15} /> },
-  { id: 'typography',   label: 'Typography',    icon: <Type size={15} />,       soon: true },
-  { id: 'spacing',      label: 'Spacing',       icon: <LayoutGrid size={15} />, soon: true },
-  { id: 'shadows',      label: 'Shadows',       icon: <Layers size={15} />,     soon: true },
-  { id: 'elevation',    label: 'Elevation',     icon: <Box size={15} />,        soon: true },
-  { id: 'borderRadius', label: 'Border Radius', icon: <Sparkles size={15} />,   soon: true },
+  { id: 'typography',   label: 'Typography',    icon: <Type size={15} /> },
+  { id: 'spacing',      label: 'Spacing',       icon: <LayoutGrid size={15} /> },
+  { id: 'shadows',      label: 'Shadows',       icon: <Layers size={15} /> },
+  { id: 'elevation',    label: 'Elevation',     icon: <Box size={15} /> },
+  { id: 'borderRadius', label: 'Border Radius', icon: <Sparkles size={15} /> },
   { id: 'motion',       label: 'Motion',        icon: <Wind size={15} />,       soon: true },
-  { id: 'components',   label: 'Components',    icon: <Sparkles size={15} />,   soon: true },
+  { id: 'components',   label: 'Components',    icon: <Sparkles size={15} /> },
 ];
 
 const featureLabels: Record<Feature, string> = {
@@ -57,31 +61,16 @@ export const Dashboard: React.FC = () => {
     projectName, setProjectName,
     history, pushHistory, clearHistory,
     checklist, toggleChecklist,
+    typography, spacing, borderRadius, shadows, elevation,
+    updateTypographyFamily, updateTypographySize, updateTypographyWeight,
+    updateSpacingValue, updateSpacingUnit, updateBorderRadiusValue,
+    updateShadowValue, updateElevationValue, updateShadowGlow
   } = useColorStore();
 
   const [activeFeature, setActiveFeature] = useState<Feature>('color');
   const [activeTab, setActiveTab] = useState<WorkspaceTab>('builder');
-  const [isExportOpen, setIsExportOpen] = useState(false);
-  const [showExportMenu, setShowExportMenu] = useState(false);
-  const [showUserMenu, setShowUserMenu] = useState(false);
+  const [exportScope, setExportScope] = useState<'all' | 'color' | null>(null);
   const [mobileNav, setMobileNav] = useState<Feature | 'preview'>('color');
-
-  const exportRef = useRef<HTMLDivElement>(null);
-  const userRef = useRef<HTMLDivElement>(null);
-
-  // Close dropdowns on outside click
-  useEffect(() => {
-    const handler = (e: MouseEvent) => {
-      if (exportRef.current && !exportRef.current.contains(e.target as Node)) {
-        setShowExportMenu(false);
-      }
-      if (userRef.current && !userRef.current.contains(e.target as Node)) {
-        setShowUserMenu(false);
-      }
-    };
-    document.addEventListener('mousedown', handler);
-    return () => document.removeEventListener('mousedown', handler);
-  }, []);
 
   const handleSave = () => {
     const snapshot = {
@@ -142,58 +131,52 @@ export const Dashboard: React.FC = () => {
             <span>Save</span>
           </button>
 
-          {/* Export dropdown */}
-          <div className="dash-export-wrapper" ref={exportRef}>
-            <button
-              className="dash-header-btn dash-header-btn--primary"
-              onClick={() => setShowExportMenu((v) => !v)}
-            >
-              <Download size={14} />
-              <span>Export</span>
-              <ChevronDown size={12} />
-            </button>
-            {showExportMenu && (
-              <div className="dash-export-dropdown">
-                <button className="dash-export-item" onClick={() => { setIsExportOpen(true); setShowExportMenu(false); }}>
-                  <Palette size={14} /> Export Color Tokens
-                </button>
-                <button className="dash-export-item" onClick={() => { showToast('info', 'Full export coming soon'); setShowExportMenu(false); }}>
-                  <Download size={14} /> Export All Tokens
-                </button>
-              </div>
-            )}
-          </div>
+          {/* Export Button */}
+          <button
+            className="dash-header-btn dash-header-btn--primary"
+            onClick={() => setExportScope('all')}
+          >
+            <Download size={14} />
+            <span>Export</span>
+          </button>
 
-          <button className="dash-header-icon-btn" onClick={() => showToast('info', 'No new notifications')}>
+          <button className="dash-header-icon-btn" onClick={() => navigate('/settings')} aria-label="Settings &amp; notifications">
             <Bell size={15} />
             <span className="dash-notif-dot" />
           </button>
 
           {/* User avatar + dropdown */}
-          <div className="dash-user-dropdown-wrapper" ref={userRef}>
-            <div
-              className="dash-user-avatar"
-              style={{ background: user?.avatarColor ?? 'hsl(256, 34%, 48%)' }}
-              onClick={() => setShowUserMenu((v) => !v)}
-              title={displayName}
-            >
-              {displayInitials}
-            </div>
-            {showUserMenu && (
-              <div className="dash-user-dropdown">
-                <div className="dash-user-info">
-                  <p className="dash-user-name">{displayName}</p>
-                  <p className="dash-user-email">{displayEmail}</p>
-                </div>
-                <button className="dash-user-menu-item" onClick={() => { showToast('info', 'Settings coming soon'); setShowUserMenu(false); }}>
-                  <Settings size={14} /> Settings
-                </button>
-                <button className="dash-user-menu-item dash-user-menu-item--danger" onClick={handleLogout}>
-                  <LogOut size={14} /> Sign out
-                </button>
+          <Dropdown
+            align="right"
+            trigger={
+              <div
+                className="dash-user-avatar"
+                style={{ background: user?.avatarColor ?? 'hsl(256, 34%, 48%)' }}
+                title={displayName}
+              >
+                {displayInitials}
               </div>
-            )}
-          </div>
+            }
+            header={
+              <div className="dash-user-info">
+                <p className="dash-user-name">{displayName}</p>
+                <p className="dash-user-email">{displayEmail}</p>
+              </div>
+            }
+            items={[
+              {
+                label: 'Settings',
+                icon: <Settings size={14} />,
+                onClick: () => navigate('/settings')
+              },
+              {
+                label: 'Sign out',
+                icon: <LogOut size={14} />,
+                danger: true,
+                onClick: handleLogout
+              }
+            ]}
+          />
         </div>
       </header>
 
@@ -240,13 +223,10 @@ export const Dashboard: React.FC = () => {
 
           {/* History */}
           <div className="sidenav-panel">
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingRight: '0.25rem' }}>
+            <div className="sidenav-history-header">
               <p className="sidenav-section-label" style={{ margin: 0 }}>History</p>
               {history.length > 0 && (
-                <button
-                  style={{ background: 'none', border: 'none', fontSize: '0.6875rem', color: '#9ca3af', cursor: 'pointer', padding: '0.25rem 0.5rem', borderRadius: '4px', fontFamily: 'inherit' }}
-                  onClick={clearHistory}
-                >
+                <button className="sidenav-clear-btn" onClick={clearHistory}>
                   Clear
                 </button>
               )}
@@ -259,7 +239,7 @@ export const Dashboard: React.FC = () => {
                   <div key={h.id} className="history-item" onClick={() => setProjectName(h.name)}>
                     <span className="history-item-name">{h.name}</span>
                     <span className="history-item-time">
-                      <History size={10} style={{ display: 'inline', marginRight: '3px', verticalAlign: 'middle' }} />
+                      <History size={10} className="history-item-icon" />
                       {formatRelativeTime(h.timestamp)}
                     </span>
                   </div>
@@ -307,43 +287,358 @@ export const Dashboard: React.FC = () => {
                   </div>
                 )}
                 {activeFeature === 'typography' && (
-                  <div className="workspace-placeholder">
-                    <div className="workspace-placeholder-icon"><Type size={26} /></div>
-                    <h3 className="workspace-placeholder-title">Typography Builder</h3>
-                    <p className="workspace-placeholder-desc">Define font families, size scales, and weights for your design system tokens.</p>
-                    <span className="workspace-placeholder-badge"><Zap size={11} /> Coming soon — Early Access</span>
+                  <div className="builder-split-grid">
+                    {/* Controls */}
+                    <div className="builder-controls-panel">
+                      <div className="builder-section">
+                        <h4 className="builder-section-title">Font Families</h4>
+                        <div className="builder-input-group">
+                          {Object.entries(typography.fontFamily).map(([key, val]) => (
+                            <div key={key} className="builder-field">
+                              <label className="builder-field-label">{key.toUpperCase()}</label>
+                              <FontPicker
+                                id={`font-family-${key}`}
+                                value={val}
+                                onChange={(family) => updateTypographyFamily(key, family)}
+                                placeholder={`Search ${key} font…`}
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      <div className="builder-section">
+                        <h4 className="builder-section-title">Scale Generator</h4>
+                        <p className="builder-section-desc">Generate standard typographic hierarchy sizes using a mathematical scale factor.</p>
+                        <div className="builder-row" style={{ gap: '1rem', marginBottom: '1rem', display: 'flex' }}>
+                          <div className="builder-field" style={{ flex: 1 }}>
+                            <label className="builder-field-label">Base Size (px)</label>
+                            <input
+                              type="number"
+                              className="builder-field-input"
+                              defaultValue={16}
+                              id="typo-base-input"
+                            />
+                          </div>
+                          <div className="builder-field" style={{ flex: 1 }}>
+                            <label className="builder-field-label">Scale Factor</label>
+                            <select className="builder-field-input" id="typo-scale-select" defaultValue="1.25">
+                              <option value="1.067">Minor Second (1.067)</option>
+                              <option value="1.125">Major Second (1.125)</option>
+                              <option value="1.2">Minor Third (1.2)</option>
+                              <option value="1.25">Major Third (1.25)</option>
+                              <option value="1.333">Perfect Fourth (1.333)</option>
+                              <option value="1.5">Perfect Fifth (1.5)</option>
+                              <option value="1.618">Golden Ratio (1.618)</option>
+                            </select>
+                          </div>
+                        </div>
+                        <div className="builder-btn-row">
+                          <GlossyButton
+                            variant="outline"
+                            size="sm"
+                            onClick={() => {
+                              const base = parseFloat((document.getElementById('typo-base-input') as HTMLInputElement).value || '16');
+                              const factor = parseFloat((document.getElementById('typo-scale-select') as HTMLSelectElement).value || '1.25');
+                              const sizes = ['xs', 'sm', 'base', 'lg', 'xl', '2xl', '3xl', '4xl', '5xl', '6xl', '7xl'];
+                              sizes.forEach((sz, idx) => {
+                                const power = idx - 2; // base is index 2
+                                const valPx = base * Math.pow(factor, power);
+                                const valRem = valPx / 16;
+                                updateTypographySize(sz, `${valRem.toFixed(3)}rem`);
+                              });
+                              showToast('success', 'Typography scale generated!');
+                            }}
+                          >
+                            Generate Typography Scale
+                          </GlossyButton>
+                        </div>
+                      </div>
+
+                      <div className="builder-section">
+                        <h4 className="builder-section-title">Manual Font Sizes</h4>
+                        <div className="builder-grid-2col">
+                          {Object.entries(typography.fontSize).map(([key, val]) => (
+                            <div key={key} className="builder-field">
+                              <label className="builder-field-label">{key}</label>
+                              <input
+                                className="builder-field-input"
+                                value={val}
+                                onChange={(e) => updateTypographySize(key, e.target.value)}
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      <div className="builder-section">
+                        <h4 className="builder-section-title">Font Weights</h4>
+                        <div className="builder-grid-2col">
+                          {Object.entries(typography.fontWeight).map(([key, val]) => (
+                            <div key={key} className="builder-field">
+                              <label className="builder-field-label">{key}</label>
+                              <input
+                                type="number"
+                                className="builder-field-input"
+                                value={val}
+                                onChange={(e) => updateTypographyWeight(key, Number(e.target.value))}
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Preview */}
+                    <div className="builder-preview-panel">
+                      <h4 className="builder-section-title">Aesthetic Specimen</h4>
+                      <div className="builder-specimen-card" style={{ fontFamily: 'var(--matisse-font-family-sans)' }}>
+                        <span style={{ fontSize: 'var(--matisse-font-size-xs)', fontWeight: 'var(--matisse-font-weight-bold)', color: 'var(--md-ref-role-primary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                          Typography Preview
+                        </span>
+                        <h1 style={{ fontSize: 'var(--matisse-font-size-4xl)', fontWeight: 'var(--matisse-font-weight-extrabold)', margin: '0.5rem 0 1rem 0', lineHeight: 'var(--matisse-line-height-tight)', fontFamily: 'var(--matisse-font-family-display)' }}>
+                          Building dynamic design scales.
+                        </h1>
+                        <p style={{ fontSize: 'var(--matisse-font-size-base)', fontWeight: 'var(--matisse-font-weight-regular)', color: 'var(--md-ref-role-onSurfaceVariant)', lineHeight: 'var(--matisse-line-height-normal)', marginBottom: '1.5rem' }}>
+                          Matisse allows teams to customize typography, spacing, and colors in one real-time workspace. Adjust settings to see this preview card update instantly.
+                        </p>
+                        <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
+                          <GlossyButton size="sm">Primary Specimen</GlossyButton>
+                          <GlossyButton size="sm" variant="outline">Learn More</GlossyButton>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 )}
                 {activeFeature === 'spacing' && (
-                  <div className="workspace-placeholder">
-                    <div className="workspace-placeholder-icon"><LayoutGrid size={26} /></div>
-                    <h3 className="workspace-placeholder-title">Spacing System</h3>
-                    <p className="workspace-placeholder-desc">Build a base unit grid and generate tonal spacing scales for consistent layouts.</p>
-                    <span className="workspace-placeholder-badge"><Zap size={11} /> Coming soon — Early Access</span>
+                  <div className="builder-split-grid">
+                    {/* Controls */}
+                    <div className="builder-controls-panel">
+                      <div className="builder-section">
+                        <h4 className="builder-section-title">Base Spacing Unit</h4>
+                        <p className="builder-section-desc">Change the base grid step (in pixels) to scale the layout spacing steps mathematically.</p>
+                        <div className="builder-field">
+                          <label className="builder-field-label">Base Step Unit (slider)</label>
+                          <input
+                            type="range"
+                            min="2"
+                            max="16"
+                            step="1"
+                            defaultValue="4"
+                            className="builder-slider"
+                            id="spacing-unit-slider"
+                            onChange={(e) => {
+                              const unit = parseInt(e.target.value);
+                              updateSpacingUnit(unit);
+                            }}
+                          />
+                        </div>
+                      </div>
+
+                      <div className="builder-section">
+                        <h4 className="builder-section-title">Manual Spacing Steps</h4>
+                        <div className="builder-grid-2col" style={{ maxHeight: '300px', overflowY: 'auto', paddingRight: '0.5rem' }}>
+                          {Object.entries(spacing).map(([key, val]) => (
+                            <div key={key} className="builder-field">
+                              <label className="builder-field-label">Step {key}</label>
+                              <input
+                                className="builder-field-input"
+                                value={val}
+                                onChange={(e) => updateSpacingValue(key, e.target.value)}
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Preview */}
+                    <div className="builder-preview-panel">
+                      <h4 className="builder-section-title">Grid Layout Preview</h4>
+                      <div className="builder-specimen-card" style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+                        <p className="builder-section-desc" style={{ margin: 0 }}>Visual representation of spacer tokens:</p>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                          {['1', '2', '3', '4', '6', '8', '12'].map((step) => (
+                            <div key={step} style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                              <span style={{ fontSize: '0.8125rem', fontWeight: 600, width: '60px', fontFamily: 'monospace' }}>Step {step}</span>
+                              <div
+                                style={{
+                                  height: '24px',
+                                  width: spacing[step] || '1rem',
+                                  background: 'linear-gradient(90deg, var(--md-ref-role-primary), var(--md-ref-role-secondary))',
+                                  borderRadius: 'var(--matisse-radius-sm)',
+                                  boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
+                                }}
+                              />
+                              <span style={{ fontSize: '0.75rem', color: 'var(--md-ref-role-onSurfaceVariant)', fontFamily: 'monospace' }}>{spacing[step]}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 )}
                 {activeFeature === 'shadows' && (
-                  <div className="workspace-placeholder">
-                    <div className="workspace-placeholder-icon"><Layers size={26} /></div>
-                    <h3 className="workspace-placeholder-title">Shadow Design System</h3>
-                    <p className="workspace-placeholder-desc">Define elevation levels and shadow tokens — from subtle cards to modal overlays.</p>
-                    <span className="workspace-placeholder-badge"><Zap size={11} /> Coming soon — Early Access</span>
+                  <div className="builder-split-grid">
+                    {/* Controls */}
+                    <div className="builder-controls-panel">
+                      <div className="builder-section">
+                        <h4 className="builder-section-title">Box Shadows</h4>
+                        <div className="builder-input-group">
+                          {Object.entries(shadows).map(([key, val]) => {
+                            if (typeof val !== 'string') return null;
+                            return (
+                              <div key={key} className="builder-field">
+                                <label className="builder-field-label">{key}</label>
+                                <input
+                                  className="builder-field-input"
+                                  value={val}
+                                  onChange={(e) => updateShadowValue(key, e.target.value)}
+                                />
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+
+                      <div className="builder-section">
+                        <h4 className="builder-section-title">Shadow Glows</h4>
+                        <div className="builder-input-group">
+                          {Object.entries(shadows.glow).map(([key, val]) => (
+                            <div key={key} className="builder-field">
+                              <label className="builder-field-label">{key} glow</label>
+                              <input
+                                className="builder-field-input"
+                                value={val}
+                                onChange={(e) => updateShadowGlow(key, e.target.value)}
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Preview */}
+                    <div className="builder-preview-panel">
+                      <h4 className="builder-section-title">Glow Previews</h4>
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(130px, 1fr))', gap: '1.25rem' }}>
+                        {Object.entries(shadows.glow).map(([name, shadowValue]) => (
+                          <div
+                            key={name}
+                            style={{
+                              padding: '1.5rem 1rem',
+                              background: 'var(--md-ref-role-surface)',
+                              borderRadius: 'var(--matisse-radius-md)',
+                              boxShadow: shadowValue,
+                              textAlign: 'center',
+                              border: '1px solid var(--md-ref-role-outlineVariant)',
+                              display: 'flex',
+                              flexDirection: 'column',
+                              gap: '0.25rem',
+                            }}
+                          >
+                            <span style={{ fontWeight: 700, fontSize: '0.875rem', textTransform: 'capitalize' }}>{name}</span>
+                            <span style={{ fontSize: '0.75rem', color: 'var(--md-ref-role-onSurfaceVariant)' }}>Active Glow</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
                   </div>
                 )}
                 {activeFeature === 'elevation' && (
-                  <div className="workspace-placeholder">
-                    <div className="workspace-placeholder-icon"><Box size={26} /></div>
-                    <h3 className="workspace-placeholder-title">Elevation Levels</h3>
-                    <p className="workspace-placeholder-desc">Map Material 3 elevation tiers with layered surfaces and tonal color overlays.</p>
-                    <span className="workspace-placeholder-badge"><Zap size={11} /> Coming soon — Early Access</span>
+                  <div className="builder-split-grid">
+                    {/* Controls */}
+                    <div className="builder-controls-panel">
+                      <div className="builder-section">
+                        <h4 className="builder-section-title">Elevation Layers</h4>
+                        <div className="builder-input-group">
+                          {Object.entries(elevation).map(([key, val]) => (
+                            <div key={key} className="builder-field">
+                              <label className="builder-field-label">Level {key}</label>
+                              <input
+                                className="builder-field-input"
+                                value={val}
+                                onChange={(e) => updateElevationValue(key, e.target.value)}
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Preview */}
+                    <div className="builder-preview-panel">
+                      <h4 className="builder-section-title">Elevation Tiers Specimen</h4>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                        {Object.entries(elevation).map(([level, val]) => (
+                          <div
+                            key={level}
+                            style={{
+                              padding: '1.25rem 2rem',
+                              background: 'var(--md-ref-role-surface)',
+                              borderRadius: 'var(--matisse-radius-md)',
+                              boxShadow: val,
+                              border: level === '0' ? '1px solid var(--md-ref-role-outlineVariant)' : 'none',
+                              display: 'flex',
+                              justifyContent: 'space-between',
+                              alignItems: 'center',
+                            }}
+                          >
+                            <span style={{ fontWeight: 700 }}>Elevation Tier {level}</span>
+                            <span style={{ fontSize: '0.75rem', fontFamily: 'monospace', color: 'var(--md-ref-role-outline)', textOverflow: 'ellipsis', overflow: 'hidden', maxWidth: '300px', whiteSpace: 'nowrap' }} title={val}>{val}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
                   </div>
                 )}
                 {activeFeature === 'borderRadius' && (
-                  <div className="workspace-placeholder">
-                    <div className="workspace-placeholder-icon"><Sparkles size={26} /></div>
-                    <h3 className="workspace-placeholder-title">Border Radius Scale</h3>
-                    <p className="workspace-placeholder-desc">Create a consistent corner radius scale from sharp to fully rounded elements.</p>
-                    <span className="workspace-placeholder-badge"><Zap size={11} /> Coming soon — Early Access</span>
+                  <div className="builder-split-grid">
+                    {/* Controls */}
+                    <div className="builder-controls-panel">
+                      <div className="builder-section">
+                        <h4 className="builder-section-title">Border Radius Scale</h4>
+                        <p className="builder-section-desc">Customize container corner rounding presets used in inputs, cards, and buttons.</p>
+                        <div className="builder-input-group">
+                          {Object.entries(borderRadius).map(([key, val]) => (
+                            <div key={key} className="builder-field">
+                              <label className="builder-field-label">{key}</label>
+                              <input
+                                className="builder-field-input"
+                                value={val}
+                                onChange={(e) => updateBorderRadiusValue(key, e.target.value)}
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Preview */}
+                    <div className="builder-preview-panel">
+                      <h4 className="builder-section-title">Corner Rounding Previews</h4>
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(130px, 1fr))', gap: '1rem' }}>
+                        {Object.entries(borderRadius).map(([key, val]) => (
+                          <div
+                            key={key}
+                            style={{
+                              padding: '1.5rem 1rem',
+                              background: 'var(--md-ref-role-surface)',
+                              border: '1px solid var(--md-ref-role-outlineVariant)',
+                              borderRadius: val,
+                              textAlign: 'center',
+                              boxShadow: '0 2px 8px rgba(0,0,0,0.02)',
+                              display: 'flex',
+                              flexDirection: 'column',
+                              gap: '0.5rem',
+                            }}
+                          >
+                            <span style={{ fontWeight: 700, fontSize: '0.875rem' }}>{key}</span>
+                            <span style={{ fontSize: '0.75rem', fontFamily: 'monospace', color: 'var(--md-ref-role-outline)' }}>{val}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
                   </div>
                 )}
                 {activeFeature === 'motion' && (
@@ -355,12 +650,7 @@ export const Dashboard: React.FC = () => {
                   </div>
                 )}
                 {activeFeature === 'components' && (
-                  <div className="workspace-placeholder">
-                    <div className="workspace-placeholder-icon"><Sparkles size={26} /></div>
-                    <h3 className="workspace-placeholder-title">Component Library</h3>
-                    <p className="workspace-placeholder-desc">Browse and preview all design system components styled with your current tokens.</p>
-                    <span className="workspace-placeholder-badge"><Zap size={11} /> Coming soon — Early Access</span>
-                  </div>
+                  <ComponentExplorer />
                 )}
               </>
             )}
@@ -401,7 +691,7 @@ export const Dashboard: React.FC = () => {
         </div>
       </nav>
 
-      <ExportPanel isOpen={isExportOpen} onClose={() => setIsExportOpen(false)} />
+      <ExportPanel isOpen={exportScope !== null} defaultScope={exportScope || 'all'} onClose={() => setExportScope(null)} />
     </div>
   );
 };

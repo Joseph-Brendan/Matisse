@@ -66,7 +66,7 @@ export const ColorBuilder: React.FC = () => {
         <PreviewPanel />
       </main>
 
-      <ExportPanel isOpen={isExportOpen} onClose={() => setIsExportOpen(false)} />
+      <ExportPanel isOpen={isExportOpen} defaultScope="color" onClose={() => setIsExportOpen(false)} />
     </div>
   );
 };
