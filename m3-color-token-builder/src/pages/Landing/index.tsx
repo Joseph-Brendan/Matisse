@@ -528,15 +528,41 @@ export const Landing: React.FC = () => {
         {/* 8. CTA SECTION */}
         <section className="cta-section">
           <div className="cta-inner-card">
-            <div className="cta-glow-overlay" />
-            <h2 className="cta-title">Upgrade your design workflow</h2>
-            <p className="cta-subtitle">
-              Join thousands of UI engineers creating custom, accessible scales. Free forever for individual projects.
-            </p>
-            <div className="cta-buttons-row">
-              <GlossyButton variant="primary" size="lg" onClick={() => navigate(user ? '/dashboard' : '/auth')}>
-                Start Designing Free
-              </GlossyButton>
+            {/* Left Decorative Arc */}
+            <svg className="cta-decor-left" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M 10 180 A 110 110 0 0 1 170 40" stroke="url(#cta-left-grad)" strokeWidth="28" strokeLinecap="round" />
+              <defs>
+                <linearGradient id="cta-left-grad" x1="0%" y1="100%" x2="80%" y2="0%">
+                  <stop offset="0%" stopColor="var(--md-ref-role-primary)" />
+                  <stop offset="100%" stopColor="var(--md-ref-role-primary)" stopOpacity="0" />
+                </linearGradient>
+              </defs>
+            </svg>
+
+            {/* Right Decorative Arc */}
+            <svg className="cta-decor-right" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M 20 180 A 90 90 0 0 1 180 180" stroke="url(#cta-right-grad)" strokeWidth="28" strokeLinecap="round" />
+              <defs>
+                <linearGradient id="cta-right-grad" x1="0%" y1="100%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="var(--md-ref-role-primary)" stopOpacity="0" />
+                  <stop offset="100%" stopColor="var(--md-ref-role-primary)" />
+                </linearGradient>
+              </defs>
+            </svg>
+
+            <div className="cta-content-wrapper">
+              <Badge variant="primary" size="md" dot className="cta-badge">
+                Matisse Color Token Builder
+              </Badge>
+              <h2 className="cta-title">Start building your design system</h2>
+              <p className="cta-subtitle">
+                Generate mathematically precise Material 3 tonal scales and export production-ready tokens for any platform in seconds.
+              </p>
+              <div className="cta-buttons-row">
+                <GlossyButton variant="primary" size="lg" onClick={() => navigate(user ? '/dashboard' : '/auth')}>
+                  Start Designing Free
+                </GlossyButton>
+              </div>
             </div>
           </div>
         </section>
