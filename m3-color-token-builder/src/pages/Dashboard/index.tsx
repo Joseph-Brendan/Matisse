@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import {
   Palette, Type, LayoutGrid, Download, Save, Plus,
   Bell, LogOut, Eye, Check,
-  History, FolderOpen, Settings, Zap, Layers, Box, Wind, Sparkles,
+  History, FolderOpen, Settings, Zap, Layers, Box, Wind, Sparkles, Trash2,
 } from 'lucide-react';
 import { KeyColorCard } from '../../components/KeyColorCard';
 import { TonalPaletteEditor } from '../../components/TonalPaletteEditor';
@@ -13,7 +13,7 @@ import { ExportPanel } from '../../components/ExportPanel';
 import { ComponentExplorer } from '../../components/ComponentExplorer';
 import { useColorStore } from '../../store/useColorStore';
 import { useAuthStore } from '../../store/useAuthStore';
-import { showToast } from '../../store/useToastStore';
+import { showAlert, showConfirm } from '../../store/useConfirmStore';
 import { GlossyButton } from '../../design-system/components/Button/GlossyButton';
 import { FontPicker } from '../../design-system/components/FontPicker/FontPicker';
 import { Dropdown } from '../../design-system/components';
@@ -59,7 +59,7 @@ export const Dashboard: React.FC = () => {
   const { user, logout } = useAuthStore();
   const {
     projectName, setProjectName,
-    history, pushHistory, clearHistory,
+    history, pushHistory, deleteHistoryItem, clearHistory,
     checklist, toggleChecklist,
     typography, spacing, borderRadius, shadows, elevation,
     updateTypographyFamily, updateTypographySize, updateTypographyWeight,
@@ -79,13 +79,13 @@ export const Dashboard: React.FC = () => {
       timestamp: Date.now(),
     };
     pushHistory(snapshot);
-    showToast('success', `"${projectName}" saved`);
+    showAlert('Project Saved', `"${projectName}" has been saved to your history.`, 'success');
   };
 
   const handleNewProject = () => {
     const name = `Project ${history.length + 1}`;
     setProjectName(name);
-    showToast('info', `Started new project: ${name}`);
+    showAlert('New Project', `Started a new project: "${name}".`, 'info');
   };
 
   const handleLogout = () => {
@@ -237,11 +237,34 @@ export const Dashboard: React.FC = () => {
               ) : (
                 history.slice(0, 5).map((h) => (
                   <div key={h.id} className="history-item" onClick={() => setProjectName(h.name)}>
-                    <span className="history-item-name">{h.name}</span>
-                    <span className="history-item-time">
-                      <History size={10} className="history-item-icon" />
-                      {formatRelativeTime(h.timestamp)}
-                    </span>
+                    <div className="history-item-content">
+                      <span className="history-item-name">{h.name}</span>
+                      <span className="history-item-time">
+                        <History size={10} className="history-item-icon" />
+                        {formatRelativeTime(h.timestamp)}
+                      </span>
+                    </div>
+                    <button
+                      className="history-item-delete-btn"
+                      onClick={async (e) => {
+                        e.stopPropagation();
+                        const confirmDelete = await showConfirm({
+                          title: 'Delete Save',
+                          message: `Are you sure you want to delete "${h.name}" from your history?`,
+                          confirmLabel: 'Delete',
+                          dismissLabel: 'Cancel',
+                          variant: 'error',
+                          icon: Trash2,
+                        });
+                        if (confirmDelete) {
+                          deleteHistoryItem(h.id);
+                        }
+                      }}
+                      title="Delete saved state"
+                      aria-label={`Delete ${h.name}`}
+                    >
+                      <Trash2 size={13} />
+                    </button>
                   </div>
                 ))
               )}
@@ -347,7 +370,7 @@ export const Dashboard: React.FC = () => {
                                 const valRem = valPx / 16;
                                 updateTypographySize(sz, `${valRem.toFixed(3)}rem`);
                               });
-                              showToast('success', 'Typography scale generated!');
+                              showAlert('Scale Generated', 'Typography scale generated!', 'success');
                             }}
                           >
                             Generate Typography Scale
@@ -683,7 +706,7 @@ export const Dashboard: React.FC = () => {
           </button>
           <button
             className="mobile-nav-btn"
-            onClick={() => { showToast('info', 'Projects panel coming soon'); }}
+            onClick={() => { showAlert('Coming Soon', 'The Projects panel is coming soon.', 'info'); }}
           >
             <FolderOpen size={16} />
             Projects

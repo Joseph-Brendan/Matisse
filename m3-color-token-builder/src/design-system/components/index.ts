@@ -7,6 +7,8 @@ export type { AlertProps } from './Alert/Alert';
 export { Modal } from './Modal/Modal';
 export type { ModalProps } from './Modal/Modal';
 
+export { ConfirmModal } from './Modal/ConfirmModal';
+
 export { ToastContainer } from './Toast/ToastContainer';
 export { ToastItem } from './Toast/Toast';
 export type { ToastData, ToastVariant } from './Toast/Toast';

@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { useColorStore } from './store/useColorStore';
 import { ToastContainer } from './design-system/components/Toast/ToastContainer';
+import { ConfirmModal } from './design-system/components/Modal/ConfirmModal';
 import { Landing } from './pages/Landing';
 import { Auth } from './pages/Auth';
 import { Dashboard } from './pages/Dashboard';
@@ -103,6 +104,7 @@ function AppShell() {
         <Route path="/settings" element={<Settings />} />
       </Routes>
       <ToastContainer />
+      <ConfirmModal />
     </div>
   );
 }

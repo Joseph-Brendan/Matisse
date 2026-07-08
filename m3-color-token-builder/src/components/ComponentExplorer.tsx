@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import {
   Palette, Type, Grid3x3, Layers, Sparkles, Bell,
-  User, Mail, Lock, ExternalLink, CheckCircle2, AlertCircle, Info
+  User, Mail, Lock, CheckCircle2, AlertCircle, MapPin, Trash2, ExternalLink
 } from 'lucide-react';
 import { useColorStore } from '../store/useColorStore';
-import { showToast } from '../store/useToastStore';
+import { showConfirm, showAlert } from '../store/useConfirmStore';
 
 // Components
 import { GlossyButton } from '../design-system/components/Button/GlossyButton';
@@ -13,19 +13,17 @@ import { Badge } from '../design-system/components/Badge/Badge';
 import { Input } from '../design-system/components/Input/Input';
 import { Alert } from '../design-system/components/Alert/Alert';
 import { Tabs, TabPanel } from '../design-system/components/Tabs/Tabs';
-import { Modal } from '../design-system/components/Modal/Modal';
 
 export const ComponentExplorer: React.FC = () => {
   const { roles, theme, typography, spacing, borderRadius, shadows, elevation } = useColorStore();
   const [activeExplorerTab, setActiveExplorerTab] = useState('colors');
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [inputValue, setInputValue] = useState('');
 
   const activeRoles = roles[theme];
 
   const handleCopyText = (text: string) => {
     navigator.clipboard.writeText(text);
-    showToast('success', `Copied: ${text}`);
+    showAlert('Copied', `Token value copied to clipboard.`, 'success');
   };
 
   return (
@@ -410,7 +408,7 @@ export const ComponentExplorer: React.FC = () => {
                 <Badge variant="tertiary">Tertiary Tag</Badge>
                 <Badge variant="success">Success Tag</Badge>
                 <Badge variant="warning">Warning Tag</Badge>
-                <Badge variant="error" removable onRemove={() => showToast('info', 'Badge dismissed')}>Removable Error</Badge>
+                <Badge variant="error" removable onRemove={() => showAlert('Badge Dismissed', 'The error badge has been removed.', 'info')}>Removable Error</Badge>
                 <Badge variant="info">Info State</Badge>
               </div>
             </Card>
@@ -565,19 +563,19 @@ export const ComponentExplorer: React.FC = () => {
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
               <Card variant="outlined" padding="lg">
-                <CardHeader title="Trigger System Toasts" subtitle="Simulate custom system alerts." />
+                <CardHeader title="Trigger Alert Dialogs" subtitle="Simulate each alert variant programmatically." />
                 <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem', flexWrap: 'wrap' }}>
-                  <GlossyButton variant="primary" onClick={() => showToast('info', 'Loading system tokens config...')}>
-                    Info Toast
+                  <GlossyButton variant="primary" onClick={() => showAlert('System Info', 'Loading system tokens config...', 'info')}>
+                    Info Alert
                   </GlossyButton>
-                  <GlossyButton variant="tertiary" onClick={() => showToast('success', 'Design tokens exported!')}>
-                    Success Toast
+                  <GlossyButton variant="tertiary" onClick={() => showAlert('Tokens Exported', 'Design tokens have been exported successfully!', 'success')}>
+                    Success Alert
                   </GlossyButton>
-                  <GlossyButton variant="secondary" onClick={() => showToast('warning', 'Low color contrast on outline variant.')}>
-                    Warning Toast
+                  <GlossyButton variant="secondary" onClick={() => showAlert('Contrast Warning', 'Low color contrast detected on outline variant.', 'warning')}>
+                    Warning Alert
                   </GlossyButton>
-                  <GlossyButton variant="error" onClick={() => showToast('error', 'Failed to compile Vite project.')}>
-                    Error Toast
+                  <GlossyButton variant="error" onClick={() => showAlert('Compile Error', 'Failed to compile Vite project. Check your config.', 'error')}>
+                    Error Alert
                   </GlossyButton>
                 </div>
               </Card>
@@ -601,84 +599,48 @@ export const ComponentExplorer: React.FC = () => {
               </Card>
 
               <Card variant="outlined" padding="lg">
-                <CardHeader title="Interactive Modal Dialogs" subtitle="Open full dialog overlay panels." />
-                <div style={{ marginTop: '1rem' }}>
-                  <GlossyButton variant="primary" onClick={() => setIsModalOpen(true)}>
-                    Open Test Modal
+                <CardHeader title="Interactive Confirm Dialogs" subtitle="Programmatic modals — triggered from anywhere in the app via showConfirm()." />
+                <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem', flexWrap: 'wrap' }}>
+                  <GlossyButton
+                    variant="primary"
+                    onClick={async () => {
+                      const ok = await showConfirm({
+                        title: 'Location Services',
+                        message: 'Allow "Maps" to access your location for directions while you\'re using the app?',
+                        confirmLabel: 'Enable',
+                        dismissLabel: 'Dismiss',
+                        variant: 'info',
+                        icon: MapPin,
+                      });
+                      if (ok) showAlert('Enabled', 'Location Services have been enabled.', 'success');
+                    }}
+                  >
+                    Confirm Dialog
                   </GlossyButton>
 
-                  <Modal
-                    isOpen={isModalOpen}
-                    onClose={() => setIsModalOpen(false)}
-                    showCloseButton={false}
-                    size="sm"
-                    footer={
-                      <div style={{ display: 'flex', gap: '1.5rem', justifyContent: 'flex-end', width: '100%', padding: '0.25rem 0' }}>
-                        <button
-                          onClick={() => setIsModalOpen(false)}
-                          style={{
-                            background: 'none',
-                            border: 'none',
-                            color: 'var(--md-ref-role-onSurfaceVariant)',
-                            fontWeight: 600,
-                            fontSize: '0.875rem',
-                            cursor: 'pointer',
-                            padding: '0.5rem 1rem',
-                            borderRadius: '0.375rem',
-                            transition: 'background-color 0.15s',
-                          }}
-                          onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'var(--md-ref-role-surfaceVariant)')}
-                          onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
-                        >
-                          Dismiss
-                        </button>
-                        <button
-                          onClick={() => { setIsModalOpen(false); showToast('success', 'Location Services enabled!'); }}
-                          style={{
-                            background: 'none',
-                            border: 'none',
-                            color: 'var(--md-ref-role-primary)',
-                            fontWeight: 600,
-                            fontSize: '0.875rem',
-                            cursor: 'pointer',
-                            padding: '0.5rem 1rem',
-                            borderRadius: '0.375rem',
-                            transition: 'background-color 0.15s',
-                          }}
-                          onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'var(--md-ref-role-primaryContainer)')}
-                          onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
-                        >
-                          Enable
-                        </button>
-                      </div>
-                    }
+                  <GlossyButton
+                    variant="error"
+                    onClick={async () => {
+                      const ok = await showConfirm({
+                        title: 'Delete Project',
+                        message: 'This action is permanent and cannot be undone. Are you sure you want to delete this project?',
+                        confirmLabel: 'Delete',
+                        dismissLabel: 'Keep',
+                        variant: 'error',
+                        icon: Trash2,
+                      });
+                      if (ok) showAlert('Deleted', 'The project has been permanently deleted.', 'error');
+                    }}
                   >
-                    <div style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start', padding: '0.5rem 0' }}>
-                      <div
-                        style={{
-                          width: '36px',
-                          height: '36px',
-                          borderRadius: '50%',
-                          backgroundColor: 'var(--md-ref-role-primaryContainer)',
-                          color: 'var(--md-ref-role-primary)',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          flexShrink: 0,
-                        }}
-                      >
-                        <Info size={20} />
-                      </div>
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                        <h3 style={{ margin: 0, fontSize: '0.9375rem', fontWeight: 700, color: 'var(--md-ref-role-onSurface)', letterSpacing: '0.05em' }}>
-                          LOCATION SERVICES
-                        </h3>
-                        <p style={{ margin: 0, fontSize: '0.875rem', color: 'var(--md-ref-role-onSurfaceVariant)', lineHeight: 1.5 }}>
-                          Allow &ldquo;Maps&rdquo; to access your location for directions while you&rsquo;re using the app?
-                        </p>
-                      </div>
-                    </div>
-                  </Modal>
+                    Destructive Confirm
+                  </GlossyButton>
+
+                  <GlossyButton
+                    variant="secondary"
+                    onClick={() => showAlert('Export Complete', 'Your design tokens have been exported to CSS variables and are ready to use.', 'success')}
+                  >
+                    Alert Only
+                  </GlossyButton>
                 </div>
               </Card>
             </div>

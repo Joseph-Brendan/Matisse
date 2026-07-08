@@ -54,6 +54,7 @@ interface ColorState {
     setTheme: (theme: 'light' | 'dark') => void;
     setProjectName: (name: string) => void;
     pushHistory: (snapshot: ProjectSnapshot) => void;
+    deleteHistoryItem: (id: string) => void;
     clearHistory: () => void;
     toggleChecklist: (key: 'color' | 'typography' | 'spacing') => void;
 
@@ -133,6 +134,12 @@ export const useColorStore = create<ColorState>((set) => {
 
         pushHistory: (snapshot) => set((state) => {
             const updated = [snapshot, ...state.history].slice(0, 20);
+            localStorage.setItem('matisse_history', JSON.stringify(updated));
+            return { history: updated };
+        }),
+
+        deleteHistoryItem: (id) => set((state) => {
+            const updated = state.history.filter((h) => h.id !== id);
             localStorage.setItem('matisse_history', JSON.stringify(updated));
             return { history: updated };
         }),
