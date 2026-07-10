@@ -109,8 +109,7 @@ export const Landing: React.FC = () => {
           }}>
           <div className="docked-navbar-left">
             <div className="hero-brand-container" onClick={() => navigate('/')}>
-              
-              <img src="/logo-drk.svg" alt="Matisse" style={{ height: '54px', display: 'block', objectFit: 'contain' }} />
+              <img src="/logo-drk.svg" alt="Matisse" style={{ height: '38px', display: 'block', objectFit: 'contain' }} />
             </div>
             <nav className="desktop-only docked-nav-links">
               <a

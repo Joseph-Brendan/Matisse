@@ -249,4 +249,44 @@
   .footer-bottom-links {
     justify-content: center;
   }
+
+  .footer-newsletter-form {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+}
+
+@media (max-width: 375px) {
+  .matisse-footer {
+    padding: 3rem 1rem 1.5rem;
+    border-radius: 1.25rem 1.25rem 0 0;
+    margin-top: 3rem;
+  }
+
+  .footer-top-grid {
+    gap: 1.5rem;
+    padding-bottom: 2rem;
+  }
+
+  .footer-brand-text {
+    font-size: 1.0625rem;
+  }
+
+  .footer-brand-desc {
+    font-size: 0.8125rem;
+  }
+
+  .footer-column-title {
+    font-size: 0.75rem;
+  }
+
+  .footer-link {
+    font-size: 0.8125rem;
+  }
+
+  .footer-bottom-links {
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: center;
+  }
 }

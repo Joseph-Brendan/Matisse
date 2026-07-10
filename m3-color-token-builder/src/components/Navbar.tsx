@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Menu, X, ChevronDown, LogOut, LayoutDashboard } from 'lucide-react';
+import { Menu, X, ChevronDown, LogOut, LayoutDashboard, Settings } from 'lucide-react';
 import { useAuthStore } from '../store/useAuthStore';
 import { GlossyButton } from '../design-system/components';
 
@@ -12,20 +12,14 @@ export const Navbar: React.FC = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
-  // Monitor scroll to add slight shadow details if the page is scrolled
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 20) {
-        setScrolled(true);
-      } else {
-        setScrolled(false);
-      }
+      setScrolled(window.scrollY > 20);
     };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Close menus on page/auth transition
   useEffect(() => {
     setMobileMenuOpen(false);
     setDropdownOpen(false);
@@ -35,18 +29,13 @@ export const Navbar: React.FC = () => {
     setMobileMenuOpen(false);
     if (location.pathname !== '/') {
       navigate(`/#${sectionId}`);
-      // Wait for navigation, then scroll
       setTimeout(() => {
         const element = document.getElementById(sectionId);
-        if (element) {
-          element.scrollIntoView({ behavior: 'smooth' });
-        }
+        if (element) element.scrollIntoView({ behavior: 'smooth' });
       }, 100);
     } else {
       const element = document.getElementById(sectionId);
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth' });
-      }
+      if (element) element.scrollIntoView({ behavior: 'smooth' });
     }
   };
 
@@ -58,81 +47,51 @@ export const Navbar: React.FC = () => {
   return (
     <header className={`navbar-header ${scrolled ? 'navbar-header--visible navbar-header--scrolled' : ''}`}>
       <div className="navbar-container">
-        {/* Brand Logo */}
         <div className="navbar-brand" onClick={() => navigate('/')}>
-          
-          <img src="/logo-drk.svg" alt="Matisse" style={{ height: '54px', display: 'block', objectFit: 'contain' }} />
+          <img src="/logo-drk.svg" alt="Matisse" style={{ height: '38px', display: 'block', objectFit: 'contain' }} />
         </div>
 
-        {/* Desktop Menu Links */}
         <nav className="navbar-desktop-nav desktop-only">
-          <a
-            href="#features"
-            className="navbar-link"
-            onClick={(e) => handleNavClick(e, 'features')}
-          >
-            Features
-          </a>
-          <a
-            href="#how-it-works"
-            className="navbar-link"
-            onClick={(e) => handleNavClick(e, 'how-it-works')}
-          >
-            How it works
-          </a>
+          <a href="#features" className="navbar-link" onClick={(e) => handleNavClick(e, 'features')}>Features</a>
+          <a href="#how-it-works" className="navbar-link" onClick={(e) => handleNavClick(e, 'how-it-works')}>How it works</a>
         </nav>
 
-        {/* Right CTA Actions or User Profile */}
         <div className="navbar-actions">
           {user ? (
-            /* User Info Block - CTAs hidden, avatar & name shown */
-            <div className="navbar-profile-wrapper">
-              <button
-                className="navbar-profile-trigger"
-                onClick={() => setDropdownOpen(!dropdownOpen)}
-              >
-                {/* User Avatar - Styled using dynamic CSS property */}
-                <div
-                  className="navbar-avatar"
-                  style={{ '--avatar-bg': user.avatarColor } as React.CSSProperties}
-                >
+            /* Desktop: show avatar + name */
+            <div className="navbar-profile-wrapper desktop-only">
+              <button className="navbar-profile-trigger" onClick={() => setDropdownOpen(!dropdownOpen)}>
+                <div className="navbar-avatar" style={{ '--avatar-bg': user.avatarColor } as React.CSSProperties}>
                   {user.initials}
                 </div>
-                {/* User Name */}
                 <span className="navbar-profile-name">{user.name}</span>
                 <ChevronDown size={16} style={{ color: '#6b7280' }} />
               </button>
 
-              {/* Profile Dropdown Menu */}
               {dropdownOpen && (
                 <>
-                  <div
-                    className="navbar-dropdown-overlay"
-                    onClick={() => setDropdownOpen(false)}
-                  />
+                  <div className="navbar-dropdown-overlay" onClick={() => setDropdownOpen(false)} />
                   <div className="navbar-dropdown-menu">
                     <div className="navbar-dropdown-header">
-                      <p className="navbar-dropdown-header-subtitle">Signed in as</p>
-                      <p className="navbar-dropdown-header-title">{user.email}</p>
+                      <div className="navbar-dropdown-avatar" style={{ background: user.avatarColor }}>
+                        {user.initials}
+                      </div>
+                      <div>
+                        <p className="navbar-dropdown-header-title">{user.name}</p>
+                        <p className="navbar-dropdown-header-subtitle">{user.email}</p>
+                      </div>
                     </div>
-                    <button
-                      className="navbar-dropdown-item"
-                      onClick={() => {
-                        setDropdownOpen(false);
-                        navigate('/dashboard');
-                      }}
-                    >
+                    <div className="navbar-dropdown-divider" />
+                    <button className="navbar-dropdown-item" onClick={() => { setDropdownOpen(false); navigate('/dashboard'); }}>
                       <LayoutDashboard size={16} />
                       Dashboard
                     </button>
-                    <button
-                      className="navbar-dropdown-item navbar-dropdown-item--logout"
-                      onClick={() => {
-                        setDropdownOpen(false);
-                        logout();
-                        navigate('/');
-                      }}
-                    >
+                    <button className="navbar-dropdown-item" onClick={() => { setDropdownOpen(false); navigate('/settings'); }}>
+                      <Settings size={16} />
+                      Settings
+                    </button>
+                    <div className="navbar-dropdown-divider" />
+                    <button className="navbar-dropdown-item navbar-dropdown-item--logout" onClick={() => { setDropdownOpen(false); logout(); navigate('/'); }}>
                       <LogOut size={16} />
                       Sign Out
                     </button>
@@ -141,53 +100,48 @@ export const Navbar: React.FC = () => {
               )}
             </div>
           ) : (
-            /* Login & Try for Free CTAs */
             <div className="desktop-only navbar-actions">
-              <GlossyButton variant="ghost" size="lg" onClick={() => navigate('/auth')}>
-                Login
-              </GlossyButton>
-              <GlossyButton size="lg" onClick={() => navigate('/auth')}>
-                Try for free
-              </GlossyButton>
+              <GlossyButton variant="ghost" size="lg" onClick={() => navigate('/auth')}>Login</GlossyButton>
+              <GlossyButton size="lg" onClick={() => navigate('/auth')}>Try for free</GlossyButton>
             </div>
           )}
 
-          {/* Hamburger Menu Toggle (Mobile) */}
-          <button
-            className="navbar-mobile-toggle mobile-only"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          >
+          <button className="navbar-mobile-toggle mobile-only" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
             {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
         </div>
       </div>
 
-      {/* Mobile Menu Panel */}
       {mobileMenuOpen && (
         <div className="navbar-mobile-drawer">
-          <a
-            href="#features"
-            className="navbar-mobile-link"
-            onClick={(e) => handleNavClick(e, 'features')}
-          >
-            Features
-          </a>
-          <a
-            href="#how-it-works"
-            className="navbar-mobile-link"
-            onClick={(e) => handleNavClick(e, 'how-it-works')}
-          >
-            How it works
-          </a>
+          <a href="#features" className="navbar-mobile-link" onClick={(e) => handleNavClick(e, 'features')}>Features</a>
+          <a href="#how-it-works" className="navbar-mobile-link" onClick={(e) => handleNavClick(e, 'how-it-works')}>How it works</a>
+          <div className="navbar-mobile-divider" />
 
-          {!user && (
+          {user ? (
+            <>
+              <div className="navbar-mobile-profile">
+                <div className="navbar-mobile-avatar" style={{ background: user.avatarColor }}>{user.initials}</div>
+                <div>
+                  <p className="navbar-mobile-name">{user.name}</p>
+                  <p className="navbar-mobile-email">{user.email}</p>
+                </div>
+              </div>
+              <button className="navbar-mobile-link navbar-mobile-link--action" onClick={() => { setMobileMenuOpen(false); navigate('/dashboard'); }}>
+                <LayoutDashboard size={18} /> Dashboard
+              </button>
+              <button className="navbar-mobile-link navbar-mobile-link--action" onClick={() => { setMobileMenuOpen(false); navigate('/settings'); }}>
+                <Settings size={18} /> Settings
+              </button>
+              <div className="navbar-mobile-divider" />
+              <button className="navbar-mobile-link navbar-mobile-link--action navbar-mobile-link--logout" onClick={() => { setMobileMenuOpen(false); logout(); navigate('/'); }}>
+                <LogOut size={18} /> Sign Out
+              </button>
+            </>
+          ) : (
             <div className="navbar-mobile-actions">
-              <GlossyButton variant="outline" size="lg" fullWidth onClick={() => navigate('/auth')}>
-                Login
-              </GlossyButton>
-              <GlossyButton size="lg" fullWidth onClick={() => navigate('/auth')}>
-                Try for free
-              </GlossyButton>
+              <GlossyButton variant="outline" size="lg" fullWidth onClick={() => navigate('/auth')}>Login</GlossyButton>
+              <GlossyButton size="lg" fullWidth onClick={() => navigate('/auth')}>Try for free</GlossyButton>
             </div>
           )}
         </div>

@@ -150,6 +150,13 @@
   margin-top: 0;
 }
 
+/* Tablet (iPad Mini) adjustments */
+@media (min-width: 481px) and (max-width: 1024px) {
+  .auth-page {
+    padding: 1.5rem 1rem;
+  }
+}
+
 /* Mobile adjustments */
 @media (max-width: 480px) {
   .auth-glass-card {
@@ -159,5 +166,35 @@
 
   .auth-back-btn {
     font-size: 0.8125rem;
+  }
+}
+
+/* Small phones (375px) */
+@media (max-width: 375px) {
+  .auth-page {
+    padding: 1rem 0.75rem;
+  }
+
+  .auth-glass-card {
+    padding: 1.25rem 1rem;
+    border-radius: 1rem;
+  }
+
+  .auth-brand-icon {
+    width: 44px;
+    height: 44px;
+    font-size: 1.125rem;
+  }
+
+  .auth-brand-title {
+    font-size: 1.25rem;
+  }
+
+  .auth-brand-subtitle {
+    font-size: 0.8125rem;
+  }
+
+  .auth-wrapper {
+    max-width: 100%;
   }
 }
