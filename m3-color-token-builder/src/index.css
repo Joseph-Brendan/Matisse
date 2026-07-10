@@ -1,26 +1,25 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700;800&display=swap');
 
-:root {
-  font-family: 'Inter', system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-  letter-spacing: -0.03em;
-
-  color-scheme: light dark;
-  background-color: #fcfcfc;
-  color: #1a1a1a;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+/* ── Reset ───────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
 body {
   margin: 0;
-  display: flex;
   min-height: 100vh;
-  min-width: 100vw;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+  font-family: 'Open Sans', system-ui, -apple-system, sans-serif;
+  font-weight: 400;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 #root {
@@ -29,19 +28,255 @@ body {
   flex-direction: column;
 }
 
-* {
-  box-sizing: border-box;
+/* App root shell — replaces inline styles on AppShell div */
+.app-shell {
+  min-height: 100vh;
+  background: var(--md-ref-role-background);
+  color: var(--md-ref-role-onBackground);
+  font-family: 'Open Sans', system-ui, -apple-system, sans-serif;
+  transition: background 0.3s ease, color 0.3s ease;
 }
 
-button,
-input,
-select,
-textarea {
+img, svg, video {
+  max-width: 100%;
+  display: block;
+}
+
+button, input, select, textarea {
   font-family: inherit;
-  letter-spacing: inherit;
 }
 
-/* Base Utility Classes */
+select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  padding: 0.5rem 2.25rem 0.5rem 0.875rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--md-ref-role-outlineVariant, rgba(0, 0, 0, 0.15));
+  background-color: var(--md-ref-role-surface, #ffffff);
+  color: var(--md-ref-role-onSurface, #111827);
+  font-size: 0.875rem;
+  font-weight: 600;
+  outline: none;
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236b7280' stroke-width='2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M19.5 8.25l-7.5 7.5-7.5-7.5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 0.875rem;
+  transition: all 0.15s ease;
+}
+
+select:hover {
+  border-color: var(--md-ref-role-outline, rgba(0, 0, 0, 0.3));
+}
+
+select:focus {
+  border-color: var(--md-ref-role-primary, #6750a4);
+  box-shadow: 0 0 0 3px var(--md-ref-role-primaryContainer, rgba(103, 81, 164, 0.15));
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* ── Design Token CSS Variables ──────────────────────── */
+:root {
+  /* Typography */
+  --matisse-font-family-sans: 'Open Sans', system-ui, -apple-system, sans-serif;
+  --matisse-font-family-display: 'Playfair Display', Georgia, serif;
+  --matisse-font-family-mono: 'JetBrains Mono', 'Fira Code', monospace;
+
+  --matisse-font-size-xs: 0.75rem;
+  --matisse-font-size-sm: 0.875rem;
+  --matisse-font-size-base: 1rem;
+  --matisse-font-size-lg: 1.125rem;
+  --matisse-font-size-xl: 1.25rem;
+  --matisse-font-size-2xl: 1.5rem;
+  --matisse-font-size-3xl: 1.875rem;
+  --matisse-font-size-4xl: 2.25rem;
+  --matisse-font-size-5xl: 3rem;
+  --matisse-font-size-6xl: 3.75rem;
+  --matisse-font-size-7xl: 4.5rem;
+
+  --matisse-font-weight-light: 300;
+  --matisse-font-weight-regular: 400;
+  --matisse-font-weight-medium: 500;
+  --matisse-font-weight-semibold: 600;
+  --matisse-font-weight-bold: 700;
+  --matisse-font-weight-extrabold: 800;
+
+  --matisse-line-height-none: 1;
+  --matisse-line-height-tight: 1.25;
+  --matisse-line-height-snug: 1.375;
+  --matisse-line-height-normal: 1.5;
+  --matisse-line-height-relaxed: 1.625;
+  --matisse-line-height-loose: 2;
+
+  /* Spacing */
+  --matisse-spacing-px: 1px;
+  --matisse-spacing-0: 0;
+  --matisse-spacing-0-5: 0.125rem;
+  --matisse-spacing-1: 0.25rem;
+  --matisse-spacing-1-5: 0.375rem;
+  --matisse-spacing-2: 0.5rem;
+  --matisse-spacing-2-5: 0.625rem;
+  --matisse-spacing-3: 0.75rem;
+  --matisse-spacing-3-5: 0.875rem;
+  --matisse-spacing-4: 1rem;
+  --matisse-spacing-5: 1.25rem;
+  --matisse-spacing-6: 1.5rem;
+  --matisse-spacing-7: 1.75rem;
+  --matisse-spacing-8: 2rem;
+  --matisse-spacing-9: 2.25rem;
+  --matisse-spacing-10: 2.5rem;
+  --matisse-spacing-11: 2.75rem;
+  --matisse-spacing-12: 3rem;
+  --matisse-spacing-14: 3.5rem;
+  --matisse-spacing-16: 4rem;
+  --matisse-spacing-20: 5rem;
+  --matisse-spacing-24: 6rem;
+  --matisse-spacing-28: 7rem;
+  --matisse-spacing-32: 8rem;
+
+  /* Border Radius */
+  --matisse-radius-xs: 0.125rem;
+  --matisse-radius-sm: 0.25rem;
+  --matisse-radius-md: 0.5rem;
+  --matisse-radius-lg: 0.75rem;
+  --matisse-radius-xl: 1rem;
+  --matisse-radius-2xl: 1.5rem;
+  --matisse-radius-3xl: 2rem;
+  --matisse-radius-full: 9999px;
+}
+
+/* ── Light Theme (default) ───────────────────────────── */
+[data-theme="light"],
+:root {
+  --md-ref-role-primary: hsl(256, 34%, 48%);
+  --md-ref-role-onPrimary: hsl(0, 0%, 100%);
+  --md-ref-role-primaryContainer: hsl(256, 100%, 87%);
+  --md-ref-role-onPrimaryContainer: hsl(256, 42%, 38%);
+  --md-ref-role-secondary: hsl(259, 11%, 40%);
+  --md-ref-role-onSecondary: hsl(0, 0%, 100%);
+  --md-ref-role-secondaryContainer: hsl(263, 27%, 81%);
+  --md-ref-role-onSecondaryContainer: hsl(260, 14%, 30%);
+  --md-ref-role-tertiary: hsl(341, 21%, 41%);
+  --md-ref-role-onTertiary: hsl(0, 0%, 100%);
+  --md-ref-role-tertiaryContainer: hsl(343, 63%, 83%);
+  --md-ref-role-onTertiaryContainer: hsl(341, 25%, 31%);
+  --md-ref-role-error: hsl(0, 54%, 41%);
+  --md-ref-role-onError: hsl(0, 0%, 100%);
+  --md-ref-role-errorContainer: hsl(0, 100%, 82%);
+  --md-ref-role-onErrorContainer: hsl(0, 55%, 31%);
+  --md-ref-role-background: hsl(300, 100%, 99%);
+  --md-ref-role-onBackground: hsl(270, 7%, 11%);
+  --md-ref-role-surface: hsl(300, 100%, 99%);
+  --md-ref-role-onSurface: hsl(270, 7%, 11%);
+  --md-ref-role-surfaceVariant: hsl(276, 19%, 90%);
+  --md-ref-role-onSurfaceVariant: hsl(257, 5%, 29%);
+  --md-ref-role-outline: hsl(262, 3%, 48%);
+  --md-ref-role-outlineVariant: hsl(273, 8%, 79%);
+  --md-ref-role-inverseSurface: hsl(276, 5%, 19%);
+  --md-ref-role-inverseOnSurface: hsl(300, 23%, 95%);
+  --md-ref-role-inversePrimary: hsl(256, 100%, 87%);
+  --md-ref-role-surfaceDim: hsl(300, 8%, 86%);
+  --md-ref-role-surfaceBright: hsl(300, 100%, 99%);
+  --md-ref-role-surfaceContainerLowest: hsl(0, 0%, 100%);
+  --md-ref-role-surfaceContainerLow: hsl(300, 30%, 96%);
+  --md-ref-role-surfaceContainer: hsl(300, 19%, 94%);
+  --md-ref-role-surfaceContainerHigh: hsl(300, 14%, 91%);
+  --md-ref-role-surfaceContainerHighest: hsl(290, 11%, 89%);
+}
+
+/* ── Dark Theme ──────────────────────────────────────── */
+[data-theme="dark"] {
+  --md-ref-role-primary: hsl(256, 100%, 87%);
+  --md-ref-role-onPrimary: hsl(258, 57%, 28%);
+  --md-ref-role-primaryContainer: hsl(256, 42%, 38%);
+  --md-ref-role-onPrimaryContainer: hsl(259, 100%, 93%);
+  --md-ref-role-secondary: hsl(263, 27%, 81%);
+  --md-ref-role-onSecondary: hsl(258, 18%, 22%);
+  --md-ref-role-secondaryContainer: hsl(260, 14%, 30%);
+  --md-ref-role-onSecondaryContainer: hsl(262, 69%, 92%);
+  --md-ref-role-tertiary: hsl(343, 63%, 83%);
+  --md-ref-role-onTertiary: hsl(339, 33%, 22%);
+  --md-ref-role-tertiaryContainer: hsl(341, 25%, 31%);
+  --md-ref-role-onTertiaryContainer: hsl(344, 100%, 93%);
+  --md-ref-role-error: hsl(0, 100%, 82%);
+  --md-ref-role-onError: hsl(0, 64%, 22%);
+  --md-ref-role-errorContainer: hsl(0, 55%, 31%);
+  --md-ref-role-onErrorContainer: hsl(0, 100%, 91%);
+  --md-ref-role-background: hsl(270, 7%, 6%);
+  --md-ref-role-onBackground: hsl(290, 11%, 89%);
+  --md-ref-role-surface: hsl(270, 7%, 6%);
+  --md-ref-role-onSurface: hsl(290, 11%, 89%);
+  --md-ref-role-surfaceVariant: hsl(257, 5%, 29%);
+  --md-ref-role-onSurfaceVariant: hsl(273, 8%, 79%);
+  --md-ref-role-outline: hsl(267, 4%, 58%);
+  --md-ref-role-outlineVariant: hsl(257, 5%, 29%);
+  --md-ref-role-inverseSurface: hsl(290, 11%, 89%);
+  --md-ref-role-inverseOnSurface: hsl(276, 5%, 19%);
+  --md-ref-role-inversePrimary: hsl(256, 34%, 48%);
+  --md-ref-role-surfaceDim: hsl(270, 7%, 6%);
+  --md-ref-role-surfaceBright: hsl(264, 4%, 24%);
+  --md-ref-role-surfaceContainerLowest: hsl(270, 6%, 4%);
+  --md-ref-role-surfaceContainerLow: hsl(270, 7%, 11%);
+  --md-ref-role-surfaceContainer: hsl(270, 6%, 13%);
+  --md-ref-role-surfaceContainerHigh: hsl(273, 5%, 17%);
+  --md-ref-role-surfaceContainerHighest: hsl(264, 4%, 22%);
+}
+
+/* ── Animations ──────────────────────────────────────── */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes modalSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes alertSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes toastSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(24px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* ── Utility Classes ─────────────────────────────────── */
 .container {
   max-width: 1440px;
   margin: 0 auto;
@@ -49,29 +284,329 @@ textarea {
   width: 100%;
 }
 
-.card {
-  background: #ffffff;
-  border-radius: 12px;
-  padding: 1rem;
-  border: 1px solid #e5e7eb;
-}
-
 @media (min-width: 768px) {
   .container {
     padding: 2rem;
   }
+}
 
-  .card {
-    padding: 1.5rem;
+/* ── Component base overrides ────────────────────────── */
+.glossy-btn {
+  border-radius: 9999px !important; /* Fully rounded buttons */
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glossy-btn:hover:not(:disabled) {
+  filter: brightness(1.1);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15), inset 0 1px 1px rgba(255, 255, 255, 0.4), inset 0 -1px 1px rgba(0, 0, 0, 0.15) !important;
+  transform: translateY(-1px);
+}
+
+.glossy-btn:active:not(:disabled) {
+  filter: brightness(0.92);
+  transform: translateY(1px) scale(0.98);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1), inset 0 1px 1px rgba(0, 0, 0, 0.2) !important;
+}
+
+.glossy-btn--ghost:hover:not(:disabled),
+.glossy-btn--outline:hover:not(:disabled) {
+  background: var(--md-ref-role-primaryContainer) !important;
+  color: var(--md-ref-role-onPrimaryContainer) !important;
+  border-color: transparent !important;
+}
+
+.glossy-btn--ghost:active:not(:disabled),
+.glossy-btn--outline:active:not(:disabled) {
+  background: var(--md-ref-role-surfaceContainerHigh) !important;
+  transform: translateY(1px);
+}
+
+.card--hoverable:hover {
+  box-shadow: 0 8px 24px hsla(0, 0%, 0%, 0.08) !important;
+  transform: translateY(-2px);
+}
+
+/* ── Responsive Utilities ────────────────────────────── */
+@media (max-width: 767px) {
+  .desktop-only {
+    display: none !important;
   }
 }
 
-.dark-theme {
-  background-color: #121212;
-  color: #ffffff;
+@media (min-width: 768px) {
+  .mobile-only {
+    display: none !important;
+  }
 }
 
-.dark-theme .card {
-  background: #1e1e1e;
-  border-color: #333333;
+/* ── Navbar Layout & Styles ──────────────────────────── */
+.navbar-header {
+  position: fixed;
+  top: 1.25rem;
+  left: 50%;
+  width: calc(100% - 2.5rem);
+  max-width: 1280px;
+  z-index: 1000;
+  background: rgba(255, 255, 255, 0.45);
+  backdrop-filter: blur(12px) saturate(180%);
+  -webkit-backdrop-filter: blur(12px) saturate(180%);
+  border-radius: 9999px !important; /* Refactored to fully rounded navbar */
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.08);
+  font-family: 'Open Sans', sans-serif;
+
+  /* Smooth scroll entrance animation */
+  opacity: 0;
+  transform: translate(-50%, -20px) scale(0.95);
+  pointer-events: none;
+  transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
+
+.navbar-header--visible {
+  opacity: 1;
+  transform: translate(-50%, 0) scale(1);
+  pointer-events: auto;
+}
+
+.navbar-header--scrolled {
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.02);
+}
+
+.navbar-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1.5rem;
+  height: 4.5rem;
+}
+
+.navbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  cursor: pointer;
+}
+
+.navbar-logo-badge {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, hsl(256, 34%, 48%), hsl(340, 21%, 41%));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 700;
+  font-size: 1.125rem;
+  box-shadow: 0 2px 8px rgba(105, 56, 189, 0.2);
+}
+
+.navbar-brand-name {
+  font-weight: 700;
+  font-size: 1.25rem;
+  letter-spacing: -0.03em;
+  background: linear-gradient(135deg, #111827, #374151);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.navbar-desktop-nav {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+
+.navbar-link {
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: #4b5563;
+  transition: color 0.2s;
+  cursor: pointer;
+}
+
+.navbar-link:hover {
+  color: var(--md-ref-role-primary) !important;
+}
+
+.navbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.navbar-profile-wrapper {
+  position: relative;
+}
+
+.navbar-profile-trigger {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  background: none;
+  border: none;
+  padding: 0.375rem 0.625rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.navbar-profile-trigger:hover {
+  background-color: rgba(0, 0, 0, 0.04);
+}
+
+.navbar-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: var(--avatar-bg, #3b82f6);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 0.875rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-profile-name {
+  font-weight: 600;
+  font-size: 0.9375rem;
+  color: #1f2937;
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.navbar-dropdown-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 99;
+}
+
+.navbar-dropdown-menu {
+  position: absolute;
+  right: 0;
+  top: 100%;
+  margin-top: 0.5rem;
+  width: 200px;
+  background: #ffffff;
+  border-radius: 0.75rem;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  padding: 0.5rem;
+  z-index: 100;
+  animation: modalSlideUp 0.2s ease-out;
+}
+
+.navbar-dropdown-header {
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid #f3f4f6;
+  margin-bottom: 0.25rem;
+}
+
+.navbar-dropdown-header-subtitle {
+  margin: 0;
+  font-size: 0.75rem;
+  color: #9ca3af;
+}
+
+.navbar-dropdown-header-title {
+  margin: 0;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #374151;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.navbar-dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.625rem 0.75rem;
+  font-size: 0.875rem;
+  color: #374151;
+  border: none;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+  border-radius: 0.375rem;
+  transition: background-color 0.2s;
+}
+
+.navbar-dropdown-item:hover {
+  background-color: #f3f4f6;
+}
+
+.navbar-dropdown-item--logout {
+  color: #dc2626;
+}
+
+.navbar-dropdown-item--logout:hover {
+  background-color: #fef2f2;
+}
+
+.navbar-mobile-toggle {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #374151;
+  padding: 0.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.navbar-mobile-drawer {
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+  padding: 1rem 1.5rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  background: #ffffff;
+  border-bottom-left-radius: 1em;
+  border-bottom-right-radius: 1em;
+  animation: modalSlideUp 0.2s ease-out;
+}
+
+.navbar-mobile-link {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #4b5563;
+  padding: 0.5rem 0;
+}
+
+.navbar-mobile-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+/* ── Toast / Modal Animations ─────────────────────────── */
+@keyframes toastSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes toastBackdropIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+
+
+
+
+

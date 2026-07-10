@@ -1,0 +1,103 @@
+/* ── Key Color Card ───────────────────────────────────── */
+
+.key-color-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.key-color-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.key-color-title {
+  font-size: 1.125rem;
+  font-weight: 700;
+  margin: 0;
+  color: #111827;
+  letter-spacing: -0.02em;
+}
+
+/* Color cards grid */
+.key-color-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1rem;
+}
+
+/* Individual color card */
+.key-color-card {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1.25rem;
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: 1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  transition: box-shadow 0.15s;
+}
+
+.key-color-card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+.key-color-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.key-color-card-label {
+  font-weight: 600;
+  text-transform: capitalize;
+  font-size: 0.875rem;
+  color: #111827;
+}
+
+.key-color-remove-btn {
+  background: none;
+  border: none;
+  color: hsl(0, 54%, 50%);
+  cursor: pointer;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.2rem 0.5rem;
+  border-radius: 0.375rem;
+  transition: background 0.12s, color 0.12s;
+  font-family: inherit;
+}
+
+.key-color-remove-btn:hover {
+  background: hsl(0, 100%, 96%);
+  color: hsl(0, 54%, 41%);
+}
+
+/* Color picker + input row */
+.key-color-input-row {
+  display: flex;
+  gap: 0.625rem;
+  align-items: center;
+}
+
+.key-color-text-input {
+  flex: 1;
+  min-width: 0;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 0.625rem;
+  font-family: 'JetBrains Mono', 'Fira Mono', 'Courier New', monospace;
+  font-size: 0.8125rem;
+  color: #374151;
+  background: #fafafa;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  outline: none;
+}
+
+.key-color-text-input:focus {
+  border-color: hsl(256, 34%, 55%);
+  box-shadow: 0 0 0 3px hsla(256, 34%, 55%, 0.12);
+  background: #ffffff;
+}

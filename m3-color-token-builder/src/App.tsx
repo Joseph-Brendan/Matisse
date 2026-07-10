@@ -1,40 +1,119 @@
-import { useState } from 'react';
-import { Header } from './components/Header';
-import { KeyColorCard } from './components/KeyColorCard';
-import { TonalPaletteEditor } from './components/TonalPaletteEditor';
-import { RoleMappingTable } from './components/RoleMappingTable';
-import { PreviewPanel } from './components/PreviewPanel';
-import { ExportPanel } from './components/ExportPanel';
+import { useEffect } from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { useColorStore } from './store/useColorStore';
+import { ToastContainer } from './design-system/components/Toast/ToastContainer';
+import { ConfirmModal } from './design-system/components/Modal/ConfirmModal';
+import { Landing } from './pages/Landing';
+import { Auth } from './pages/Auth';
+import { Dashboard } from './pages/Dashboard';
+import { ColorBuilder } from './pages/ColorBuilder';
+import { DesignSystem } from './pages/DesignSystem';
+import { Settings } from './pages/Settings';
 
-function App() {
-  const [isExportOpen, setIsExportOpen] = useState(false);
-  const { theme } = useColorStore();
+/** Build a CSS font-family stack from a plain font name */
+function buildFontStack(name: string, category: 'sans' | 'display' | 'mono'): string {
+  const fallbacks: Record<string, string> = {
+    sans: `'${name}', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif`,
+    display: `'${name}', Georgia, serif`,
+    mono: `'${name}', 'Fira Code', 'Courier New', monospace`,
+  };
+  // If it's already a stack (contains comma), use as-is
+  if (name.includes(',')) return name;
+  return fallbacks[category] ?? `'${name}', sans-serif`;
+}
+
+function AppShell() {
+  const { theme, roles, typography, spacing, borderRadius, shadows, elevation } = useColorStore();
+
+  useEffect(() => {
+    // Sync theme colors
+    const activeRoles = roles[theme];
+    activeRoles.forEach(r => {
+      document.documentElement.style.setProperty(`--md-ref-role-${r.name}`, r.resolvedValue);
+    });
+
+    // Sync typography — build proper CSS stacks from stored plain font names
+    const familyKeys = Object.keys(typography.fontFamily) as string[];
+    familyKeys.forEach((key, i) => {
+      const name = typography.fontFamily[key];
+      const cat = i === 2 ? 'mono' : i === 1 ? 'display' : 'sans'; // sans / display / mono by index
+      const stack = buildFontStack(name, cat as 'sans' | 'display' | 'mono');
+      document.documentElement.style.setProperty(`--matisse-font-family-${key}`, stack);
+
+      // Load Google Font for this name
+      const encoded = encodeURIComponent(name).replace(/%20/g, '+');
+      const id = `gf-${encoded}`;
+      if (!document.getElementById(id)) {
+        const link = document.createElement('link');
+        link.id = id;
+        link.rel = 'stylesheet';
+        link.href = `https://fonts.googleapis.com/css2?family=${encoded}:wght@300;400;500;600;700;800&display=swap`;
+        document.head.appendChild(link);
+      }
+    });
+
+    for (const [key, val] of Object.entries(typography.fontSize)) {
+      document.documentElement.style.setProperty(`--matisse-font-size-${key}`, val);
+    }
+    for (const [key, val] of Object.entries(typography.fontWeight)) {
+      document.documentElement.style.setProperty(`--matisse-font-weight-${key}`, val.toString());
+    }
+    for (const [key, val] of Object.entries(typography.lineHeight)) {
+      document.documentElement.style.setProperty(`--matisse-line-height-${key}`, val.toString());
+    }
+    for (const [key, val] of Object.entries(typography.letterSpacing)) {
+      document.documentElement.style.setProperty(`--matisse-letter-spacing-${key}`, val);
+    }
+
+    // Sync spacing
+    for (const [key, val] of Object.entries(spacing)) {
+      document.documentElement.style.setProperty(`--matisse-spacing-${key}`, val);
+    }
+
+    // Sync border radius
+    for (const [key, val] of Object.entries(borderRadius)) {
+      document.documentElement.style.setProperty(`--matisse-radius-${key}`, val);
+    }
+
+    // Sync shadows
+    for (const [key, val] of Object.entries(shadows)) {
+      if (typeof val === 'string') {
+        document.documentElement.style.setProperty(`--matisse-shadow-${key}`, val);
+      }
+    }
+
+    // Sync glow shadows
+    for (const [key, val] of Object.entries(shadows.glow)) {
+      document.documentElement.style.setProperty(`--matisse-shadow-glow-${key}`, val);
+    }
+
+    // Sync elevation
+    for (const [key, val] of Object.entries(elevation)) {
+      document.documentElement.style.setProperty(`--matisse-elevation-${key}`, val);
+    }
+  }, [theme, roles, typography, spacing, borderRadius, shadows, elevation]);
 
   return (
-    <div className={theme === 'dark' ? 'dark-theme' : ''} style={{ minHeight: '100vh', transition: 'all 0.3s ease' }}>
-      <Header onExport={() => setIsExportOpen(true)} />
-
-      <main className="container" style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-
-        {/* Core Settings Layer */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-          <KeyColorCard />
-          <TonalPaletteEditor />
-        </div>
-
-        {/* Roles */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-          <RoleMappingTable />
-        </div>
-
-        {/* Live Preview */}
-        <PreviewPanel />
-
-      </main>
-
-      <ExportPanel isOpen={isExportOpen} onClose={() => setIsExportOpen(false)} />
+    <div className="app-shell" data-theme={theme}>
+      <Routes>
+        <Route path="/" element={<Landing />} />
+        <Route path="/auth" element={<Auth />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/color-builder" element={<ColorBuilder />} />
+        <Route path="/components" element={<DesignSystem />} />
+        <Route path="/settings" element={<Settings />} />
+      </Routes>
+      <ToastContainer />
+      <ConfirmModal />
     </div>
+  );
+}
+
+function App() {
+  return (
+    <BrowserRouter>
+      <AppShell />
+    </BrowserRouter>
   );
 }
 
