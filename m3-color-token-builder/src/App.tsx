@@ -3,6 +3,8 @@ import { useColorStore } from './store/useColorStore';
 import { ToastContainer } from './design-system/components/Toast/ToastContainer';
 import { Landing } from './pages/Landing';
 import { Auth } from './pages/Auth';
+import { AuthCallback } from './pages/AuthCallback';
+import { SignUp } from './pages/SignUp';
 import { Dashboard } from './pages/Dashboard';
 import { ColorBuilder } from './pages/ColorBuilder';
 import { DesignSystem } from './pages/DesignSystem';
@@ -24,6 +26,8 @@ function AppShell() {
       <Routes>
         <Route path="/" element={<Landing />} />
         <Route path="/auth" element={<Auth />} />
+        <Route path="/auth/callback" element={<AuthCallback />} />
+        <Route path="/signup" element={<SignUp />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/color-builder" element={<ColorBuilder />} />
         <Route path="/components" element={<DesignSystem />} />
