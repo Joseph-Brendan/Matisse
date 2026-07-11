@@ -202,3 +202,52 @@
   box-shadow: 0 0 0 3px hsla(256, 34%, 55%, 0.12);
   background: #ffffff;
 }
+
+/* ── Responsive ──────────────────────────────────────────── */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .role-table-card {
+    padding: 1.25rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .role-table-card {
+    padding: 1rem;
+  }
+  .role-table-title {
+    font-size: 1rem;
+  }
+  .role-table th,
+  .role-table td {
+    padding: 0.5rem 0.625rem;
+  }
+  .role-name {
+    font-size: 0.75rem;
+  }
+}
+
+@media (max-width: 375px) {
+  .role-table-card {
+    padding: 0.75rem;
+    border-radius: 0.75rem;
+  }
+  .role-table-title {
+    font-size: 0.875rem;
+  }
+  .role-table-header {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .role-table-theme-toggle {
+    width: 100%;
+  }
+  .role-table-theme-btn {
+    flex: 1;
+    text-align: center;
+    font-size: 0.75rem;
+    padding: 0.35rem 0.75rem;
+  }
+  .role-table-subtitle {
+    font-size: 0.75rem;
+  }
+}
