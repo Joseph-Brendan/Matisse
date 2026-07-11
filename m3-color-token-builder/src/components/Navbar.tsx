@@ -54,6 +54,7 @@ export const Navbar: React.FC = () => {
         <nav className="navbar-desktop-nav desktop-only">
           <a href="#features" className="navbar-link" onClick={(e) => handleNavClick(e, 'features')}>Features</a>
           <a href="#how-it-works" className="navbar-link" onClick={(e) => handleNavClick(e, 'how-it-works')}>How it works</a>
+          <a href="/about" className="navbar-link" onClick={() => navigate('/about')}>About</a>
         </nav>
 
         <div className="navbar-actions">
@@ -116,6 +117,7 @@ export const Navbar: React.FC = () => {
         <div className="navbar-mobile-drawer">
           <a href="#features" className="navbar-mobile-link" onClick={(e) => handleNavClick(e, 'features')}>Features</a>
           <a href="#how-it-works" className="navbar-mobile-link" onClick={(e) => handleNavClick(e, 'how-it-works')}>How it works</a>
+          <a href="/about" className="navbar-mobile-link" onClick={() => navigate('/about')}>About</a>
           <div className="navbar-mobile-divider" />
 
           {user ? (

@@ -9,6 +9,7 @@ import { Dashboard } from './pages/Dashboard';
 import { ColorBuilder } from './pages/ColorBuilder';
 import { DesignSystem } from './pages/DesignSystem';
 import { Settings } from './pages/Settings';
+import { About } from './pages/About';
 
 /** Build a CSS font-family stack from a plain font name */
 function buildFontStack(name: string, category: 'sans' | 'display' | 'mono'): string {
@@ -97,6 +98,7 @@ function AppShell() {
     <div className="app-shell" data-theme={theme}>
       <Routes>
         <Route path="/" element={<Landing />} />
+        <Route path="/about" element={<About />} />
         <Route path="/auth" element={<Auth />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/color-builder" element={<ColorBuilder />} />
