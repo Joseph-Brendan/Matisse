@@ -15,14 +15,14 @@ export interface BadgeProps {
 }
 
 const variantColors: Record<BadgeVariant, { bg: string; text: string; border: string }> = {
-  primary: { bg: 'hsla(256, 100%, 87%, 0.6)', text: 'hsl(256, 42%, 38%)', border: 'hsla(256, 100%, 75%, 0.4)' },
-  secondary: { bg: 'hsla(263, 27%, 81%, 0.6)', text: 'hsl(260, 14%, 30%)', border: 'hsla(263, 27%, 70%, 0.4)' },
-  tertiary: { bg: 'hsla(343, 63%, 83%, 0.6)', text: 'hsl(341, 25%, 31%)', border: 'hsla(343, 63%, 70%, 0.4)' },
-  error: { bg: 'hsla(0, 100%, 82%, 0.6)', text: 'hsl(0, 55%, 31%)', border: 'hsla(0, 100%, 70%, 0.4)' },
+  primary: { bg: 'color-mix(in srgb, var(--md-ref-role-primaryContainer) 80%, transparent)', text: 'var(--md-ref-role-onPrimaryContainer)', border: 'color-mix(in srgb, var(--md-ref-role-primary) 30%, transparent)' },
+  secondary: { bg: 'color-mix(in srgb, var(--md-ref-role-secondaryContainer) 80%, transparent)', text: 'var(--md-ref-role-onSecondaryContainer)', border: 'color-mix(in srgb, var(--md-ref-role-secondary) 30%, transparent)' },
+  tertiary: { bg: 'color-mix(in srgb, var(--md-ref-role-tertiaryContainer) 80%, transparent)', text: 'var(--md-ref-role-onTertiaryContainer)', border: 'color-mix(in srgb, var(--md-ref-role-tertiary) 30%, transparent)' },
+  error: { bg: 'color-mix(in srgb, var(--md-ref-role-errorContainer) 80%, transparent)', text: 'var(--md-ref-role-onErrorContainer)', border: 'color-mix(in srgb, var(--md-ref-role-error) 30%, transparent)' },
   success: { bg: 'hsla(145, 70%, 80%, 0.6)', text: 'hsl(145, 80%, 18%)', border: 'hsla(145, 70%, 70%, 0.4)' },
   warning: { bg: 'hsla(40, 100%, 80%, 0.6)', text: 'hsl(35, 90%, 20%)', border: 'hsla(40, 100%, 70%, 0.4)' },
   info: { bg: 'hsla(259, 100%, 85%, 0.6)', text: 'hsl(258, 57%, 22%)', border: 'hsla(259, 100%, 75%, 0.4)' },
-  neutral: { bg: 'hsla(290, 5%, 78%, 0.6)', text: 'hsl(264, 3%, 28%)', border: 'hsla(290, 5%, 70%, 0.4)' },
+  neutral: { bg: 'color-mix(in srgb, var(--md-ref-role-surfaceContainerHigh) 80%, transparent)', text: 'var(--md-ref-role-onSurfaceVariant)', border: 'color-mix(in srgb, var(--md-ref-role-outline) 30%, transparent)' },
 };
 
 const sizeMap: Record<BadgeSize, React.CSSProperties> = {

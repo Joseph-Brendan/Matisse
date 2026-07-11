@@ -260,18 +260,26 @@ export const Landing: React.FC = () => {
                         value={pickerHue}
                         onChange={(e) => setPickerHue(Number(e.target.value))}
                         className="hue-slider"
+                        style={{ accentColor: `hsl(${pickerHue}, 60%, 50%)` }}
                       />
                     </div>
                   </div>
                   <div className="tool-sandbox-preview-colors">
                     {[0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 95, 99, 100].map((tone) => {
-                      const computedBg = `hsl(${pickerHue}, 45%, ${100 - tone}%)`;
-                      const computedColor = tone > 50 ? '#000' : '#fff';
+                      const lightness = 100 - tone;
+                      const computedBg = `hsl(${pickerHue}, 45%, ${lightness}%)`;
+                      const useDark = lightness > 55;
                       return (
                         <div 
                           key={tone} 
                           className="sandbox-color-block"
-                          style={{ backgroundColor: computedBg, color: computedColor }}
+                          style={{
+                            backgroundColor: computedBg,
+                            color: useDark ? '#000' : '#fff',
+                            textShadow: useDark
+                              ? '0 0 3px rgba(255,255,255,0.4), 0 0 1px rgba(255,255,255,0.6)'
+                              : '0 0 3px rgba(0,0,0,0.35), 0 0 1px rgba(0,0,0,0.5)',
+                          }}
                         >
                           <span className="sandbox-tone-num">{tone}</span>
                         </div>

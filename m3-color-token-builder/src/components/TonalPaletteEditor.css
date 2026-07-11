@@ -143,10 +143,12 @@
   font-weight: 700;
   line-height: 1;
   pointer-events: none;
+  text-shadow: 0 0 3px rgba(0,0,0,0.35), 0 0 1px rgba(0,0,0,0.5);
 }
 
 .tonal-cell-label--dark {
   color: #000000;
+  text-shadow: 0 0 3px rgba(255,255,255,0.5), 0 0 1px rgba(255,255,255,0.7);
 }
 
 .tonal-cell-label--light {
