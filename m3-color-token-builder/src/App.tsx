@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { useColorStore } from './store/useColorStore';
 import { ToastContainer } from './design-system/components/Toast/ToastContainer';
+import { ConfirmModal } from './design-system/components/Modal/ConfirmModal';
 import { Landing } from './pages/Landing';
 import { Auth } from './pages/Auth';
 import { Dashboard } from './pages/Dashboard';
@@ -9,6 +10,7 @@ import { ColorBuilder } from './pages/ColorBuilder';
 import { DesignSystem } from './pages/DesignSystem';
 import { Settings } from './pages/Settings';
 import { Tools } from './pages/Tools';
+import { About } from './pages/About';
 
 /** Build a CSS font-family stack from a plain font name */
 function buildFontStack(name: string, category: 'sans' | 'display' | 'mono'): string {
@@ -97,6 +99,7 @@ function AppShell() {
     <div className="app-shell" data-theme={theme}>
       <Routes>
         <Route path="/" element={<Landing />} />
+        <Route path="/about" element={<About />} />
         <Route path="/auth" element={<Auth />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/color-builder" element={<ColorBuilder />} />
@@ -105,6 +108,7 @@ function AppShell() {
         <Route path="/tools" element={<Tools />} />
       </Routes>
       <ToastContainer />
+      <ConfirmModal />
     </div>
   );
 }

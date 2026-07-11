@@ -1,10 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-  Palette, Layers, Paintbrush, Grid3x3, Type, Download, ArrowUpRight,
+  Palette, Layers, Paintbrush, Grid3x3, Type, Download, ArrowUpRight, Sparkles,
   ChevronDown, ChevronUp, Star, Check
 } from 'lucide-react';
 import { GlossyButton } from '../../design-system/components/Button/GlossyButton';
+import {
+  ColorSystemIllustration,
+  TypographyIllustration,
+  ComponentsIllustration,
+  SpacingIllustration,
+  ExportIllustration,
+  VersionHistoryIllustration,
+  PreviewIllustration,
+  PresetsIllustration,
+} from './FeatureIllustration';
 import type { GlossyVariant } from '../../design-system/components/Button/GlossyButton';
 import { Badge } from '../../design-system/components/Badge/Badge';
 import { Navbar } from '../../components/Navbar';
@@ -13,12 +23,14 @@ import { useAuthStore } from '../../store/useAuthStore';
 import './Landing.css';
 
 const features = [
-  { icon: <Palette size={24} />, title: 'Color System', desc: 'Full Material 3 tonal palette with semantic role mapping for light and dark modes.' },
-  { icon: <Paintbrush size={24} />, title: 'Glossy Components', desc: 'Modern glossy button system with primary, secondary, tertiary, and error variants.' },
-  { icon: <Type size={24} />, title: 'Typography Scale', desc: 'Harmonious type system built on Open Sans with 11 sizes and 8 weights.' },
-  { icon: <Grid3x3 size={24} />, title: 'Spacing & Grid', desc: 'Consistent 4px-based spacing scale and responsive grid system.' },
-  { icon: <Layers size={24} />, title: 'Component Library', desc: 'Production-ready components: tabs, alerts, modals, toasts, badges, cards, and inputs.' },
-  { icon: <Download size={24} />, title: 'Multi-format Export', desc: 'Export tokens as JSON, CSS variables, or Tailwind config for any platform.' },
+  { Illustration: ColorSystemIllustration, title: 'Color System', desc: 'Full Material 3 tonal palette with semantic role mapping for light and dark modes.' },
+  { Illustration: TypographyIllustration, title: 'Typography Scale', desc: 'Harmonious type system built on Open Sans with 11 sizes and 8 weights.' },
+  { Illustration: ComponentsIllustration, title: 'Component Library', desc: 'Production-ready components: tabs, alerts, modals, toasts, badges, cards, and inputs.' },
+  { Illustration: SpacingIllustration, title: 'Spacing & Grid', desc: 'Consistent 4px-based spacing scale and responsive grid system.' },
+  { Illustration: ExportIllustration, title: 'Multi-format Export', desc: 'Export tokens as JSON, CSS variables, or Tailwind config for any platform.' },
+  { Illustration: VersionHistoryIllustration, title: 'Version History', desc: 'Track every change to your design tokens with full semantic versioning.' },
+  { Illustration: PresetsIllustration, title: 'Smart Presets', desc: 'Start faster with pre-built design system templates for fintech, health, e-com, and more.' },
+  { Illustration: PreviewIllustration, title: 'Live Preview', desc: 'See your design system come to life with real-time previews of colors, typography, and components.' },
 ];
 
 const buttonVariants: { variant: GlossyVariant; label: string }[] = [
@@ -109,8 +121,7 @@ export const Landing: React.FC = () => {
           }}>
           <div className="docked-navbar-left">
             <div className="hero-brand-container" onClick={() => navigate('/')}>
-              
-              <img src="/logo-drk.svg" alt="Matisse" style={{ height: '54px', display: 'block', objectFit: 'contain' }} />
+              <img src="/logo-drk.svg" alt="Matisse" style={{ height: '38px', display: 'block', objectFit: 'contain' }} />
             </div>
             <nav className="desktop-only docked-nav-links">
               <a
@@ -169,7 +180,7 @@ export const Landing: React.FC = () => {
           <div className="hero-left-content">
             <div className="hero-badge-shopify">
               <Palette size={14} className="hero-badge-icon-color" />
-              <span>Powered by Matisse</span>
+              <span>Powered by Dev and Design</span>
             </div>
 
             <h1 className="hero-headline">
@@ -201,7 +212,7 @@ export const Landing: React.FC = () => {
       {/* Indented Landing Content below the fold */}
       <div className="landing-content-sections">
         
-        {/* 2. TOOLS SECTION */}
+         {/* 2. TOOLS SECTION */}
         <section id="tools" className="tools-section">
           <div className="section-header">
             <Badge variant="primary" size="md">Interactive Toolkit</Badge>
@@ -351,6 +362,7 @@ export const Landing: React.FC = () => {
           </div>
         </section>
 
+
         {/* 3. ABOUT SECTION */}
         <section id="about" className="about-section">
           <div className="about-split-layout">
@@ -408,18 +420,19 @@ export const Landing: React.FC = () => {
           </div>
         </section>
 
+
         {/* 4. FEATURE SECTION */}
         <section id="features" className="features-section">
           <div className="section-header">
             <Badge variant="primary" size="md">Features</Badge>
-            <h2 className="section-title">Everything you need</h2>
-            <p className="section-subtitle">A complete toolkit for building consistent, beautiful interfaces.</p>
+            <h2 className="section-title" style={{ fontWeight: 700 }}>Everything You Need To Build a Design System That Ships</h2>
+            <p className="section-subtitle">Create consistent colors, typography, spacing, motion components and design tokens.</p>
           </div>
           <div className="features-grid">
             {features.map((f, i) => (
-              <div key={i} className="feature-card">
-                <div className="feature-icon-wrapper">
-                  {f.icon}
+              <div key={i} className="feature-card" data-color={['purple', 'pink', 'blue', 'teal', 'green', 'orange', 'indigo', 'rose'][i]} data-size={['large', 'medium', 'medium', 'medium', 'medium', 'half', 'half', 'medium'][i]}>
+                <div className="feature-card-illustration">
+                  <f.Illustration />
                 </div>
                 <h3 className="feature-card-title">{f.title}</h3>
                 <p className="feature-card-desc">{f.desc}</p>
@@ -431,86 +444,133 @@ export const Landing: React.FC = () => {
         {/* 5. HOW IT WORKS SECTION */}
         <section id="how-it-works" className="how-it-works-section">
           <div className="how-it-works-header">
-            <Badge variant="primary" size="md">Workflow</Badge>
-            <h2 className="how-it-works-title">How it works</h2>
-            <p className="how-it-works-subtitle">
-              Three simple steps to transform your design palette into production-ready system tokens.
-            </p>
+            <h2 className="how-it-works-title">
+              <div className="title-line"></div>
+              <span>How It works</span>
+              <div className="title-line right"></div>
+            </h2>
           </div>
-          <div className="how-it-works-grid">
-            {[
-              {
-                step: '01',
-                title: 'Define Key Colors',
-                desc: 'Select primary, secondary, and tertiary seeds using visual pickers or custom hex color values directly.',
-                stepClass: 'workflow-card-01',
-                numClass: 'workflow-step-num-01',
-              },
-              {
-                step: '02',
-                title: 'Generate Tonal Scales',
-                desc: 'Matisse instantly maps all seed colors through the perceptual engine, target-generating 11 tones.',
-                stepClass: 'workflow-card-02',
-                numClass: 'workflow-step-num-02',
-              },
-              {
-                step: '03',
-                title: 'Export & Integrate',
-                desc: 'Download your files immediately. Available in clean CSS files, standard JSON format, or Tailwind maps.',
-                stepClass: 'workflow-card-03',
-                numClass: 'workflow-step-num-03',
-              },
-            ].map((item, idx) => (
-              <div key={idx} className={`workflow-card ${item.stepClass}`}>
-                <div className={`workflow-step-num ${item.numClass}`}>
-                  {item.step}
+
+          <div className="timeline-container">
+            <svg className="timeline-loop-svg" viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M 160 10 C 60 10, 20 50, 20 90 C 20 130, 60 150, 110 150 C 130 150, 140 140, 140 120" stroke="#76E037" strokeWidth="2" fill="none" />
+              <path d="M 135 125 L 140 120 L 145 125" stroke="#76E037" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+
+            <div className="timeline-start-node">
+              <div className="pulse-ring"><div className="pulse-dot"></div></div>
+              <span className="timeline-start-text">Start</span>
+            </div>
+
+            <div className="timeline-track">
+              <div className="timeline-line"></div>
+
+              <div className="timeline-item">
+                <div className="timeline-card">
+                  <div className="timeline-icon-box">
+                    <Palette size={20} />
+                  </div>
+                  <div className="timeline-content-box">
+                    <p>Select primary, secondary, and tertiary seeds using visual pickers or custom hex color values directly.</p>
+                  </div>
                 </div>
-                <h3 className="workflow-card-title">
-                  {item.title}
-                </h3>
-                <p className="workflow-card-desc">
-                  {item.desc}
-                </p>
               </div>
-            ))}
+
+              <div className="timeline-item">
+                <div className="timeline-card">
+                  <div className="timeline-icon-box">
+                    <Sparkles size={20} />
+                  </div>
+                  <div className="timeline-content-box">
+                    <p>Matisse instantly maps all seed colors through the perceptual engine, target-generating 11 tones.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="timeline-item">
+                <div className="timeline-card">
+                  <div className="timeline-icon-box">
+                    <Download size={20} />
+                  </div>
+                  <div className="timeline-content-box">
+                    <p>Download your files immediately. Available in clean CSS files, standard JSON format, or Tailwind maps.</p>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+            <div className="timeline-end-node">
+              <div className="timeline-check">
+                <Check size={16} strokeWidth={3} />
+              </div>
+              <p className="timeline-end-text">Ready to use, <span>Congratulations you have a new color system.</span></p>
+            </div>
           </div>
         </section>
 
         {/* 6. FAQ SECTION */}
         <section id="faq" className="faq-section">
-          <div className="section-header">
-            <Badge variant="primary" size="md">FAQ</Badge>
-            <h2 className="section-title">Frequently Asked Questions</h2>
-            <p className="section-subtitle">Got questions? We have got the answers.</p>
-          </div>
-          <div className="faq-accordion-stack">
-            {faqs.map((faq, i) => {
-              const isOpen = faqOpenIdx === i;
-              return (
-                <div key={i} className={`faq-accordion-item ${isOpen ? 'open' : ''}`} onClick={() => toggleFaq(i)}>
-                  <div className="faq-accordion-trigger">
-                    <span className="faq-question-text">{faq.q}</span>
-                    <span className="faq-icon-toggle">
-                      {isOpen ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
-                    </span>
-                  </div>
-                  {isOpen && (
-                    <div className="faq-accordion-panel">
-                      <p className="faq-answer-text">{faq.a}</p>
+          <div className="faq-split-layout">
+            <div className="faq-left-content">
+              <Badge variant="primary" size="md">FAQ</Badge>
+              <h2 className="section-title">Frequently Asked Questions</h2>
+              <p className="section-subtitle">Got questions? We have got the answers.</p>
+            </div>
+            <div className="faq-right-accordion">
+              <div className="faq-accordion-stack">
+                {faqs.map((faq, i) => {
+                  const isOpen = faqOpenIdx === i;
+                  return (
+                    <div key={i} className={`faq-accordion-item ${isOpen ? 'open' : ''}`}>
+                      <div
+                        className="faq-accordion-trigger"
+                        onClick={() => toggleFaq(i)}
+                        role="button"
+                        tabIndex={0}
+                        aria-expanded={isOpen}
+                        onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleFaq(i); } }}
+                      >
+                        <span className="faq-question-text" id={`faq-q-${i}`}>{faq.q}</span>
+                        <span className="faq-icon-toggle" aria-hidden="true">
+                          <ChevronDown size={18} />
+                        </span>
+                      </div>
+                      <div className={`faq-accordion-panel ${isOpen ? 'open' : ''}`} role="region" aria-labelledby={`faq-q-${i}`}>
+                        <div className="faq-accordion-panel-inner">
+                          <p className="faq-answer-text">{faq.a}</p>
+                        </div>
+                      </div>
                     </div>
-                  )}
-                </div>
-              );
-            })}
+                  );
+                })}
+              </div>
+            </div>
           </div>
         </section>
 
         {/* 7. TESTIMONIAL SECTION */}
         <section id="testimonials" className="testimonials-section">
+          <div className="testimonials-contour testimonials-contour--tl">
+            <svg viewBox="0 0 300 300" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ width: '100%', height: '100%' }}>
+              <path d="M-20 60 C80 60 120 100 140 200" stroke="hsla(256, 34%, 48%, 0.04)" strokeWidth="1.5" fill="none" strokeLinecap="round" />
+              <path d="M-20 120 C40 120 70 160 80 240" stroke="hsla(256, 100%, 87%, 0.05)" strokeWidth="1.5" fill="none" strokeLinecap="round" />
+              <path d="M60 -20 C60 80 100 120 200 140" stroke="hsla(256, 34%, 48%, 0.03)" strokeWidth="1" fill="none" strokeLinecap="round" />
+              <path d="M120 -20 C120 40 160 70 240 80" stroke="hsla(256, 100%, 87%, 0.04)" strokeWidth="1" fill="none" strokeLinecap="round" />
+            </svg>
+          </div>
+          <div className="testimonials-contour testimonials-contour--br">
+            <svg viewBox="0 0 300 300" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ width: '100%', height: '100%' }}>
+              <path d="M-20 60 C80 60 120 100 140 200" stroke="hsla(256, 34%, 48%, 0.04)" strokeWidth="1.5" fill="none" strokeLinecap="round" />
+              <path d="M-20 120 C40 120 70 160 80 240" stroke="hsla(256, 100%, 87%, 0.05)" strokeWidth="1.5" fill="none" strokeLinecap="round" />
+              <path d="M60 -20 C60 80 100 120 200 140" stroke="hsla(256, 34%, 48%, 0.03)" strokeWidth="1" fill="none" strokeLinecap="round" />
+              <path d="M120 -20 C120 40 160 70 240 80" stroke="hsla(256, 100%, 87%, 0.04)" strokeWidth="1" fill="none" strokeLinecap="round" />
+            </svg>
+          </div>
           <div className="section-header">
-            <Badge variant="primary" size="md">Wall of Fame</Badge>
-            <h2 className="section-title">Loved by product builders</h2>
-            <p className="section-subtitle">Here is what developers and design system managers think of Matisse.</p>
+            <Badge variant="primary" size="md">Testimonials</Badge>
+            <h2 className="section-title">Trusted by teams building better design systems</h2>
+            <p className="section-subtitle">See how designers, developers, and vibe coders use Matisse to build consistent design systems faster from colors and typography to components and design tokens all without starting from scratch.</p>
           </div>
           <div className="testimonials-grid">
             {testimonials.map((t, idx) => (

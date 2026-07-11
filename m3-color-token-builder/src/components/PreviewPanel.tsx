@@ -3,6 +3,7 @@ import { useColorStore } from '../store/useColorStore';
 import { GlossyButton } from '../design-system/components/Button/GlossyButton';
 import { Card, CardHeader, CardContent } from '../design-system/components/Card/Card';
 import { ShoppingBag, Star } from 'lucide-react';
+import './PreviewPanel.css';
 
 export const PreviewPanel: React.FC = () => {
     const { roles, theme } = useColorStore();
@@ -65,15 +66,15 @@ export const PreviewPanel: React.FC = () => {
     const inputColor = 'var(--role-onSurface)';
 
     return (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', marginTop: '1.5rem' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
+        <div className="preview-panel-wrapper">
+            <div className="preview-header">
                 <div>
                     <h2 style={{ fontSize: '1.25rem', margin: 0 }}>Live Preview</h2>
                     <p style={{ margin: '0.25rem 0 0', color: '#6b7280', fontSize: '0.875rem' }}>Verify token settings against real industry layouts.</p>
                 </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                    <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-                        <label style={{ fontSize: '0.875rem', fontWeight: 600, color: '#4b5563' }}>Preset:</label>
+                <div className="preview-header-controls">
+                    <div className="preview-preset-selector">
+                        <label>Preset:</label>
                         <select
                             value={preset}
                             onChange={(e) => setPreset(e.target.value as any)}
@@ -94,10 +95,10 @@ export const PreviewPanel: React.FC = () => {
                 </div>
             </div>
 
-            <div style={{ display: 'flex', gap: '2rem', flexWrap: 'wrap' }}>
+            <div className="preview-display-area">
                 {/* PREVIEW COMPONENT */}
-                <div style={{ flex: '1 1 400px', minWidth: 0 }}>
-                    <div style={previewStyle}>
+                <div className="preview-display-main">
+                    <div className="preview-container" style={previewStyle}>
                         {preset === 'auth' && (
                             <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', maxWidth: '320px', margin: '0 auto' }}>
                                 <div style={{ textAlign: 'center' }}>
@@ -239,16 +240,18 @@ export const PreviewPanel: React.FC = () => {
                         )}
 
                         {preset === 'marketing' && (
-                            <div style={{ textAlign: 'center', padding: '1.5rem 0', display: 'flex', flexDirection: 'column', gap: '1rem', alignItems: 'center' }}>
-                                <span style={{ fontSize: '0.75rem', color: 'var(--role-onTertiaryContainer)', background: 'var(--role-tertiaryContainer)', padding: '0.25rem 0.75rem', borderRadius: '99px', fontWeight: 600 }}>Matisse Release v1.0</span>
-                                <h3 style={{ margin: 0, fontSize: '2rem', fontWeight: 800, color: 'var(--role-primary)', lineHeight: 1.2 }}>Automate design scales</h3>
-                                <p style={{ margin: 0, color: 'var(--role-onSurfaceVariant)', fontSize: '0.9375rem', maxWidth: '420px', lineHeight: 1.5 }}>
+                            <div className="marketing-hero">
+                                <div>
+                                    <span style={{ fontSize: '0.75rem', color: 'var(--role-onTertiaryContainer)', background: 'var(--role-tertiaryContainer)', padding: '0.25rem 0.75rem', borderRadius: '99px', fontWeight: 600 }}>Matisse Release v1.0</span>
+                                    <h3 style={{ margin: '0.75rem 0 0', fontSize: '2rem', fontWeight: 800, color: 'var(--role-primary)', lineHeight: 1.2 }}>Automate design scales</h3>
+                                    <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1rem', justifyContent: 'center' }}>
+                                        <button style={{ padding: '0.625rem 1.25rem', border: 'none', background: 'var(--role-primary)', color: 'var(--role-onPrimary)', borderRadius: '99px', fontWeight: 600, cursor: 'pointer' }}>Get Started Free</button>
+                                        <button style={{ padding: '0.625rem 1.25rem', border: '1px solid var(--role-outline)', background: 'transparent', color: 'var(--role-primary)', borderRadius: '99px', fontWeight: 600, cursor: 'pointer' }}>Documentation</button>
+                                    </div>
+                                </div>
+                                <p className="marketing-hero-summary" style={{ margin: 0, color: 'var(--role-onSurfaceVariant)', fontSize: '0.9375rem' }}>
                                     A visual token customizer for Material 3 design systems. Build perfect palettes and export to CSS, JSON, and Tailwind.
                                 </p>
-                                <div style={{ display: 'flex', gap: '0.75rem', marginTop: '0.5rem' }}>
-                                    <button style={{ padding: '0.625rem 1.25rem', border: 'none', background: 'var(--role-primary)', color: 'var(--role-onPrimary)', borderRadius: '99px', fontWeight: 600, cursor: 'pointer' }}>Get Started Free</button>
-                                    <button style={{ padding: '0.625rem 1.25rem', border: '1px solid var(--role-outline)', background: 'transparent', color: 'var(--role-primary)', borderRadius: '99px', fontWeight: 600, cursor: 'pointer' }}>Documentation</button>
-                                </div>
                             </div>
                         )}
 
@@ -283,7 +286,7 @@ export const PreviewPanel: React.FC = () => {
 
                 {/* ANATOMY PANEL */}
                 {showAnatomy && (
-                    <Card variant="outlined" style={{ flex: '1 1 300px', margin: 0 }} padding="lg">
+                    <Card variant="outlined" className="preview-anatomy-panel" style={{ margin: 0 }} padding="lg">
                         <CardHeader title="Color Anatomy" subtitle="Design tokens mapped to interactive elements." />
                         <CardContent>
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', fontSize: '0.875rem', marginTop: '1rem' }}>

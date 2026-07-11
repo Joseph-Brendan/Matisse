@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import {
   Palette, Type, Grid3x3, Layers, Sparkles, Bell,
-  User, Mail, Lock, ExternalLink, CheckCircle2, AlertCircle, Info
+  User, Mail, Lock, CheckCircle2, AlertCircle, MapPin, Trash2, ExternalLink
 } from 'lucide-react';
 import { useColorStore } from '../store/useColorStore';
-import { showToast } from '../store/useToastStore';
+import { showConfirm, showAlert } from '../store/useConfirmStore';
 
 // Components
 import { GlossyButton } from '../design-system/components/Button/GlossyButton';
@@ -13,42 +13,25 @@ import { Badge } from '../design-system/components/Badge/Badge';
 import { Input } from '../design-system/components/Input/Input';
 import { Alert } from '../design-system/components/Alert/Alert';
 import { Tabs, TabPanel } from '../design-system/components/Tabs/Tabs';
-import { Modal } from '../design-system/components/Modal/Modal';
+import './ComponentExplorer.css';
 
 export const ComponentExplorer: React.FC = () => {
   const { roles, theme, typography, spacing, borderRadius, shadows, elevation } = useColorStore();
   const [activeExplorerTab, setActiveExplorerTab] = useState('colors');
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [inputValue, setInputValue] = useState('');
 
   const activeRoles = roles[theme];
 
   const handleCopyText = (text: string) => {
     navigator.clipboard.writeText(text);
-    showToast('success', `Copied: ${text}`);
+    showAlert('Copied', `Token value copied to clipboard.`, 'success');
   };
 
   return (
-    <div style={{ display: 'flex', flex: 1, minHeight: '0', background: 'var(--md-ref-role-background)', borderRadius: '1rem', border: '1px solid var(--md-ref-role-outlineVariant)', overflow: 'hidden' }}>
+    <div className="component-explorer">
       {/* Navigation Sidebar */}
-      <aside
-        style={{
-          width: '240px',
-          borderRight: '1px solid var(--md-ref-role-outlineVariant)',
-          padding: '1.5rem 1rem',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '0.375rem',
-          background: 'var(--md-ref-role-surface)',
-          flexShrink: 0,
-          overflowY: 'auto'
-        }}
-      >
-        <div style={{ marginBottom: '1rem', padding: '0 0.5rem' }}>
-          <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--md-ref-role-outline)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-            Design Tokens
-          </span>
-        </div>
+      <aside className="component-explorer__sidebar">
+        <div className="explorer-nav-label">Design Tokens</div>
 
         {[
           { id: 'colors', label: 'Color Roles', icon: <Palette size={18} /> },
@@ -58,36 +41,17 @@ export const ComponentExplorer: React.FC = () => {
         ].map((item) => (
           <button
             key={item.id}
+            className={`explorer-nav-btn${activeExplorerTab === item.id ? ' explorer-nav-btn--active' : ''}`}
             onClick={() => setActiveExplorerTab(item.id)}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.75rem',
-              padding: '0.75rem',
-              borderRadius: '0.5rem',
-              border: 'none',
-              background: activeExplorerTab === item.id ? 'var(--md-ref-role-primaryContainer)' : 'transparent',
-              color: activeExplorerTab === item.id ? 'var(--md-ref-role-onPrimaryContainer)' : 'var(--md-ref-role-onSurfaceVariant)',
-              fontWeight: activeExplorerTab === item.id ? 600 : 500,
-              cursor: 'pointer',
-              fontSize: '0.875rem',
-              transition: 'all 0.15s',
-              textAlign: 'left',
-              width: '100%',
-            }}
           >
             {item.icon}
             {item.label}
           </button>
         ))}
 
-        <div style={{ height: '1px', background: 'var(--md-ref-role-outlineVariant)', margin: '1rem 0' }} />
+        <div className="explorer-nav-divider" />
 
-        <div style={{ marginBottom: '1rem', padding: '0 0.5rem' }}>
-          <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--md-ref-role-outline)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-            Components
-          </span>
-        </div>
+        <div className="explorer-nav-label">Components</div>
 
         {[
           { id: 'buttons', label: 'Glossy Buttons', icon: <Sparkles size={18} /> },
@@ -97,23 +61,8 @@ export const ComponentExplorer: React.FC = () => {
         ].map((item) => (
           <button
             key={item.id}
+            className={`explorer-nav-btn${activeExplorerTab === item.id ? ' explorer-nav-btn--active' : ''}`}
             onClick={() => setActiveExplorerTab(item.id)}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.75rem',
-              padding: '0.75rem',
-              borderRadius: '0.5rem',
-              border: 'none',
-              background: activeExplorerTab === item.id ? 'var(--md-ref-role-primaryContainer)' : 'transparent',
-              color: activeExplorerTab === item.id ? 'var(--md-ref-role-onPrimaryContainer)' : 'var(--md-ref-role-onSurfaceVariant)',
-              fontWeight: activeExplorerTab === item.id ? 600 : 500,
-              cursor: 'pointer',
-              fontSize: '0.875rem',
-              transition: 'all 0.15s',
-              textAlign: 'left',
-              width: '100%',
-            }}
           >
             {item.icon}
             {item.label}
@@ -122,54 +71,30 @@ export const ComponentExplorer: React.FC = () => {
       </aside>
 
       {/* Content Area */}
-      <main style={{ flex: 1, padding: '2rem', overflowY: 'auto', background: 'var(--md-ref-role-background)' }}>
+      <main className="component-explorer__content">
         {/* Colors Panel */}
         {activeExplorerTab === 'colors' && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-            <div>
-              <h2 style={{ fontSize: '1.75rem', fontWeight: 700, margin: 0 }}>Semantic Color Roles</h2>
-              <p style={{ color: 'var(--md-ref-role-onSurfaceVariant)', margin: '0.25rem 0 0' }}>
-                Dynamically resolved values based on Material 3 tonal palettes. Click a swatch to copy its HSL.
-              </p>
+          <div className="explorer-section">
+            <div className="explorer-section-header">
+              <h2>Semantic Color Roles</h2>
+              <p>Dynamically resolved values based on Material 3 tonal palettes. Click a swatch to copy its HSL.</p>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1.25rem' }}>
+            <div className="explorer-grid explorer-grid--color-roles">
               {activeRoles.map((role) => (
                 <div
                   key={role.name}
-                  className="card card--hoverable"
+                  className="explorer-color-role-card"
                   onClick={() => handleCopyText(role.resolvedValue)}
-                  style={{
-                    padding: '1rem',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    background: 'var(--md-ref-role-surface)',
-                    border: '1px solid var(--md-ref-role-outlineVariant)',
-                    borderRadius: '0.75rem',
-                    cursor: 'pointer',
-                    transition: 'all 0.2s',
-                  }}
                 >
                   <div>
-                    <span style={{ fontWeight: 600, fontSize: '0.875rem', color: 'var(--md-ref-role-onSurface)' }}>{role.name}</span>
-                    <p style={{ margin: '0.125rem 0 0', fontSize: '0.75rem', color: 'var(--md-ref-role-onSurfaceVariant)', fontFamily: 'monospace' }}>
-                      {role.resolvedValue}
-                    </p>
-                    <p style={{ margin: '0.25rem 0 0', fontSize: '0.6875rem', color: 'var(--md-ref-role-outline)', opacity: 0.8 }}>
-                      {role.reference}
-                    </p>
+                    <span className="explorer-color-role-card-name">{role.name}</span>
+                    <p className="explorer-color-role-card-value">{role.resolvedValue}</p>
+                    <p className="explorer-color-role-card-ref">{role.reference}</p>
                   </div>
                   <div
-                    style={{
-                      width: '44px',
-                      height: '44px',
-                      borderRadius: '0.5rem',
-                      background: role.resolvedValue,
-                      border: '1px solid var(--md-ref-role-outlineVariant)',
-                      boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
-                      flexShrink: 0,
-                    }}
+                    className="explorer-color-role-card-swatch"
+                    style={{ background: role.resolvedValue }}
                   />
                 </div>
               ))}
@@ -179,22 +104,20 @@ export const ComponentExplorer: React.FC = () => {
 
         {/* Typography Panel */}
         {activeExplorerTab === 'typography' && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-            <div>
-              <h2 style={{ fontSize: '1.75rem', fontWeight: 700, margin: 0 }}>Typography Scale</h2>
-              <p style={{ color: 'var(--md-ref-role-onSurfaceVariant)', margin: '0.25rem 0 0' }}>
-                Open Sans system font scales mapped to standard sizing slots.
-              </p>
+          <div className="explorer-section">
+            <div className="explorer-section-header">
+              <h2>Typography Scale</h2>
+              <p>Open Sans system font scales mapped to standard sizing slots.</p>
             </div>
 
             {/* Font Families */}
             <Card variant="outlined" padding="lg">
               <CardHeader title="Font Families" subtitle="Ref definitions for displays, body text, and code." />
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '1rem' }}>
+              <div className="explorer-card-inner">
                 {Object.entries(typography.fontFamily).map(([name, family]) => (
-                  <div key={name} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--md-ref-role-outlineVariant)', paddingBottom: '0.75rem' }}>
-                    <span style={{ fontWeight: 600, fontSize: '0.875rem', textTransform: 'capitalize' }}>{name}</span>
-                    <span style={{ fontSize: '0.875rem', fontFamily: family, color: 'var(--md-ref-role-onSurfaceVariant)' }}>{family}</span>
+                  <div key={name} className="explorer-typo-card-item">
+                    <span className="explorer-typo-card-item-name">{name}</span>
+                    <span className="explorer-typo-card-item-value" style={{ fontFamily: family }}>{family}</span>
                   </div>
                 ))}
               </div>
@@ -203,14 +126,14 @@ export const ComponentExplorer: React.FC = () => {
             {/* Font Sizes */}
             <Card variant="outlined" padding="lg">
               <CardHeader title="Sizes & Alignment" subtitle="Visual preview of the standard type scale." />
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', marginTop: '1rem' }}>
+              <div className="explorer-card-inner explorer-card-inner--lg">
                 {Object.entries(typography.fontSize).map(([size, value]) => (
-                  <div key={size} style={{ display: 'flex', alignItems: 'flex-start', borderBottom: '1px solid var(--md-ref-role-outlineVariant)', paddingBottom: '1rem' }}>
-                    <div style={{ width: '120px', flexShrink: 0 }}>
-                      <span style={{ fontWeight: 600, fontSize: '0.875rem' }}>{size}</span>
-                      <p style={{ margin: 0, fontSize: '0.75rem', color: 'var(--md-ref-role-onSurfaceVariant)', fontFamily: 'monospace' }}>{value}</p>
+                  <div key={size} className="explorer-typo-size-row">
+                    <div className="explorer-typo-size-label">
+                      <span className="explorer-typo-size-name">{size}</span>
+                      <p className="explorer-typo-size-value">{value}</p>
                     </div>
-                    <div style={{ flex: 1, fontSize: value, lineHeight: 1.2, color: 'var(--md-ref-role-onSurface)' }}>
+                    <div className="explorer-typo-size-preview" style={{ fontSize: value }}>
                       Sphinx of black quartz, judge my vow.
                     </div>
                   </div>
@@ -222,31 +145,24 @@ export const ComponentExplorer: React.FC = () => {
 
         {/* Spacing & Radius Panel */}
         {activeExplorerTab === 'spacing' && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-            <div>
-              <h2 style={{ fontSize: '1.75rem', fontWeight: 700, margin: 0 }}>Spacing & Borders</h2>
-              <p style={{ color: 'var(--md-ref-role-onSurfaceVariant)', margin: '0.25rem 0 0' }}>
-                4px-based grid steps and rounded border-radius tokens.
-              </p>
+          <div className="explorer-section">
+            <div className="explorer-section-header">
+              <h2>Spacing & Borders</h2>
+              <p>4px-based grid steps and rounded border-radius tokens.</p>
             </div>
 
             {/* Border Radius */}
             <Card variant="outlined" padding="lg">
               <CardHeader title="Border Radius Scale" subtitle="Rounding definitions used across containers, buttons, and inputs." />
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: '1.25rem', marginTop: '1rem' }}>
+              <div className="explorer-grid explorer-grid--border-radius" style={{ marginTop: '1rem' }}>
                 {Object.entries(borderRadius).map(([name, value]) => (
                   <div
                     key={name}
-                    style={{
-                      padding: '1rem',
-                      background: 'var(--md-ref-role-surface)',
-                      border: '1px solid var(--md-ref-role-outlineVariant)',
-                      borderRadius: value,
-                      textAlign: 'center',
-                    }}
+                    className="explorer-br-card"
+                    style={{ borderRadius: value }}
                   >
-                    <span style={{ fontWeight: 600, fontSize: '0.875rem' }}>{name}</span>
-                    <p style={{ margin: '0.25rem 0 0', fontSize: '0.75rem', color: 'var(--md-ref-role-onSurfaceVariant)', fontFamily: 'monospace' }}>{value}</p>
+                    <span className="explorer-br-card-name">{name}</span>
+                    <p className="explorer-br-card-value">{value}</p>
                   </div>
                 ))}
               </div>
@@ -255,23 +171,18 @@ export const ComponentExplorer: React.FC = () => {
             {/* Spacing Scale */}
             <Card variant="outlined" padding="lg">
               <CardHeader title="Spacing Blocks" subtitle="Linear spacer guides (showing key increments)." />
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '1rem' }}>
+              <div className="explorer-card-inner">
                 {['0.5', '1', '2', '3', '4', '6', '8'].map((key) => {
                   const value = spacing[key as keyof typeof spacing];
                   return (
-                    <div key={key} style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
-                      <div style={{ width: '80px', flexShrink: 0 }}>
-                        <span style={{ fontWeight: 600, fontSize: '0.875rem' }}>Step {key}</span>
-                        <p style={{ margin: 0, fontSize: '0.75rem', color: 'var(--md-ref-role-onSurfaceVariant)', fontFamily: 'monospace' }}>{value}</p>
+                    <div key={key} className="explorer-spacing-row">
+                      <div className="explorer-spacing-row-label">
+                        <span className="explorer-spacing-row-name">Step {key}</span>
+                        <p className="explorer-spacing-row-value">{value}</p>
                       </div>
                       <div
-                        style={{
-                          height: '24px',
-                          width: value,
-                          background: 'var(--md-ref-role-primary)',
-                          borderRadius: '4px',
-                          opacity: 0.85,
-                        }}
+                        className="explorer-spacing-row-bar"
+                        style={{ width: value }}
                       />
                     </div>
                   );
@@ -283,32 +194,25 @@ export const ComponentExplorer: React.FC = () => {
 
         {/* Shadows & Elevation Panel */}
         {activeExplorerTab === 'shadows' && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-            <div>
-              <h2 style={{ fontSize: '1.75rem', fontWeight: 700, margin: 0 }}>Shadows & Elevation</h2>
-              <p style={{ color: 'var(--md-ref-role-onSurfaceVariant)', margin: '0.25rem 0 0' }}>
-                Atmospheric shadows and standard elevation layers.
-              </p>
+          <div className="explorer-section">
+            <div className="explorer-section-header">
+              <h2>Shadows & Elevation</h2>
+              <p>Atmospheric shadows and standard elevation layers.</p>
             </div>
 
             {/* Elevation cards */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '1.5rem' }}>
+            <div className="explorer-grid explorer-grid--elevation">
               {Object.entries(elevation).map(([level, value]) => (
                 <div
                   key={level}
+                  className="explorer-elevation-card"
                   style={{
-                    padding: '2rem 1.5rem',
-                    background: 'var(--md-ref-role-surface)',
-                    borderRadius: '0.75rem',
                     boxShadow: value,
-                    textAlign: 'center',
                     border: level === '0' ? '1px solid var(--md-ref-role-outlineVariant)' : 'none',
                   }}
                 >
-                  <span style={{ fontWeight: 700, fontSize: '1.125rem', color: 'var(--md-ref-role-onSurface)' }}>Elevation {level}</span>
-                  <p style={{ margin: '0.5rem 0 0', fontSize: '0.75rem', color: 'var(--md-ref-role-onSurfaceVariant)', fontFamily: 'monospace', textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }} title={value}>
-                    {value}
-                  </p>
+                  <span className="explorer-elevation-card-title">Elevation {level}</span>
+                  <p className="explorer-elevation-card-value" title={value}>{value}</p>
                 </div>
               ))}
             </div>
@@ -316,23 +220,15 @@ export const ComponentExplorer: React.FC = () => {
             {/* Glow states */}
             <Card variant="outlined" padding="lg">
               <CardHeader title="Glow Shadows" subtitle="Vibrant colored shadow effects mapped to variants." />
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '1.5rem', marginTop: '1rem' }}>
+              <div className="explorer-grid explorer-grid--glows" style={{ marginTop: '1rem' }}>
                 {Object.entries(shadows.glow).map(([name, shadowValue]) => (
                   <div
                     key={name}
-                    style={{
-                      padding: '1.5rem',
-                      background: 'var(--md-ref-role-surface)',
-                      borderRadius: '0.75rem',
-                      boxShadow: shadowValue,
-                      textAlign: 'center',
-                      border: '1px solid var(--md-ref-role-outlineVariant)',
-                    }}
+                    className="explorer-glow-card"
+                    style={{ boxShadow: shadowValue }}
                   >
-                    <span style={{ fontWeight: 600, fontSize: '0.875rem', textTransform: 'capitalize' }}>{name} Glow</span>
-                    <p style={{ margin: '0.25rem 0 0', fontSize: '0.75rem', color: 'var(--md-ref-role-onSurfaceVariant)', fontFamily: 'monospace' }}>
-                      Active Glow State
-                    </p>
+                    <span className="explorer-glow-card-name">{name} Glow</span>
+                    <p className="explorer-glow-card-sub">Active Glow State</p>
                   </div>
                 ))}
               </div>
@@ -342,75 +238,45 @@ export const ComponentExplorer: React.FC = () => {
 
         {/* Component Showcase - Buttons */}
         {activeExplorerTab === 'buttons' && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-            <div>
-              <h2 style={{ fontSize: '1.75rem', fontWeight: 700, margin: 0 }}>Glossy Buttons Component</h2>
-              <p style={{ color: 'var(--md-ref-role-onSurfaceVariant)', margin: '0.25rem 0 0' }}>
-                Showcasing all Glossy Button variants, sizes, and icon integrations.
-              </p>
+          <div className="explorer-section">
+            <div className="explorer-section-header">
+              <h2>Glossy Buttons Component</h2>
+              <p>Showcasing all Glossy Button variants, sizes, and icon integrations.</p>
             </div>
 
             <Card variant="outlined" padding="lg">
               <CardHeader title="Variants & Aesthetics" subtitle="Dynamic theme-aware buttons displaying correct inline horizontal row alignment with icons." />
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', marginTop: '1.5rem', alignItems: 'center' }}>
-                <GlossyButton variant="primary">
-                  <Sparkles size={16} />
-                  Primary Action
-                </GlossyButton>
-                <GlossyButton variant="secondary">
-                  <User size={16} />
-                  Secondary Action
-                </GlossyButton>
-                <GlossyButton variant="tertiary">
-                  <CheckCircle2 size={16} />
-                  Tertiary Action
-                </GlossyButton>
-                <GlossyButton variant="error">
-                  <AlertCircle size={16} />
-                  Error State
-                </GlossyButton>
-                <GlossyButton variant="outline">
-                  <ExternalLink size={16} />
-                  Outlined
-                </GlossyButton>
-                <GlossyButton variant="ghost">
-                  <ExternalLink size={16} style={{ transform: 'rotate(180deg)' }} />
-                  Ghost Link
-                </GlossyButton>
+              <div className="explorer-showcase-row">
+                <GlossyButton variant="primary"><Sparkles size={16} /> Primary Action</GlossyButton>
+                <GlossyButton variant="secondary"><User size={16} /> Secondary Action</GlossyButton>
+                <GlossyButton variant="tertiary"><CheckCircle2 size={16} /> Tertiary Action</GlossyButton>
+                <GlossyButton variant="error"><AlertCircle size={16} /> Error State</GlossyButton>
+                <GlossyButton variant="outline"><ExternalLink size={16} /> Outlined</GlossyButton>
+                <GlossyButton variant="ghost"><ExternalLink size={16} style={{ transform: 'rotate(180deg)' }} /> Ghost Link</GlossyButton>
               </div>
             </Card>
 
             <Card variant="outlined" padding="lg">
               <CardHeader title="Button Sizes" subtitle="Explore xs, sm, md, lg, and xl scaling." />
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', marginTop: '1.5rem', alignItems: 'center' }}>
-                <GlossyButton size="xs" variant="primary">
-                  <Sparkles size={12} /> Extra Small
-                </GlossyButton>
-                <GlossyButton size="sm" variant="primary">
-                  <Sparkles size={14} /> Small
-                </GlossyButton>
-                <GlossyButton size="md" variant="primary">
-                  <Sparkles size={16} /> Medium
-                </GlossyButton>
-                <GlossyButton size="lg" variant="primary">
-                  <Sparkles size={18} /> Large
-                </GlossyButton>
-                <GlossyButton size="xl" variant="primary">
-                  <Sparkles size={20} /> Extra Large
-                </GlossyButton>
+              <div className="explorer-showcase-row">
+                <GlossyButton size="xs" variant="primary"><Sparkles size={12} /> Extra Small</GlossyButton>
+                <GlossyButton size="sm" variant="primary"><Sparkles size={14} /> Small</GlossyButton>
+                <GlossyButton size="md" variant="primary"><Sparkles size={16} /> Medium</GlossyButton>
+                <GlossyButton size="lg" variant="primary"><Sparkles size={18} /> Large</GlossyButton>
+                <GlossyButton size="xl" variant="primary"><Sparkles size={20} /> Extra Large</GlossyButton>
               </div>
             </Card>
 
             <Card variant="outlined" padding="lg">
               <CardHeader title="Badges Scale" subtitle="Explore normal, primary dot, removable, and custom-colored semantic tags." />
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem', marginTop: '1.5rem', alignItems: 'center' }}>
+              <div className="explorer-showcase-row explorer-showcase-row--tight">
                 <Badge variant="neutral">Neutral Tag</Badge>
                 <Badge variant="primary" dot>Primary Info</Badge>
                 <Badge variant="secondary">Secondary Type</Badge>
                 <Badge variant="tertiary">Tertiary Tag</Badge>
                 <Badge variant="success">Success Tag</Badge>
                 <Badge variant="warning">Warning Tag</Badge>
-                <Badge variant="error" removable onRemove={() => showToast('info', 'Badge dismissed')}>Removable Error</Badge>
+                <Badge variant="error" removable onRemove={() => showAlert('Badge Dismissed', 'The error badge has been removed.', 'info')}>Removable Error</Badge>
                 <Badge variant="info">Info State</Badge>
               </div>
             </Card>
@@ -419,18 +285,16 @@ export const ComponentExplorer: React.FC = () => {
 
         {/* Component Showcase - Inputs */}
         {activeExplorerTab === 'inputs' && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-            <div>
-              <h2 style={{ fontSize: '1.75rem', fontWeight: 700, margin: 0 }}>Input Fields</h2>
-              <p style={{ color: 'var(--md-ref-role-onSurfaceVariant)', margin: '0.25rem 0 0' }}>
-                Text fields with outline, filled, and underlined aesthetics supporting prefix icons, validations, and loading states.
-              </p>
+          <div className="explorer-section">
+            <div className="explorer-section-header">
+              <h2>Input Fields</h2>
+              <p>Text fields with outline, filled, and underlined aesthetics supporting prefix icons, validations, and loading states.</p>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem' }}>
+            <div className="explorer-grid explorer-grid--inputs">
               <Card variant="outlined" padding="lg">
                 <CardHeader title="Outlined Inputs" />
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem', marginTop: '1rem' }}>
+                <div className="explorer-card-inner" style={{ gap: '1.25rem' }}>
                   <Input label="Email address" placeholder="email@example.com" icon={<Mail size={16} />} fullWidth />
                   <Input label="Password" type="password" placeholder="Enter your password" icon={<Lock size={16} />} fullWidth />
                 </div>
@@ -438,7 +302,7 @@ export const ComponentExplorer: React.FC = () => {
 
               <Card variant="outlined" padding="lg">
                 <CardHeader title="Filled Inputs" />
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem', marginTop: '1rem' }}>
+                <div className="explorer-card-inner" style={{ gap: '1.25rem' }}>
                   <Input variant="filled" label="Username" placeholder="Enter username" icon={<User size={16} />} fullWidth />
                   <Input variant="filled" label="Search system" placeholder="Search..." icon={<ExternalLink size={16} />} fullWidth />
                 </div>
@@ -446,7 +310,7 @@ export const ComponentExplorer: React.FC = () => {
 
               <Card variant="outlined" padding="lg">
                 <CardHeader title="Validation States" />
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem', marginTop: '1rem' }}>
+                <div className="explorer-card-inner" style={{ gap: '1.25rem' }}>
                   <Input
                     label="Input with error"
                     placeholder="Invalid input"
@@ -471,15 +335,13 @@ export const ComponentExplorer: React.FC = () => {
 
         {/* Component Showcase - Cards */}
         {activeExplorerTab === 'cards' && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-            <div>
-              <h2 style={{ fontSize: '1.75rem', fontWeight: 700, margin: 0 }}>Cards & Content Containers</h2>
-              <p style={{ color: 'var(--md-ref-role-onSurfaceVariant)', margin: '0.25rem 0 0' }}>
-                Standard layouts for cards, headers, actions, and buttons.
-              </p>
+          <div className="explorer-section">
+            <div className="explorer-section-header">
+              <h2>Cards & Content Containers</h2>
+              <p>Standard layouts for cards, headers, actions, and buttons.</p>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '1.5rem' }}>
+            <div className="explorer-grid explorer-grid--cards">
               <Card variant="elevated" hoverable>
                 <CardHeader title="Elevated Card" subtitle="Hover to test card translation scale." />
                 <CardContent>
@@ -520,7 +382,7 @@ export const ComponentExplorer: React.FC = () => {
               </Card>
             </div>
 
-            <div style={{ marginTop: '1.5rem' }}>
+            <div className="explorer-tabs-section">
               <Card variant="outlined" padding="lg">
                 <CardHeader title="Tabs Navigation" subtitle="Sleek, theme-integrated Pills, Segmented, and Underline navigation panels." />
                 <CardContent>
@@ -555,36 +417,34 @@ export const ComponentExplorer: React.FC = () => {
 
         {/* Component Showcase - Alerts & Toasts */}
         {activeExplorerTab === 'alerts-toasts' && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-            <div>
-              <h2 style={{ fontSize: '1.75rem', fontWeight: 700, margin: 0 }}>Alerts & Toast Notifications</h2>
-              <p style={{ color: 'var(--md-ref-role-onSurfaceVariant)', margin: '0.25rem 0 0' }}>
-                Interactive system feedbacks and temporary overlay notifications.
-              </p>
+          <div className="explorer-section">
+            <div className="explorer-section-header">
+              <h2>Alerts & Toast Notifications</h2>
+              <p>Interactive system feedbacks and temporary overlay notifications.</p>
             </div>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+            <div className="explorer-alerts-column">
               <Card variant="outlined" padding="lg">
-                <CardHeader title="Trigger System Toasts" subtitle="Simulate custom system alerts." />
-                <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem', flexWrap: 'wrap' }}>
-                  <GlossyButton variant="primary" onClick={() => showToast('info', 'Loading system tokens config...')}>
-                    Info Toast
+                <CardHeader title="Trigger Alert Dialogs" subtitle="Simulate each alert variant programmatically." />
+                <div className="explorer-showcase-row" style={{ marginTop: '1rem' }}>
+                  <GlossyButton variant="primary" onClick={() => showAlert('System Info', 'Loading system tokens config...', 'info')}>
+                    Info Alert
                   </GlossyButton>
-                  <GlossyButton variant="tertiary" onClick={() => showToast('success', 'Design tokens exported!')}>
-                    Success Toast
+                  <GlossyButton variant="tertiary" onClick={() => showAlert('Tokens Exported', 'Design tokens have been exported successfully!', 'success')}>
+                    Success Alert
                   </GlossyButton>
-                  <GlossyButton variant="secondary" onClick={() => showToast('warning', 'Low color contrast on outline variant.')}>
-                    Warning Toast
+                  <GlossyButton variant="secondary" onClick={() => showAlert('Contrast Warning', 'Low color contrast detected on outline variant.', 'warning')}>
+                    Warning Alert
                   </GlossyButton>
-                  <GlossyButton variant="error" onClick={() => showToast('error', 'Failed to compile Vite project.')}>
-                    Error Toast
+                  <GlossyButton variant="error" onClick={() => showAlert('Compile Error', 'Failed to compile Vite project. Check your config.', 'error')}>
+                    Error Alert
                   </GlossyButton>
                 </div>
               </Card>
 
               <Card variant="outlined" padding="lg">
                 <CardHeader title="Alert Component Variants" subtitle="Standard inline messages." />
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '1rem' }}>
+                <div className="explorer-alerts-column">
                   <Alert variant="info" title="System Status" dismissible>
                     The design system contains 24 typography scales and is bound dynamically.
                   </Alert>
@@ -601,84 +461,48 @@ export const ComponentExplorer: React.FC = () => {
               </Card>
 
               <Card variant="outlined" padding="lg">
-                <CardHeader title="Interactive Modal Dialogs" subtitle="Open full dialog overlay panels." />
-                <div style={{ marginTop: '1rem' }}>
-                  <GlossyButton variant="primary" onClick={() => setIsModalOpen(true)}>
-                    Open Test Modal
+                <CardHeader title="Interactive Confirm Dialogs" subtitle="Programmatic modals — triggered from anywhere in the app via showConfirm()." />
+                <div className="explorer-showcase-row" style={{ marginTop: '1rem' }}>
+                  <GlossyButton
+                    variant="primary"
+                    onClick={async () => {
+                      const ok = await showConfirm({
+                        title: 'Location Services',
+                        message: 'Allow "Maps" to access your location for directions while you\'re using the app?',
+                        confirmLabel: 'Enable',
+                        dismissLabel: 'Dismiss',
+                        variant: 'info',
+                        icon: MapPin,
+                      });
+                      if (ok) showAlert('Enabled', 'Location Services have been enabled.', 'success');
+                    }}
+                  >
+                    Confirm Dialog
                   </GlossyButton>
 
-                  <Modal
-                    isOpen={isModalOpen}
-                    onClose={() => setIsModalOpen(false)}
-                    showCloseButton={false}
-                    size="sm"
-                    footer={
-                      <div style={{ display: 'flex', gap: '1.5rem', justifyContent: 'flex-end', width: '100%', padding: '0.25rem 0' }}>
-                        <button
-                          onClick={() => setIsModalOpen(false)}
-                          style={{
-                            background: 'none',
-                            border: 'none',
-                            color: 'var(--md-ref-role-onSurfaceVariant)',
-                            fontWeight: 600,
-                            fontSize: '0.875rem',
-                            cursor: 'pointer',
-                            padding: '0.5rem 1rem',
-                            borderRadius: '0.375rem',
-                            transition: 'background-color 0.15s',
-                          }}
-                          onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'var(--md-ref-role-surfaceVariant)')}
-                          onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
-                        >
-                          Dismiss
-                        </button>
-                        <button
-                          onClick={() => { setIsModalOpen(false); showToast('success', 'Location Services enabled!'); }}
-                          style={{
-                            background: 'none',
-                            border: 'none',
-                            color: 'var(--md-ref-role-primary)',
-                            fontWeight: 600,
-                            fontSize: '0.875rem',
-                            cursor: 'pointer',
-                            padding: '0.5rem 1rem',
-                            borderRadius: '0.375rem',
-                            transition: 'background-color 0.15s',
-                          }}
-                          onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'var(--md-ref-role-primaryContainer)')}
-                          onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
-                        >
-                          Enable
-                        </button>
-                      </div>
-                    }
+                  <GlossyButton
+                    variant="error"
+                    onClick={async () => {
+                      const ok = await showConfirm({
+                        title: 'Delete Project',
+                        message: 'This action is permanent and cannot be undone. Are you sure you want to delete this project?',
+                        confirmLabel: 'Delete',
+                        dismissLabel: 'Keep',
+                        variant: 'error',
+                        icon: Trash2,
+                      });
+                      if (ok) showAlert('Deleted', 'The project has been permanently deleted.', 'error');
+                    }}
                   >
-                    <div style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start', padding: '0.5rem 0' }}>
-                      <div
-                        style={{
-                          width: '36px',
-                          height: '36px',
-                          borderRadius: '50%',
-                          backgroundColor: 'var(--md-ref-role-primaryContainer)',
-                          color: 'var(--md-ref-role-primary)',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          flexShrink: 0,
-                        }}
-                      >
-                        <Info size={20} />
-                      </div>
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                        <h3 style={{ margin: 0, fontSize: '0.9375rem', fontWeight: 700, color: 'var(--md-ref-role-onSurface)', letterSpacing: '0.05em' }}>
-                          LOCATION SERVICES
-                        </h3>
-                        <p style={{ margin: 0, fontSize: '0.875rem', color: 'var(--md-ref-role-onSurfaceVariant)', lineHeight: 1.5 }}>
-                          Allow &ldquo;Maps&rdquo; to access your location for directions while you&rsquo;re using the app?
-                        </p>
-                      </div>
-                    </div>
-                  </Modal>
+                    Destructive Confirm
+                  </GlossyButton>
+
+                  <GlossyButton
+                    variant="secondary"
+                    onClick={() => showAlert('Export Complete', 'Your design tokens have been exported to CSS variables and are ready to use.', 'success')}
+                  >
+                    Alert Only
+                  </GlossyButton>
                 </div>
               </Card>
             </div>

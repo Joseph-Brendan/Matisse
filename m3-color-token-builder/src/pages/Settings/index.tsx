@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Moon, Sun, Bell, User, Info, Palette } from 'lucide-react';
 import { useAuthStore } from '../../store/useAuthStore';
 import { useColorStore } from '../../store/useColorStore';
-import { showToast } from '../../store/useToastStore';
+import { showAlert } from '../../store/useConfirmStore';
 import './Settings.css';
 
 export const Settings: React.FC = () => {
@@ -21,7 +21,7 @@ export const Settings: React.FC = () => {
 
   const handleThemeChange = (t: 'light' | 'dark') => {
     setTheme(t);
-    showToast('success', `Switched to ${t} theme`);
+    showAlert('Appearance', `Switched to ${t === 'light' ? 'Light' : 'Dark'} mode.`, 'info');
   };
 
   return (
@@ -111,8 +111,8 @@ export const Settings: React.FC = () => {
           </div>
           <div className="settings-row">
             <div className="settings-row__info">
-              <span className="settings-row__label">In-app toast notifications</span>
-              <span className="settings-row__desc">Show toast messages for saves, exports, and errors.</span>
+              <span className="settings-row__label">In-app notifications</span>
+              <span className="settings-row__desc">Show confirmation dialogs for saves, exports, and actions.</span>
             </div>
             <label className="settings-toggle" aria-label="Toggle toast notifications">
               <input

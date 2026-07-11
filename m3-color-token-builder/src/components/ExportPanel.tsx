@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useColorStore } from '../store/useColorStore';
 import { GlossyButton } from '../design-system/components/Button/GlossyButton';
-import { showToast } from '../store/useToastStore';
+import { showAlert } from '../store/useConfirmStore';
 import './ExportPanel.css';
 
 interface ExportPanelProps {
@@ -223,7 +223,7 @@ export const ExportPanel: React.FC<ExportPanelProps> = ({ isOpen, onClose, defau
 
     const handleCopy = () => {
         navigator.clipboard.writeText(generateText());
-        showToast('success', 'Copied to clipboard!');
+        showAlert('Copied', 'Tokens copied to clipboard!', 'success');
     };
 
     return (
