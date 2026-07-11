@@ -1,14 +1,32 @@
-const POPUP_WIDTH = 600;
-const POPUP_HEIGHT = 700;
-const CLOSE_GRACE_MS = 1500;
+export interface OAuthResult {
+  email?: string;
+  name?: string;
+  code?: string;
+  error?: string;
+}
 
-export function openOAuthPopup(url: string): Promise<{ provider: string; code?: string; idToken?: string; email?: string; name?: string }> {
-  const left = window.screenX + (window.innerWidth - POPUP_WIDTH) / 2;
-  const top = window.screenY + (window.innerHeight - POPUP_HEIGHT) / 2;
+export function generateState(provider: string): string {
+  const raw = `${provider}-${crypto.randomUUID()}-${Date.now()}`;
+  const encoder = new TextEncoder();
+  const data = encoder.encode(raw);
+  return crypto.subtle
+    ? Array.from(new Uint8Array(data))
+        .map((b) => b.toString(16).padStart(2, '0'))
+        .join('')
+        .slice(0, 32)
+    : raw.replace(/-/g, '').slice(0, 32);
+}
+
+export function openOAuthPopup(url: string): Promise<OAuthResult> {
+  const width = 600;
+  const height = 700;
+  const left = window.screenX + (window.innerWidth - width) / 2;
+  const top = window.screenY + (window.innerHeight - height) / 2;
+
   const popup = window.open(
     url,
     'oauth-popup',
-    `width=${POPUP_WIDTH},height=${POPUP_HEIGHT},left=${left},top=${top},popup=1`
+    `width=${width},height=${height},left=${left},top=${top},popup=1`
   );
 
   if (!popup) {
@@ -16,59 +34,56 @@ export function openOAuthPopup(url: string): Promise<{ provider: string; code?: 
   }
 
   return new Promise((resolve, reject) => {
-    let settled = false;
-    let closeTimer: ReturnType<typeof setTimeout> | null = null;
-
-    const settle = (err: Error | null, result?: any) => {
-      if (settled) return;
-      settled = true;
-      window.removeEventListener('message', handleMessage);
-      if (closeTimer) clearTimeout(closeTimer);
-      clearInterval(pollTimer);
-      if (err) reject(err);
-      else resolve(result);
-    };
-
-    const handleMessage = (event: MessageEvent) => {
-      if (event.origin !== window.location.origin) return;
-      if (event.data?.type !== 'oauth-result') return;
-      if (event.data.error) {
-        settle(new Error(event.data.error));
-      } else {
-        settle(null, event.data.payload);
-      }
-    };
-
-    const pollTimer = setInterval(() => {
-      if (settled) return;
-      if (popup.closed) {
-        if (closeTimer === null) {
-          closeTimer = setTimeout(() => {
-            settle(new Error('OAuth popup was closed before completing sign-in.'));
-          }, CLOSE_GRACE_MS);
+    const timer = setInterval(() => {
+      try {
+        if (popup.closed) {
+          clearInterval(timer);
+          reject(new Error('Sign-in cancelled.'));
+          return;
         }
-      } else {
-        if (closeTimer !== null) {
-          clearTimeout(closeTimer);
-          closeTimer = null;
+
+        const href = popup.location.href;
+        const currentOrigin = window.location.origin;
+
+        if (href.startsWith(currentOrigin + '/auth/callback')) {
+          const params = new URLSearchParams(href.split('?')[1] || '');
+          const hash = href.includes('#') ? new URLSearchParams(href.split('#')[1] || '') : new URLSearchParams();
+
+          const idToken = hash.get('id_token');
+          const accessToken = hash.get('access_token') || params.get('code');
+          const error = params.get('error') || hash.get('error');
+
+          if (error) {
+            popup.close();
+            clearInterval(timer);
+            reject(new Error(decodeURIComponent(error)));
+            return;
+          }
+
+          popup.close();
+          clearInterval(timer);
+
+          if (idToken) {
+            const payload = JSON.parse(atob(idToken.split('.')[1]));
+            resolve({
+              email: payload.email,
+              name: payload.name,
+            });
+          } else if (accessToken) {
+            resolve({ code: accessToken });
+          } else {
+            resolve({});
+          }
         }
+      } catch {
+        // cross-origin until redirect lands on same origin — safe to ignore
       }
     }, 200);
 
-    window.addEventListener('message', handleMessage);
+    setTimeout(() => {
+      clearInterval(timer);
+      popup.close();
+      reject(new Error('Sign-in timed out.'));
+    }, 120_000);
   });
-}
-
-export function generateState(provider: string): string {
-  const state = `${provider}_${crypto.randomUUID()}`;
-  localStorage.setItem('oauth_state', state);
-  return state;
-}
-
-export function verifyState(state: string): string | null {
-  const stored = localStorage.getItem('oauth_state');
-  if (!stored || stored !== state) return null;
-  localStorage.removeItem('oauth_state');
-  const provider = state.split('_')[0];
-  return provider;
 }

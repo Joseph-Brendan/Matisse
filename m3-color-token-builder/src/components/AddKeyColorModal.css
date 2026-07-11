@@ -191,3 +191,36 @@
   box-shadow: 0 6px 20px rgba(105, 56, 189, 0.45);
   transform: translateY(-1px);
 }
+
+/* ── Responsive ── */
+@media (max-width: 480px) {
+  .modal-glass-card {
+    padding: 1.5rem;
+    border-radius: 1.25rem;
+  }
+  .modal-title {
+    font-size: 1.125rem;
+  }
+  .modal-actions {
+    flex-direction: column-reverse;
+    gap: 0.5rem;
+  }
+  .modal-actions button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 375px) {
+  .modal-glass-card {
+    padding: 1.25rem 1rem;
+    border-radius: 1rem;
+    gap: 1rem;
+  }
+  .modal-title {
+    font-size: 1rem;
+  }
+  .modal-input {
+    padding: 0.625rem 0.75rem;
+    font-size: 0.875rem;
+  }
+}

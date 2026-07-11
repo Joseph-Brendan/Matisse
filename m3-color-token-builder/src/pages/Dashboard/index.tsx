@@ -1,18 +1,23 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Palette, Type, LayoutGrid, Download, Save, Plus,
-  Bell, LogOut, ChevronDown, Eye, Check,
-  History, FolderOpen, Settings, Zap, Layers, Box, Wind, Sparkles,
+  Bell, LogOut, Eye, Menu, X,
+  History, Settings, Zap, Layers, Box, Wind, Sparkles, Trash2,
 } from 'lucide-react';
 import { KeyColorCard } from '../../components/KeyColorCard';
 import { TonalPaletteEditor } from '../../components/TonalPaletteEditor';
 import { RoleMappingTable } from '../../components/RoleMappingTable';
 import { PreviewPanel } from '../../components/PreviewPanel';
 import { ExportPanel } from '../../components/ExportPanel';
+import { ComponentExplorer } from '../../components/ComponentExplorer';
 import { useColorStore } from '../../store/useColorStore';
 import { useAuthStore } from '../../store/useAuthStore';
-import { showToast } from '../../store/useToastStore';
+import { showAlert, showConfirm } from '../../store/useConfirmStore';
+import { GlossyButton } from '../../design-system/components/Button/GlossyButton';
+import { FontPicker } from '../../design-system/components/FontPicker/FontPicker';
+import { Dropdown } from '../../design-system/components';
+import { FeatureCheckbox } from '../../components/FeatureCheckbox';
 import './Dashboard.css';
 
 type Feature = 'color' | 'typography' | 'spacing' | 'shadows' | 'elevation' | 'borderRadius' | 'motion' | 'components';
@@ -20,13 +25,13 @@ type WorkspaceTab = 'builder' | 'preview';
 
 const featureNav: { id: Feature; label: string; icon: React.ReactNode; soon?: boolean }[] = [
   { id: 'color',        label: 'Color',         icon: <Palette size={15} /> },
-  { id: 'typography',   label: 'Typography',    icon: <Type size={15} />,       soon: true },
-  { id: 'spacing',      label: 'Spacing',       icon: <LayoutGrid size={15} />, soon: true },
-  { id: 'shadows',      label: 'Shadows',       icon: <Layers size={15} />,     soon: true },
-  { id: 'elevation',    label: 'Elevation',     icon: <Box size={15} />,        soon: true },
-  { id: 'borderRadius', label: 'Border Radius', icon: <Sparkles size={15} />,   soon: true },
+  { id: 'typography',   label: 'Typography',    icon: <Type size={15} /> },
+  { id: 'spacing',      label: 'Spacing',       icon: <LayoutGrid size={15} /> },
+  { id: 'shadows',      label: 'Shadows',       icon: <Layers size={15} /> },
+  { id: 'elevation',    label: 'Elevation',     icon: <Box size={15} /> },
+  { id: 'borderRadius', label: 'Border Radius', icon: <Sparkles size={15} /> },
   { id: 'motion',       label: 'Motion',        icon: <Wind size={15} />,       soon: true },
-  { id: 'components',   label: 'Components',    icon: <Sparkles size={15} />,   soon: true },
+  { id: 'components',   label: 'Components',    icon: <Sparkles size={15} /> },
 ];
 
 const featureLabels: Record<Feature, string> = {
@@ -55,33 +60,32 @@ export const Dashboard: React.FC = () => {
   const { user, logout } = useAuthStore();
   const {
     projectName, setProjectName,
-    history, pushHistory, clearHistory,
-    checklist, toggleChecklist,
+    history, pushHistory, deleteHistoryItem, clearHistory,
+    checklist, toggleChecklist, checkFeature,
+    typography, spacing, borderRadius, shadows, elevation,
+    updateTypographyFamily, updateTypographySize, updateTypographyWeight,
+    updateSpacingValue, updateSpacingUnit, updateBorderRadiusValue,
+    updateShadowValue, updateElevationValue, updateShadowGlow
   } = useColorStore();
 
   const [activeFeature, setActiveFeature] = useState<Feature>('color');
   const [activeTab, setActiveTab] = useState<WorkspaceTab>('builder');
-  const [isExportOpen, setIsExportOpen] = useState(false);
-  const [showExportMenu, setShowExportMenu] = useState(false);
-  const [showUserMenu, setShowUserMenu] = useState(false);
+  const [exportScope, setExportScope] = useState<'all' | 'color' | null>(null);
   const [mobileNav, setMobileNav] = useState<Feature | 'preview'>('color');
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  const exportRef = useRef<HTMLDivElement>(null);
-  const userRef = useRef<HTMLDivElement>(null);
+  const featureChecklistMap: Partial<Record<Feature, keyof typeof checklist>> = {
+    color: 'color',
+    typography: 'typography',
+    spacing: 'spacing',
+  };
 
-  // Close dropdowns on outside click
   useEffect(() => {
-    const handler = (e: MouseEvent) => {
-      if (exportRef.current && !exportRef.current.contains(e.target as Node)) {
-        setShowExportMenu(false);
-      }
-      if (userRef.current && !userRef.current.contains(e.target as Node)) {
-        setShowUserMenu(false);
-      }
-    };
-    document.addEventListener('mousedown', handler);
-    return () => document.removeEventListener('mousedown', handler);
-  }, []);
+    const key = featureChecklistMap[activeFeature];
+    if (key && !checklist[key]) {
+      checkFeature(key);
+    }
+  }, [activeFeature]);
 
   const handleSave = () => {
     const snapshot = {
@@ -90,13 +94,13 @@ export const Dashboard: React.FC = () => {
       timestamp: Date.now(),
     };
     pushHistory(snapshot);
-    showToast('success', `"${projectName}" saved`);
+    showAlert('Project Saved', `"${projectName}" has been saved to your history.`, 'success');
   };
 
   const handleNewProject = () => {
     const name = `Project ${history.length + 1}`;
     setProjectName(name);
-    showToast('info', `Started new project: ${name}`);
+    showAlert('New Project', `Started a new project: "${name}".`, 'info');
   };
 
   const handleLogout = () => {
@@ -107,6 +111,7 @@ export const Dashboard: React.FC = () => {
   const handleFeatureClick = (f: Feature) => {
     setActiveFeature(f);
     setActiveTab('builder');
+    setSidebarOpen(false);
   };
 
   const handleMobileNav = (nav: Feature | 'preview') => {
@@ -127,9 +132,16 @@ export const Dashboard: React.FC = () => {
       {/* ── Dark Header ──────────────────────────────── */}
       <header className="dashboard-header">
         <div className="dashboard-header-left">
-          <img src="/logo-wt.svg" alt="Matisse" onClick={() => navigate('/')} style={{ height: '54px', cursor: 'pointer', objectFit: 'contain' }} />
+          <button
+            className="dash-header-menu-btn"
+            onClick={() => setSidebarOpen(!sidebarOpen)}
+            aria-label="Toggle sidebar"
+          >
+            {sidebarOpen ? <X size={20} /> : <Menu size={20} />}
+          </button>
+          <img src="/logo-wt.svg" alt="Matisse" className="dash-logo-img" onClick={() => navigate('/')} />
           <input
-            className="dashboard-project-name"
+            className="dashboard-project-name desktop-only"
             value={projectName}
             onChange={(e) => setProjectName(e.target.value)}
             aria-label="Project name"
@@ -139,68 +151,77 @@ export const Dashboard: React.FC = () => {
         <div className="dashboard-header-right">
           <button className="dash-header-btn" onClick={handleSave}>
             <Save size={14} />
-            <span>Save</span>
+            <span className="dash-header-btn-label">Save</span>
           </button>
 
-          {/* Export dropdown */}
-          <div className="dash-export-wrapper" ref={exportRef}>
-            <button
-              className="dash-header-btn dash-header-btn--primary"
-              onClick={() => setShowExportMenu((v) => !v)}
-            >
-              <Download size={14} />
-              <span>Export</span>
-              <ChevronDown size={12} />
-            </button>
-            {showExportMenu && (
-              <div className="dash-export-dropdown">
-                <button className="dash-export-item" onClick={() => { setIsExportOpen(true); setShowExportMenu(false); }}>
-                  <Palette size={14} /> Export Color Tokens
-                </button>
-                <button className="dash-export-item" onClick={() => { showToast('info', 'Full export coming soon'); setShowExportMenu(false); }}>
-                  <Download size={14} /> Export All Tokens
-                </button>
-              </div>
-            )}
-          </div>
+          <button
+            className="dash-header-btn dash-header-btn--primary"
+            onClick={() => setExportScope('all')}
+          >
+            <Download size={14} />
+            <span className="dash-header-btn-label">Export</span>
+          </button>
 
-          <button className="dash-header-icon-btn" onClick={() => showToast('info', 'No new notifications')}>
+          <button className="dash-header-icon-btn desktop-only" onClick={() => navigate('/settings')} aria-label="Settings &amp; notifications">
             <Bell size={15} />
             <span className="dash-notif-dot" />
           </button>
 
-          {/* User avatar + dropdown */}
-          <div className="dash-user-dropdown-wrapper" ref={userRef}>
-            <div
-              className="dash-user-avatar"
-              style={{ background: user?.avatarColor ?? 'hsl(256, 34%, 48%)' }}
-              onClick={() => setShowUserMenu((v) => !v)}
-              title={displayName}
-            >
-              {displayInitials}
-            </div>
-            {showUserMenu && (
-              <div className="dash-user-dropdown">
-                <div className="dash-user-info">
-                  <p className="dash-user-name">{displayName}</p>
-                  <p className="dash-user-email">{displayEmail}</p>
-                </div>
-                <button className="dash-user-menu-item" onClick={() => { showToast('info', 'Settings coming soon'); setShowUserMenu(false); }}>
-                  <Settings size={14} /> Settings
-                </button>
-                <button className="dash-user-menu-item dash-user-menu-item--danger" onClick={handleLogout}>
-                  <LogOut size={14} /> Sign out
-                </button>
+          <Dropdown
+            align="right"
+            trigger={
+              <div
+                className="dash-user-avatar"
+                style={{ background: user?.avatarColor ?? 'hsl(256, 34%, 48%)' }}
+                title={displayName}
+              >
+                {displayInitials}
               </div>
-            )}
-          </div>
+            }
+            header={
+              <div className="dash-user-info">
+                <p className="dash-user-name">{displayName}</p>
+                <p className="dash-user-email">{displayEmail}</p>
+              </div>
+            }
+            items={[
+              {
+                label: 'Settings',
+                icon: <Settings size={14} />,
+                onClick: () => navigate('/settings')
+              },
+              {
+                label: 'Sign out',
+                icon: <LogOut size={14} />,
+                danger: true,
+                onClick: handleLogout
+              }
+            ]}
+          />
         </div>
       </header>
 
       {/* ── Body ─────────────────────────────────────── */}
       <div className="dashboard-body">
+        {/* Mobile sidebar backdrop */}
+        {sidebarOpen && <div className="dashboard-sidebar-backdrop" onClick={() => setSidebarOpen(false)} />}
+
         {/* ── Floating Left Sidenav ─────────────────── */}
-        <aside className="dashboard-sidenav">
+        <aside className={`dashboard-sidenav${sidebarOpen ? ' dashboard-sidenav--open' : ''}`}>
+          {/* New Project */}
+          <button className="sidenav-new-project-btn" onClick={handleNewProject}>
+            <Plus size={16} />
+            New Project
+          </button>
+
+          <input
+            className="dashboard-project-name mobile-only"
+            value={projectName}
+            onChange={(e) => setProjectName(e.target.value)}
+            aria-label="Project name"
+            style={{ width: '100%', textAlign: 'center', marginBottom: '0.25rem' }}
+          />
+
           {/* Feature Navigation */}
           <div className="sidenav-panel">
             <p className="sidenav-section-label">Features</p>
@@ -222,31 +243,22 @@ export const Dashboard: React.FC = () => {
             <p className="sidenav-section-label">Progress</p>
             <div className="sidenav-checklist">
               {(Object.keys(checklist) as (keyof typeof checklist)[]).map((key) => (
-                <div
+                <FeatureCheckbox
                   key={key}
-                  className={`checklist-item${checklist[key] ? ' done' : ''}`}
-                  onClick={() => toggleChecklist(key)}
-                >
-                  <div className={`checklist-box${checklist[key] ? ' checked' : ''}`}>
-                    {checklist[key] && <Check size={11} strokeWidth={3} />}
-                  </div>
-                  <span className="checklist-label">
-                    {key.charAt(0).toUpperCase() + key.slice(1)}
-                  </span>
-                </div>
+                  checked={checklist[key]}
+                  label={key.charAt(0).toUpperCase() + key.slice(1)}
+                  onChange={() => toggleChecklist(key)}
+                />
               ))}
             </div>
           </div>
 
           {/* History */}
           <div className="sidenav-panel">
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingRight: '0.25rem' }}>
+            <div className="sidenav-history-header">
               <p className="sidenav-section-label" style={{ margin: 0 }}>History</p>
               {history.length > 0 && (
-                <button
-                  style={{ background: 'none', border: 'none', fontSize: '0.6875rem', color: '#9ca3af', cursor: 'pointer', padding: '0.25rem 0.5rem', borderRadius: '4px', fontFamily: 'inherit' }}
-                  onClick={clearHistory}
-                >
+                <button className="sidenav-clear-btn" onClick={clearHistory}>
                   Clear
                 </button>
               )}
@@ -257,22 +269,40 @@ export const Dashboard: React.FC = () => {
               ) : (
                 history.slice(0, 5).map((h) => (
                   <div key={h.id} className="history-item" onClick={() => setProjectName(h.name)}>
-                    <span className="history-item-name">{h.name}</span>
-                    <span className="history-item-time">
-                      <History size={10} style={{ display: 'inline', marginRight: '3px', verticalAlign: 'middle' }} />
-                      {formatRelativeTime(h.timestamp)}
-                    </span>
+                    <div className="history-item-content">
+                      <span className="history-item-name">{h.name}</span>
+                      <span className="history-item-time">
+                        <History size={10} className="history-item-icon" />
+                        {formatRelativeTime(h.timestamp)}
+                      </span>
+                    </div>
+                    <button
+                      className="history-item-delete-btn"
+                      onClick={async (e) => {
+                        e.stopPropagation();
+                        const confirmDelete = await showConfirm({
+                          title: 'Delete Save',
+                          message: `Are you sure you want to delete "${h.name}" from your history?`,
+                          confirmLabel: 'Delete',
+                          dismissLabel: 'Cancel',
+                          variant: 'error',
+                          icon: Trash2,
+                        });
+                        if (confirmDelete) {
+                          deleteHistoryItem(h.id);
+                        }
+                      }}
+                      title="Delete saved state"
+                      aria-label={`Delete ${h.name}`}
+                    >
+                      <Trash2 size={13} />
+                    </button>
                   </div>
                 ))
               )}
             </div>
           </div>
 
-          {/* New Project */}
-          <button className="sidenav-new-project-btn" onClick={handleNewProject}>
-            <Plus size={16} />
-            New Project
-          </button>
         </aside>
 
         {/* ── Workspace ─────────────────────────────── */}
@@ -300,50 +330,342 @@ export const Dashboard: React.FC = () => {
             {activeTab === 'builder' && (
               <>
                 {activeFeature === 'color' && (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                  <div className="color-feature-wrapper">
                     <KeyColorCard />
                     <TonalPaletteEditor />
                     <RoleMappingTable />
                   </div>
                 )}
                 {activeFeature === 'typography' && (
-                  <div className="workspace-placeholder">
-                    <div className="workspace-placeholder-icon"><Type size={26} /></div>
-                    <h3 className="workspace-placeholder-title">Typography Builder</h3>
-                    <p className="workspace-placeholder-desc">Define font families, size scales, and weights for your design system tokens.</p>
-                    <span className="workspace-placeholder-badge"><Zap size={11} /> Coming soon — Early Access</span>
+                  <div className="builder-split-grid">
+                    {/* Controls */}
+                    <div className="builder-controls-panel">
+                      <div className="builder-section">
+                        <h4 className="builder-section-title">Font Families</h4>
+                        <div className="builder-input-group">
+                          {Object.entries(typography.fontFamily).map(([key, val]) => (
+                            <div key={key} className="builder-field">
+                              <label className="builder-field-label">{key.toUpperCase()}</label>
+                              <FontPicker
+                                id={`font-family-${key}`}
+                                value={val}
+                                onChange={(family) => updateTypographyFamily(key, family)}
+                                placeholder={`Search ${key} font…`}
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      <div className="builder-section">
+                        <h4 className="builder-section-title">Scale Generator</h4>
+                        <p className="builder-section-desc">Generate standard typographic hierarchy sizes using a mathematical scale factor.</p>
+                        <div className="builder-row">
+                          <div className="builder-field">
+                            <label className="builder-field-label">Base Size (px)</label>
+                            <input
+                              type="number"
+                              className="builder-field-input"
+                              defaultValue={16}
+                              id="typo-base-input"
+                            />
+                          </div>
+                          <div className="builder-field">
+                            <label className="builder-field-label">Scale Factor</label>
+                            <select className="builder-field-input" id="typo-scale-select" defaultValue="1.25">
+                              <option value="1.067">Minor Second (1.067)</option>
+                              <option value="1.125">Major Second (1.125)</option>
+                              <option value="1.2">Minor Third (1.2)</option>
+                              <option value="1.25">Major Third (1.25)</option>
+                              <option value="1.333">Perfect Fourth (1.333)</option>
+                              <option value="1.5">Perfect Fifth (1.5)</option>
+                              <option value="1.618">Golden Ratio (1.618)</option>
+                            </select>
+                          </div>
+                        </div>
+                        <div className="builder-btn-row">
+                          <GlossyButton
+                            variant="outline"
+                            size="sm"
+                            onClick={() => {
+                              const base = parseFloat((document.getElementById('typo-base-input') as HTMLInputElement).value || '16');
+                              const factor = parseFloat((document.getElementById('typo-scale-select') as HTMLSelectElement).value || '1.25');
+                              const sizes = ['xs', 'sm', 'base', 'lg', 'xl', '2xl', '3xl', '4xl', '5xl', '6xl', '7xl'];
+                              sizes.forEach((sz, idx) => {
+                                const power = idx - 2; // base is index 2
+                                const valPx = base * Math.pow(factor, power);
+                                const valRem = valPx / 16;
+                                updateTypographySize(sz, `${valRem.toFixed(3)}rem`);
+                              });
+                              showAlert('Scale Generated', 'Typography scale generated!', 'success');
+                            }}
+                          >
+                            Generate Typography Scale
+                          </GlossyButton>
+                        </div>
+                      </div>
+
+                      <div className="builder-section">
+                        <h4 className="builder-section-title">Manual Font Sizes</h4>
+                        <div className="builder-grid-2col">
+                          {Object.entries(typography.fontSize).map(([key, val]) => (
+                            <div key={key} className="builder-field">
+                              <label className="builder-field-label">{key}</label>
+                              <input
+                                className="builder-field-input"
+                                value={val}
+                                onChange={(e) => updateTypographySize(key, e.target.value)}
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      <div className="builder-section">
+                        <h4 className="builder-section-title">Font Weights</h4>
+                        <div className="builder-grid-2col">
+                          {Object.entries(typography.fontWeight).map(([key, val]) => (
+                            <div key={key} className="builder-field">
+                              <label className="builder-field-label">{key}</label>
+                              <input
+                                type="number"
+                                className="builder-field-input"
+                                value={val}
+                                onChange={(e) => updateTypographyWeight(key, Number(e.target.value))}
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Preview */}
+                    <div className="builder-preview-panel">
+                      <h4 className="builder-section-title">Aesthetic Specimen</h4>
+                      <div className="builder-specimen-card" style={{ fontFamily: 'var(--matisse-font-family-sans)' }}>
+                        <span style={{ fontSize: 'var(--matisse-font-size-xs)', fontWeight: 'var(--matisse-font-weight-bold)', color: 'var(--md-ref-role-primary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                          Typography Preview
+                        </span>
+                        <h1 style={{ fontSize: 'var(--matisse-font-size-4xl)', fontWeight: 'var(--matisse-font-weight-extrabold)', margin: '0.5rem 0 1rem 0', lineHeight: 'var(--matisse-line-height-tight)', fontFamily: 'var(--matisse-font-family-display)' }}>
+                          Building dynamic design scales.
+                        </h1>
+                        <p style={{ fontSize: 'var(--matisse-font-size-base)', fontWeight: 'var(--matisse-font-weight-regular)', color: 'var(--md-ref-role-onSurfaceVariant)', lineHeight: 'var(--matisse-line-height-normal)', marginBottom: '1.5rem' }}>
+                          Matisse allows teams to customize typography, spacing, and colors in one real-time workspace. Adjust settings to see this preview card update instantly.
+                        </p>
+                        <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
+                          <GlossyButton size="sm">Primary Specimen</GlossyButton>
+                          <GlossyButton size="sm" variant="outline">Learn More</GlossyButton>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 )}
                 {activeFeature === 'spacing' && (
-                  <div className="workspace-placeholder">
-                    <div className="workspace-placeholder-icon"><LayoutGrid size={26} /></div>
-                    <h3 className="workspace-placeholder-title">Spacing System</h3>
-                    <p className="workspace-placeholder-desc">Build a base unit grid and generate tonal spacing scales for consistent layouts.</p>
-                    <span className="workspace-placeholder-badge"><Zap size={11} /> Coming soon — Early Access</span>
+                  <div className="builder-split-grid">
+                    {/* Controls */}
+                    <div className="builder-controls-panel">
+                      <div className="builder-section">
+                        <h4 className="builder-section-title">Base Spacing Unit</h4>
+                        <p className="builder-section-desc">Change the base grid step (in pixels) to scale the layout spacing steps mathematically.</p>
+                        <div className="builder-field">
+                          <label className="builder-field-label">Base Step Unit (slider)</label>
+                          <input
+                            type="range"
+                            min="2"
+                            max="16"
+                            step="1"
+                            defaultValue="4"
+                            className="builder-slider"
+                            id="spacing-unit-slider"
+                            onChange={(e) => {
+                              const unit = parseInt(e.target.value);
+                              updateSpacingUnit(unit);
+                            }}
+                          />
+                        </div>
+                      </div>
+
+                      <div className="builder-section">
+                        <h4 className="builder-section-title">Manual Spacing Steps</h4>
+                        <div className="builder-grid-2col spacing-steps-grid">
+                          {Object.entries(spacing).map(([key, val]) => (
+                            <div key={key} className="builder-field">
+                              <label className="builder-field-label">Step {key}</label>
+                              <input
+                                className="builder-field-input"
+                                value={val}
+                                onChange={(e) => updateSpacingValue(key, e.target.value)}
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Preview */}
+                    <div className="builder-preview-panel">
+                      <h4 className="builder-section-title">Grid Layout Preview</h4>
+                      <div className="builder-specimen-card" style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+                        <p className="builder-section-desc" style={{ margin: 0 }}>Visual representation of spacer tokens:</p>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                          {['1', '2', '3', '4', '6', '8', '12'].map((step) => (
+                            <div key={step} style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                              <span style={{ fontSize: '0.8125rem', fontWeight: 600, width: '60px', fontFamily: 'monospace' }}>Step {step}</span>
+                              <div
+                                style={{
+                                  height: '24px',
+                                  width: spacing[step] || '1rem',
+                                  background: 'linear-gradient(90deg, var(--md-ref-role-primary), var(--md-ref-role-secondary))',
+                                  borderRadius: 'var(--matisse-radius-sm)',
+                                  boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
+                                }}
+                              />
+                              <span style={{ fontSize: '0.75rem', color: 'var(--md-ref-role-onSurfaceVariant)', fontFamily: 'monospace' }}>{spacing[step]}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 )}
                 {activeFeature === 'shadows' && (
-                  <div className="workspace-placeholder">
-                    <div className="workspace-placeholder-icon"><Layers size={26} /></div>
-                    <h3 className="workspace-placeholder-title">Shadow Design System</h3>
-                    <p className="workspace-placeholder-desc">Define elevation levels and shadow tokens — from subtle cards to modal overlays.</p>
-                    <span className="workspace-placeholder-badge"><Zap size={11} /> Coming soon — Early Access</span>
+                  <div className="builder-split-grid">
+                    {/* Controls */}
+                    <div className="builder-controls-panel">
+                      <div className="builder-section">
+                        <h4 className="builder-section-title">Box Shadows</h4>
+                        <div className="builder-input-group">
+                          {Object.entries(shadows).map(([key, val]) => {
+                            if (typeof val !== 'string') return null;
+                            return (
+                              <div key={key} className="builder-field">
+                                <label className="builder-field-label">{key}</label>
+                                <input
+                                  className="builder-field-input"
+                                  value={val}
+                                  onChange={(e) => updateShadowValue(key, e.target.value)}
+                                />
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+
+                      <div className="builder-section">
+                        <h4 className="builder-section-title">Shadow Glows</h4>
+                        <div className="builder-input-group">
+                          {Object.entries(shadows.glow).map(([key, val]) => (
+                            <div key={key} className="builder-field">
+                              <label className="builder-field-label">{key} glow</label>
+                              <input
+                                className="builder-field-input"
+                                value={val}
+                                onChange={(e) => updateShadowGlow(key, e.target.value)}
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Preview */}
+                    <div className="builder-preview-panel">
+                      <h4 className="builder-section-title">Glow Previews</h4>
+                      <div className="builder-preview-grid builder-preview-grid--glows">
+                        {Object.entries(shadows.glow).map(([name, shadowValue]) => (
+                          <div
+                            key={name}
+                            className="builder-preview-card"
+                            style={{ boxShadow: shadowValue, borderRadius: 'var(--matisse-radius-md)' }}
+                          >
+                            <span className="builder-preview-card-title">{name}</span>
+                            <span className="builder-preview-card-sub">Active Glow</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
                   </div>
                 )}
                 {activeFeature === 'elevation' && (
-                  <div className="workspace-placeholder">
-                    <div className="workspace-placeholder-icon"><Box size={26} /></div>
-                    <h3 className="workspace-placeholder-title">Elevation Levels</h3>
-                    <p className="workspace-placeholder-desc">Map Material 3 elevation tiers with layered surfaces and tonal color overlays.</p>
-                    <span className="workspace-placeholder-badge"><Zap size={11} /> Coming soon — Early Access</span>
+                  <div className="builder-split-grid">
+                    {/* Controls */}
+                    <div className="builder-controls-panel">
+                      <div className="builder-section">
+                        <h4 className="builder-section-title">Elevation Layers</h4>
+                        <div className="builder-input-group">
+                          {Object.entries(elevation).map(([key, val]) => (
+                            <div key={key} className="builder-field">
+                              <label className="builder-field-label">Level {key}</label>
+                              <input
+                                className="builder-field-input"
+                                value={val}
+                                onChange={(e) => updateElevationValue(key, e.target.value)}
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Preview */}
+                    <div className="builder-preview-panel">
+                      <h4 className="builder-section-title">Elevation Tiers Specimen</h4>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                        {Object.entries(elevation).map(([level, val]) => (
+                          <div
+                            key={level}
+                            className="elevation-tier-row"
+                            style={{
+                              boxShadow: val,
+                              border: level === '0' ? '1px solid var(--md-ref-role-outlineVariant)' : 'none',
+                            }}
+                          >
+                            <span className="elevation-tier-row-label">Elevation Tier {level}</span>
+                            <span className="elevation-tier-row-value" title={val}>{val}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
                   </div>
                 )}
                 {activeFeature === 'borderRadius' && (
-                  <div className="workspace-placeholder">
-                    <div className="workspace-placeholder-icon"><Sparkles size={26} /></div>
-                    <h3 className="workspace-placeholder-title">Border Radius Scale</h3>
-                    <p className="workspace-placeholder-desc">Create a consistent corner radius scale from sharp to fully rounded elements.</p>
-                    <span className="workspace-placeholder-badge"><Zap size={11} /> Coming soon — Early Access</span>
+                  <div className="builder-split-grid">
+                    {/* Controls */}
+                    <div className="builder-controls-panel">
+                      <div className="builder-section">
+                        <h4 className="builder-section-title">Border Radius Scale</h4>
+                        <p className="builder-section-desc">Customize container corner rounding presets used in inputs, cards, and buttons.</p>
+                        <div className="builder-input-group">
+                          {Object.entries(borderRadius).map(([key, val]) => (
+                            <div key={key} className="builder-field">
+                              <label className="builder-field-label">{key}</label>
+                              <input
+                                className="builder-field-input"
+                                value={val}
+                                onChange={(e) => updateBorderRadiusValue(key, e.target.value)}
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Preview */}
+                    <div className="builder-preview-panel">
+                      <h4 className="builder-section-title">Corner Rounding Previews</h4>
+                      <div className="builder-preview-grid builder-preview-grid--br">
+                        {Object.entries(borderRadius).map(([key, val]) => (
+                          <div
+                            key={key}
+                            className="builder-preview-card"
+                            style={{ borderRadius: val, gap: '0.5rem' }}
+                          >
+                            <span className="builder-preview-card-title" style={{ textTransform: 'none' }}>{key}</span>
+                            <span className="builder-preview-card-sub" style={{ fontFamily: 'monospace' }}>{val}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
                   </div>
                 )}
                 {activeFeature === 'motion' && (
@@ -355,12 +677,7 @@ export const Dashboard: React.FC = () => {
                   </div>
                 )}
                 {activeFeature === 'components' && (
-                  <div className="workspace-placeholder">
-                    <div className="workspace-placeholder-icon"><Sparkles size={26} /></div>
-                    <h3 className="workspace-placeholder-title">Component Library</h3>
-                    <p className="workspace-placeholder-desc">Browse and preview all design system components styled with your current tokens.</p>
-                    <span className="workspace-placeholder-badge"><Zap size={11} /> Coming soon — Early Access</span>
-                  </div>
+                  <ComponentExplorer />
                 )}
               </>
             )}
@@ -374,16 +691,20 @@ export const Dashboard: React.FC = () => {
       {/* ── Mobile Bottom Nav ─────────────────────── */}
       <nav className="dashboard-mobile-nav">
         <div className="mobile-nav-inner">
-          {featureNav.map((f) => (
-            <button
-              key={f.id}
-              className={`mobile-nav-btn${mobileNav === f.id ? ' active' : ''}`}
-              onClick={() => handleMobileNav(f.id)}
-            >
-              {f.icon}
-              {f.label}
-            </button>
-          ))}
+          <button
+            className={`mobile-nav-btn${activeFeature === 'color' && activeTab === 'builder' ? ' active' : ''}`}
+            onClick={() => handleMobileNav('color')}
+          >
+            <Palette size={16} />
+            Color
+          </button>
+          <button
+            className={`mobile-nav-btn${activeFeature === 'typography' && activeTab === 'builder' ? ' active' : ''}`}
+            onClick={() => handleMobileNav('typography')}
+          >
+            <Type size={16} />
+            Type
+          </button>
           <button
             className={`mobile-nav-btn${mobileNav === 'preview' ? ' active' : ''}`}
             onClick={() => handleMobileNav('preview')}
@@ -393,15 +714,15 @@ export const Dashboard: React.FC = () => {
           </button>
           <button
             className="mobile-nav-btn"
-            onClick={() => { showToast('info', 'Projects panel coming soon'); }}
+            onClick={() => navigate('/settings')}
           >
-            <FolderOpen size={16} />
-            Projects
+            <Settings size={16} />
+            Settings
           </button>
         </div>
       </nav>
 
-      <ExportPanel isOpen={isExportOpen} onClose={() => setIsExportOpen(false)} />
+      <ExportPanel isOpen={exportScope !== null} defaultScope={exportScope || 'all'} onClose={() => setExportScope(null)} />
     </div>
   );
 };

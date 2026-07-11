@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import { GlossyButton } from '../../design-system/components/Button/GlossyButton';
 import { Input } from '../../design-system/components/Input/Input';
@@ -26,7 +26,7 @@ const GitHubIcon = () => (
 const VITE_GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 const VITE_GITHUB_CLIENT_ID = import.meta.env.VITE_GITHUB_CLIENT_ID;
 
-const LoginForm: React.FC<{ onSuccess: () => void }> = ({ onSuccess }) => {
+const LoginForm: React.FC<{ onSuccess: () => void; onSwitchToSignup: () => void }> = ({ onSuccess, onSwitchToSignup }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -109,7 +109,9 @@ const LoginForm: React.FC<{ onSuccess: () => void }> = ({ onSuccess }) => {
 
       <p className="auth-signup-text">
         Don&apos;t have an account?{' '}
-        <Link to="/signup" className="auth-signup-link">Sign Up</Link>
+        <button type="button" className="auth-signup-link" onClick={onSwitchToSignup} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 'inherit' }}>
+          Sign Up
+        </button>
       </p>
 
       <div className="auth-divider">
@@ -130,9 +132,70 @@ const LoginForm: React.FC<{ onSuccess: () => void }> = ({ onSuccess }) => {
   );
 };
 
+const SignupForm: React.FC<{ onSuccess: () => void; onSwitchToLogin: () => void }> = ({ onSuccess, onSwitchToLogin }) => {
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const login = useAuthStore((state) => state.login);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+    if (!name || !email || !password) {
+      setError('Please fill in all fields.');
+      return;
+    }
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+      login(name, email);
+      onSuccess();
+    }, 1200);
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="auth-form">
+      {error && <Alert variant="error" dismissible onDismiss={() => setError('')}>{error}</Alert>}
+      <Input label="Full name" type="text" placeholder="Jane Doe" value={name} onChange={(e) => setName(e.target.value)} fullWidth />
+      <Input label="Email address" type="email" placeholder="jane@example.com" value={email} onChange={(e) => setEmail(e.target.value)} fullWidth />
+      <Input label="Password" type="password" placeholder="Create a password" value={password} onChange={(e) => setPassword(e.target.value)} fullWidth />
+      <div className="auth-submit-row">
+        <GlossyButton type="submit" loading={loading} fullWidth size="lg">
+          Create Account
+        </GlossyButton>
+      </div>
+
+      <p className="auth-signup-text">
+        Already have an account?{' '}
+        <button type="button" className="auth-signup-link" onClick={onSwitchToLogin} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 'inherit' }}>
+          Login
+        </button>
+      </p>
+
+      <div className="auth-divider">
+        <span className="auth-divider-line" />
+        <span className="auth-divider-text">or</span>
+        <span className="auth-divider-line" />
+      </div>
+
+      <div className="auth-social-row">
+        <button type="button" className="auth-social-btn" aria-label="Continue with Google">
+          <GoogleIcon />
+        </button>
+        <button type="button" className="auth-social-btn" aria-label="Continue with GitHub">
+          <GitHubIcon />
+        </button>
+      </div>
+    </form>
+  );
+};
+
 export const Auth: React.FC = () => {
   const navigate = useNavigate();
   const [success, setSuccess] = useState(false);
+  const [mode, setMode] = useState<'login' | 'signup'>('login');
 
   const handleSuccess = () => {
     setSuccess(true);
@@ -149,20 +212,36 @@ export const Auth: React.FC = () => {
 
         <div className="auth-glass-card">
           <div className="auth-brand">
-            <img src="/login.icon.svg" alt="Login" className="auth-brand-logo" />
-            <h1 className="auth-brand-title">Hello!</h1>
+            <img src="/logo-drk.svg" alt="Matisse" className="auth-brand-logo" />
+            <h1 className="auth-brand-title">{mode === 'login' ? 'Welcome back!' : 'Create your account'}</h1>
             <p className="auth-brand-subtitle">
-              Login to continue building your design system.
+              {mode === 'login'
+                ? 'Login to continue building your design system.'
+                : 'Start building better design systems today.'}
             </p>
           </div>
 
           {success ? (
             <div className="auth-success">
-              <Alert variant="success" title="Success!">Welcome back! Redirecting...</Alert>
+              <Alert variant="success" title="Success!">{mode === 'login' ? 'Welcome back!' : 'Account created!'} Redirecting...</Alert>
+            </div>
+          ) : mode === 'login' ? (
+            <div className="auth-tab-area">
+              <LoginForm onSuccess={handleSuccess} onSwitchToSignup={() => setMode('signup')} />
+              <div style={{ textAlign: 'center', marginTop: '0.75rem' }}>
+                <button
+                  type="button"
+                  className="auth-signup-link"
+                  onClick={() => setMode('signup')}
+                  style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '0.875rem' }}
+                >
+                  Don&apos;t have an account? <span style={{ fontWeight: 600 }}>Sign Up</span>
+                </button>
+              </div>
             </div>
           ) : (
             <div className="auth-tab-area">
-              <LoginForm onSuccess={handleSuccess} />
+              <SignupForm onSuccess={handleSuccess} onSwitchToLogin={() => setMode('login')} />
             </div>
           )}
         </div>

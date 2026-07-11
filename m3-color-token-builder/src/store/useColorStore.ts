@@ -2,6 +2,9 @@ import { create } from 'zustand';
 import type { KeyColor, TonalPalette, RoleToken, KeyColorName } from '../types';
 import { DEFAULT_KEY_COLORS, DEFAULT_LIGHT_ROLES, DEFAULT_DARK_ROLES } from '../lib/defaults';
 import { generateTones } from '../lib/material';
+import { typography as initialTypography } from '../design-system/tokens/typography';
+import { spacing as initialSpacing, borderRadius as initialBorderRadius } from '../design-system/tokens/spacing';
+import { shadows as initialShadows, elevation as initialElevation } from '../design-system/tokens/shadows';
 
 export interface ProjectSnapshot {
     id: string;
@@ -18,6 +21,32 @@ interface ColorState {
     history: ProjectSnapshot[];
     checklist: { color: boolean; typography: boolean; spacing: boolean };
 
+    // Typography
+    typography: {
+        fontFamily: Record<string, string>;
+        fontSize: Record<string, string>;
+        fontWeight: Record<string, number>;
+        lineHeight: Record<string, number>;
+        letterSpacing: Record<string, string>;
+    };
+
+    // Spacing
+    spacing: Record<string, string>;
+    borderRadius: Record<string, string>;
+
+    // Shadows & Elevation
+    shadows: {
+        xs: string;
+        sm: string;
+        md: string;
+        lg: string;
+        xl: string;
+        '2xl': string;
+        inner: string;
+        glow: Record<string, string>;
+    };
+    elevation: Record<string, string>;
+
     updateKeyColor: (name: KeyColorName, value: string) => void;
     addOptionalColor: (name: string, value: string) => void;
     removeOptionalColor: (name: string) => void;
@@ -25,13 +54,28 @@ interface ColorState {
     setTheme: (theme: 'light' | 'dark') => void;
     setProjectName: (name: string) => void;
     pushHistory: (snapshot: ProjectSnapshot) => void;
+    deleteHistoryItem: (id: string) => void;
     clearHistory: () => void;
     toggleChecklist: (key: 'color' | 'typography' | 'spacing') => void;
+    checkFeature: (key: 'color' | 'typography' | 'spacing') => void;
 
     // Tone editing
     addTone: (keyColor: string, tone: number, value: string) => void;
     updateToneHex: (keyColor: string, tone: number, value: string) => void;
     deleteTone: (keyColor: string, tone: number) => void;
+
+    // Design Token Actions
+    updateTypographyFamily: (key: string, value: string) => void;
+    updateTypographySize: (key: string, value: string) => void;
+    updateTypographyWeight: (key: string, value: number) => void;
+    updateTypographyLineHeight: (key: string, value: number) => void;
+    updateTypographyLetterSpacing: (key: string, value: string) => void;
+    updateSpacingValue: (key: string, value: string) => void;
+    updateSpacingUnit: (baseUnitPx: number) => void;
+    updateBorderRadiusValue: (key: string, value: string) => void;
+    updateShadowValue: (key: string, value: string) => void;
+    updateElevationValue: (key: string, value: string) => void;
+    updateShadowGlow: (key: string, value: string) => void;
 }
 
 // Helpers
@@ -95,6 +139,12 @@ export const useColorStore = create<ColorState>((set) => {
             return { history: updated };
         }),
 
+        deleteHistoryItem: (id) => set((state) => {
+            const updated = state.history.filter((h) => h.id !== id);
+            localStorage.setItem('matisse_history', JSON.stringify(updated));
+            return { history: updated };
+        }),
+
         clearHistory: () => {
             localStorage.removeItem('matisse_history');
             set({ history: [] });
@@ -102,6 +152,9 @@ export const useColorStore = create<ColorState>((set) => {
 
         toggleChecklist: (key) => set((state) => ({
             checklist: { ...state.checklist, [key]: !state.checklist[key] }
+        })),
+        checkFeature: (key) => set((state) => ({
+            checklist: { ...state.checklist, [key]: true }
         })),
 
         updateKeyColor: (name, value) => {
@@ -205,6 +258,127 @@ export const useColorStore = create<ColorState>((set) => {
                     }
                 };
             });
-        }
+        },
+
+        // Typography
+        typography: {
+            fontFamily: { ...initialTypography.fontFamily },
+            fontSize: { ...initialTypography.fontSize },
+            fontWeight: { ...initialTypography.fontWeight },
+            lineHeight: { ...initialTypography.lineHeight },
+            letterSpacing: { ...initialTypography.letterSpacing }
+        },
+        // Spacing
+        spacing: { ...initialSpacing },
+        borderRadius: { ...initialBorderRadius },
+        // Shadows & Elevation
+        shadows: {
+            ...initialShadows,
+            glow: { ...initialShadows.glow }
+        },
+        elevation: { ...initialElevation },
+
+        // Design Token Actions
+        updateTypographyFamily: (key, value) => set((state) => ({
+            typography: {
+                ...state.typography,
+                fontFamily: { ...state.typography.fontFamily, [key]: value }
+            }
+        })),
+
+        updateTypographySize: (key, value) => set((state) => ({
+            typography: {
+                ...state.typography,
+                fontSize: { ...state.typography.fontSize, [key]: value }
+            }
+        })),
+
+        updateTypographyWeight: (key, value) => set((state) => ({
+            typography: {
+                ...state.typography,
+                fontWeight: { ...state.typography.fontWeight, [key]: value }
+            }
+        })),
+
+        updateTypographyLineHeight: (key, value) => set((state) => ({
+            typography: {
+                ...state.typography,
+                lineHeight: { ...state.typography.lineHeight, [key]: value }
+            }
+        })),
+
+        updateTypographyLetterSpacing: (key, value) => set((state) => ({
+            typography: {
+                ...state.typography,
+                letterSpacing: { ...state.typography.letterSpacing, [key]: value }
+            }
+        })),
+
+        updateSpacingValue: (key, value) => set((state) => ({
+            spacing: { ...state.spacing, [key]: value }
+        })),
+
+        updateSpacingUnit: (baseUnitPx) => set((state) => {
+            const newSpacing = { ...state.spacing };
+            const multipliers: Record<string, number> = {
+                '0.5': 0.125,
+                '1': 0.25,
+                '1.5': 0.375,
+                '2': 0.5,
+                '2.5': 0.625,
+                '3': 0.75,
+                '3.5': 0.875,
+                '4': 1,
+                '5': 1.25,
+                '6': 1.5,
+                '7': 1.75,
+                '8': 2,
+                '9': 2.25,
+                '10': 2.5,
+                '11': 2.75,
+                '12': 3,
+                '14': 3.5,
+                '16': 4,
+                '20': 5,
+                '24': 6,
+                '28': 7,
+                '32': 8,
+                '36': 9,
+                '40': 10,
+                '44': 11,
+                '48': 12,
+                '52': 13,
+                '56': 14,
+                '60': 15,
+                '64': 16,
+                '72': 18,
+                '80': 20,
+                '96': 24,
+            };
+            for (const [key, mult] of Object.entries(multipliers)) {
+                const valueInRem = (baseUnitPx * mult) / 16;
+                newSpacing[key] = `${valueInRem}rem`;
+            }
+            return { spacing: newSpacing };
+        }),
+
+        updateBorderRadiusValue: (key, value) => set((state) => ({
+            borderRadius: { ...state.borderRadius, [key]: value }
+        })),
+
+        updateShadowValue: (key, value) => set((state) => ({
+            shadows: { ...state.shadows, [key]: value }
+        })),
+
+        updateElevationValue: (key, value) => set((state) => ({
+            elevation: { ...state.elevation, [key]: value }
+        })),
+
+        updateShadowGlow: (key, value) => set((state) => ({
+            shadows: {
+                ...state.shadows,
+                glow: { ...state.shadows.glow, [key]: value }
+            }
+        }))
     };
 });

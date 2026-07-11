@@ -70,7 +70,7 @@ export const Footer: React.FC = () => {
         <div className="footer-row-2">
           <div className="footer-col-left">
             <p className="footer-copyright">
-              &copy; {currentYear} Matisse. Built with React, TypeScript &amp; Material 3 styling values. All rights reserved.
+              &copy; {currentYear} Matisse. Built by Dev and Design. All rights reserved.
             </p>
           </div>
           <div className="footer-col-right">
