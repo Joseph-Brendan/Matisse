@@ -80,6 +80,13 @@ export const Navbar: React.FC = () => {
           >
             How it works
           </a>
+          <a
+            href="#"
+            className="navbar-link"
+            onClick={(e) => { e.preventDefault(); navigate('/about'); }}
+          >
+            About
+          </a>
         </nav>
 
         {/* Right CTA Actions or User Profile */}
@@ -178,6 +185,12 @@ export const Navbar: React.FC = () => {
             onClick={(e) => handleNavClick(e, 'how-it-works')}
           >
             How it works
+          </a>
+          <a
+            className="navbar-mobile-link"
+            onClick={() => { setMobileMenuOpen(false); navigate('/about'); }}
+          >
+            About
           </a>
 
           {!user && (

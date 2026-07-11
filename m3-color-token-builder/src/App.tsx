@@ -6,6 +6,7 @@ import { Auth } from './pages/Auth';
 import { Dashboard } from './pages/Dashboard';
 import { ColorBuilder } from './pages/ColorBuilder';
 import { DesignSystem } from './pages/DesignSystem';
+import { About } from './pages/About';
 
 function AppShell() {
   const { theme } = useColorStore();
@@ -26,6 +27,7 @@ function AppShell() {
         <Route path="/auth" element={<Auth />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/color-builder" element={<ColorBuilder />} />
+        <Route path="/about" element={<About />} />
         <Route path="/components" element={<DesignSystem />} />
       </Routes>
       <ToastContainer />
