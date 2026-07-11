@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-  Palette, Layers, Paintbrush, Grid3x3, Type, Download, ArrowUpRight, Sparkles,
-  ChevronDown, ChevronUp, Star, Check
+  Palette, Layers, Paintbrush, Type, Download, ArrowUpRight, Sparkles,
+  ChevronDown, Star, Check
 } from 'lucide-react';
 import { GlossyButton } from '../../design-system/components/Button/GlossyButton';
 import {
