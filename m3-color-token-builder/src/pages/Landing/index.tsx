@@ -499,10 +499,26 @@ export const Landing: React.FC = () => {
 
         {/* 7. TESTIMONIAL SECTION */}
         <section id="testimonials" className="testimonials-section">
+          <div className="testimonials-contour testimonials-contour--tl">
+            <svg viewBox="0 0 300 300" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ width: '100%', height: '100%' }}>
+              <path d="M-20 60 C80 60 120 100 140 200" stroke="hsla(256, 34%, 48%, 0.04)" strokeWidth="1.5" fill="none" strokeLinecap="round" />
+              <path d="M-20 120 C40 120 70 160 80 240" stroke="hsla(256, 100%, 87%, 0.05)" strokeWidth="1.5" fill="none" strokeLinecap="round" />
+              <path d="M60 -20 C60 80 100 120 200 140" stroke="hsla(256, 34%, 48%, 0.03)" strokeWidth="1" fill="none" strokeLinecap="round" />
+              <path d="M120 -20 C120 40 160 70 240 80" stroke="hsla(256, 100%, 87%, 0.04)" strokeWidth="1" fill="none" strokeLinecap="round" />
+            </svg>
+          </div>
+          <div className="testimonials-contour testimonials-contour--br">
+            <svg viewBox="0 0 300 300" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ width: '100%', height: '100%' }}>
+              <path d="M-20 60 C80 60 120 100 140 200" stroke="hsla(256, 34%, 48%, 0.04)" strokeWidth="1.5" fill="none" strokeLinecap="round" />
+              <path d="M-20 120 C40 120 70 160 80 240" stroke="hsla(256, 100%, 87%, 0.05)" strokeWidth="1.5" fill="none" strokeLinecap="round" />
+              <path d="M60 -20 C60 80 100 120 200 140" stroke="hsla(256, 34%, 48%, 0.03)" strokeWidth="1" fill="none" strokeLinecap="round" />
+              <path d="M120 -20 C120 40 160 70 240 80" stroke="hsla(256, 100%, 87%, 0.04)" strokeWidth="1" fill="none" strokeLinecap="round" />
+            </svg>
+          </div>
           <div className="section-header">
-            <Badge variant="primary" size="md">Wall of Fame</Badge>
-            <h2 className="section-title">Loved by product builders</h2>
-            <p className="section-subtitle">Here is what developers and design system managers think of Matisse.</p>
+            <Badge variant="primary" size="md">Testimonials</Badge>
+            <h2 className="section-title">Trusted by teams building better design systems</h2>
+            <p className="section-subtitle">See how designers, developers, and vibe coders use Matisse to build consistent design systems faster from colors and typography to components and design tokens all without starting from scratch.</p>
           </div>
           <div className="testimonials-grid">
             {testimonials.map((t, idx) => (
