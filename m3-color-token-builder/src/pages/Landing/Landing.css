@@ -1623,6 +1623,25 @@
     width: 200px;
     height: 200px;
   }
+  .faq-split-layout {
+    gap: 3rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .faq-split-layout {
+    flex-direction: column;
+    gap: 2.5rem;
+  }
+  .faq-left-content {
+    flex: 1 1 100%;
+    text-align: center;
+    align-items: center;
+  }
+  .faq-right-accordion {
+    flex: 1 1 100%;
+    width: 100%;
+  }
 }
 
 /* ── Responsive: Mobile (<= 480px) ────────────────────── */
