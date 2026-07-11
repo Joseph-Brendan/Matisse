@@ -8,6 +8,7 @@ import { PreviewPanel } from '../../components/PreviewPanel';
 import { ExportPanel } from '../../components/ExportPanel';
 import { useColorStore } from '../../store/useColorStore';
 import { GlossyButton } from '../../design-system/components/Button/GlossyButton';
+import './ColorBuilder.css';
 
 export const ColorBuilder: React.FC = () => {
   const [isExportOpen, setIsExportOpen] = useState(false);
@@ -16,25 +17,15 @@ export const ColorBuilder: React.FC = () => {
 
   return (
     <div
-      className={theme === 'dark' ? 'dark-theme' : ''}
-      style={{ minHeight: '100vh', transition: 'all 0.3s ease' }}
+      className={`color-builder-root ${theme === 'dark' ? 'dark-theme' : ''}`}
     >
-      <header
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          padding: '0.75rem 2rem',
-          borderBottom: '1px solid var(--md-ref-role-outlineVariant)',
-          background: 'var(--md-ref-role-surface)',
-        }}
-      >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+      <header className="color-builder-header">
+        <div className="color-builder-header-left">
           <GlossyButton variant="ghost" size="sm" onClick={() => navigate('/')}>
             <ArrowLeft size={18} />
             Home
           </GlossyButton>
-          <h1 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 600 }}>
+          <h1 className="color-builder-title">
             Color Builder
           </h1>
         </div>
@@ -44,18 +35,7 @@ export const ColorBuilder: React.FC = () => {
         </GlossyButton>
       </header>
 
-      <main
-        className="container"
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '2rem',
-          padding: '2rem',
-          maxWidth: '1280px',
-          margin: '0 auto',
-          width: '100%',
-        }}
-      >
+      <main className="color-builder-main container">
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
           <KeyColorCard />
           <TonalPaletteEditor />
@@ -66,7 +46,7 @@ export const ColorBuilder: React.FC = () => {
         <PreviewPanel />
       </main>
 
-      <ExportPanel isOpen={isExportOpen} onClose={() => setIsExportOpen(false)} />
+      <ExportPanel isOpen={isExportOpen} defaultScope="color" onClose={() => setIsExportOpen(false)} />
     </div>
   );
 };

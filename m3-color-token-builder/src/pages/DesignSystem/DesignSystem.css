@@ -1,0 +1,77 @@
+.design-system-root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--md-ref-role-background);
+  color: var(--md-ref-role-onSurface);
+}
+
+.design-system-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 2rem;
+  border-bottom: 1px solid var(--md-ref-role-outlineVariant);
+  background: var(--md-ref-role-surface);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.design-system-header-left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.design-system-title {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.design-system-body {
+  flex: 1;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .design-system-header {
+    padding: 0.75rem 1.25rem;
+  }
+  .design-system-body {
+    padding: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .design-system-header {
+    padding: 0.625rem 1rem;
+  }
+  .design-system-header-left {
+    gap: 0.5rem;
+  }
+  .design-system-title {
+    font-size: 1.0625rem;
+  }
+  .design-system-body {
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 375px) {
+  .design-system-header {
+    padding: 0.5rem 0.75rem;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .design-system-title {
+    font-size: 0.9375rem;
+  }
+  .design-system-body {
+    padding: 0.75rem;
+  }
+}

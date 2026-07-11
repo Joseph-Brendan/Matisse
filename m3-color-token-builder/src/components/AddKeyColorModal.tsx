@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { PopoverColorPicker } from './PopoverColorPicker';
 import { GlossyButton } from '../design-system/components/Button/GlossyButton';
+import { showAlert } from '../store/useConfirmStore';
 import './AddKeyColorModal.css';
 
 interface AddKeyColorModalProps {
@@ -19,7 +20,7 @@ export const AddKeyColorModal: React.FC<AddKeyColorModalProps> = ({ isOpen, onCl
         e.preventDefault();
         const trimmed = name.trim();
         if (!trimmed) {
-            alert('Please enter a valid name.');
+            showAlert('Invalid Name', 'Please enter a valid color role name.');
             return;
         }
         onAdd(trimmed, value);
