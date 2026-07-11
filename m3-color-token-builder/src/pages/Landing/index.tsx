@@ -1,13 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-<<<<<<< HEAD
   Palette, Layers, Paintbrush, Grid3x3, Type, Download, ArrowUpRight,
   ChevronDown, ChevronUp, Star, Check, User, Mail, Sparkles
-=======
-  Palette, Layers, Paintbrush, Grid3x3, Type, Download, ArrowUpRight, Sparkles,
-  ChevronDown, ChevronUp, Star, Check
->>>>>>> 73dc176773fd646a566d9f77767eee5a95955780
 } from 'lucide-react';
 import { GlossyButton } from '../../design-system/components/Button/GlossyButton';
 import {
@@ -126,12 +121,8 @@ export const Landing: React.FC = () => {
           }}>
           <div className="docked-navbar-left">
             <div className="hero-brand-container" onClick={() => navigate('/')}>
-<<<<<<< HEAD
 
               <img src="/logo-drk.svg" alt="Matisse" style={{ height: '54px', display: 'block', objectFit: 'contain' }} />
-=======
-              <img src="/logo-drk.svg" alt="Matisse" style={{ height: '38px', display: 'block', objectFit: 'contain' }} />
->>>>>>> 73dc176773fd646a566d9f77767eee5a95955780
             </div>
             <nav className="desktop-only docked-nav-links">
               <a
@@ -221,13 +212,8 @@ export const Landing: React.FC = () => {
 
       {/* Indented Landing Content below the fold */}
       <div className="landing-content-sections">
-<<<<<<< HEAD
 
         {/* 2. TOOLS SECTION */}
-=======
-        
-         {/* 2. TOOLS SECTION */}
->>>>>>> 73dc176773fd646a566d9f77767eee5a95955780
         <section id="tools" className="tools-section">
           <div className="section-header">
             <Badge variant="primary" size="md">Interactive Toolkit</Badge>
