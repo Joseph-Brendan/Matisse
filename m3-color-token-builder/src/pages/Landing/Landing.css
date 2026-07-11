@@ -383,99 +383,221 @@
   max-width: 100%;
   margin: 2rem auto 6rem;
   padding: 4rem 2rem;
-  background: var(--md-ref-role-surfaceContainerLowest);
+  background: #0b0c0e; /* Dark theme section background matching the screenshot */
   border-radius: 2rem;
-  border: 1px solid var(--md-ref-role-outlineVariant);
+  border: 1px solid #1c1c1e;
   box-sizing: border-box;
 }
 
 .how-it-works-header {
   text-align: center;
-  margin-bottom: 3.5rem;
+  margin-bottom: 4rem;
 }
 
 .how-it-works-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
   font-size: 2.5rem;
   font-weight: 800;
-  margin: 0.75rem 0 0.5rem;
+  margin: 0;
   letter-spacing: -0.02em;
+  color: #ffffff;
 }
 
-.how-it-works-subtitle {
-  color: var(--md-ref-role-onSurfaceVariant);
-  margin: 0;
-  font-size: 1.125rem;
-}
-
-.how-it-works-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 2.5rem;
+.title-line {
+  height: 1px;
+  width: 150px;
+  background: #76E037; /* Green title lines */
   position: relative;
 }
 
-.workflow-card {
+.title-line::after {
+  content: '';
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  background-color: #76E037;
+  border-radius: 50%;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.title-line:not(.right)::after {
+  right: 0;
+}
+
+.title-line.right::after {
+  left: 0;
+}
+
+.timeline-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   position: relative;
-  padding: 2.5rem 2rem;
-  border-radius: 1.5rem;
-  background: var(--md-ref-role-surface);
-  border: 1px solid var(--md-ref-role-outlineVariant);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
-  transition: all 0.3s ease;
+  max-width: 600px;
+  margin: 0 auto;
 }
 
-.workflow-card-01:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
-  border-color: hsl(256, 34%, 48%);
-}
-.workflow-card-02:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
-  border-color: hsl(340, 21%, 41%);
-}
-.workflow-card-03:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
-  border-color: hsl(259, 11%, 40%);
+.timeline-loop-svg {
+  position: absolute;
+  bottom: 0px;
+  right: 50%;
+  width: 160px;
+  height: 160px;
+  z-index: 1;
+  pointer-events: none;
 }
 
-.workflow-step-num {
-  font-size: 3.5rem;
-  font-weight: 900;
-  line-height: 1;
-  margin-bottom: 1rem;
-  opacity: 0.8;
+.timeline-start-node {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  max-width: 440px;
+  margin: 0 auto 2rem;
+  padding-left: calc(50% - 12px);
+  font-weight: 600;
+  color: #ffffff;
+  z-index: 2;
 }
 
-.workflow-step-num-01 {
-  background: linear-gradient(135deg, hsl(256, 34%, 48%), #9ca3af);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-.workflow-step-num-02 {
-  background: linear-gradient(135deg, hsl(340, 21%, 41%), #9ca3af);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-.workflow-step-num-03 {
-  background: linear-gradient(135deg, hsl(259, 11%, 40%), #9ca3af);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+.pulse-ring {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 1.5px solid #76E037;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  background: #0b0c0e;
+  z-index: 3;
 }
 
-.workflow-card-title {
-  font-size: 1.25rem;
-  font-weight: 700;
-  margin: 0 0 0.75rem;
-  color: var(--md-ref-role-onSurface);
+.pulse-dot {
+  width: 8px;
+  height: 8px;
+  background-color: #76E037;
+  border-radius: 50%;
+  animation: pulse-animation-green 2s infinite;
 }
 
-.workflow-card-desc {
-  margin: 0;
+@keyframes pulse-animation-green {
+  0% { transform: scale(0.8); box-shadow: 0 0 0 0 rgba(118, 224, 55, 0.7); }
+  70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(118, 224, 55, 0); }
+  100% { transform: scale(0.8); box-shadow: 0 0 0 0 rgba(118, 224, 55, 0); }
+}
+
+.timeline-start-text {
+  margin-left: 12px;
   font-size: 0.9375rem;
-  color: var(--md-ref-role-onSurfaceVariant);
-  line-height: 1.6;
+  color: #ffffff;
+  font-weight: 500;
+}
+
+.timeline-track {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  position: relative;
+  width: 100%;
+}
+
+.timeline-line {
+  position: absolute;
+  top: -2rem; 
+  bottom: -2.5rem; 
+  left: 50%;
+  width: 2px;
+  background: #76E037; /* Green timeline connector line */
+  transform: translateX(-50%);
+  z-index: 0;
+}
+
+.timeline-item {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  justify-content: center;
+}
+
+.timeline-card {
+  display: flex;
+  align-items: center;
+  background: #1c1c1e; /* Dark card background */
+  border: 1px solid #2c2c2e;
+  border-radius: 12px;
+  padding: 1.25rem 1.5rem;
+  gap: 1.5rem;
+  width: 100%;
+  max-width: 440px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s, border-color 0.2s;
+}
+
+.timeline-card:hover {
+  transform: translateY(-2px);
+  border-color: #76E037;
+}
+
+.timeline-icon-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff; /* White icons */
+  flex-shrink: 0;
+}
+
+.timeline-content-box {
+  flex: 1;
+}
+
+.timeline-content-box p {
+  font-size: 0.9375rem;
+  color: #a1a1aa; /* Muted gray text inside cards */
+  margin: 0;
+  line-height: 1.5;
+  text-align: left;
+}
+
+.timeline-end-node {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  max-width: 440px;
+  margin: 2rem auto 0;
+  padding-left: calc(50% - 14px);
+  z-index: 2;
+}
+
+.timeline-check {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #76E037;
+  color: #0b0c0e; /* Dark color for checkmark */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 10px rgba(118, 224, 55, 0.3);
+  flex-shrink: 0;
+  z-index: 3;
+}
+
+.timeline-end-text {
+  margin-left: 12px;
+  font-size: 0.9375rem;
+  color: #a1a1aa;
+  line-height: 1.4;
+  text-align: left;
+}
+
+.timeline-end-text span {
+  color: #ffffff;
 }
 
 /* ── Section General Headers ────────────────────────── */

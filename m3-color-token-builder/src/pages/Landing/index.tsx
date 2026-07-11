@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Palette, Layers, Paintbrush, Grid3x3, Type, Download, ArrowUpRight,
-  ChevronDown, ChevronUp, Star, Check
+  ChevronDown, ChevronUp, Star, Check, User, Mail, Sparkles
 } from 'lucide-react';
 import { GlossyButton } from '../../design-system/components/Button/GlossyButton';
 import type { GlossyVariant } from '../../design-system/components/Button/GlossyButton';
@@ -109,7 +109,7 @@ export const Landing: React.FC = () => {
           }}>
           <div className="docked-navbar-left">
             <div className="hero-brand-container" onClick={() => navigate('/')}>
-              
+
               <img src="/logo-drk.svg" alt="Matisse" style={{ height: '54px', display: 'block', objectFit: 'contain' }} />
             </div>
             <nav className="desktop-only docked-nav-links">
@@ -200,7 +200,7 @@ export const Landing: React.FC = () => {
 
       {/* Indented Landing Content below the fold */}
       <div className="landing-content-sections">
-        
+
         {/* 2. TOOLS SECTION */}
         <section id="tools" className="tools-section">
           <div className="section-header">
@@ -214,28 +214,28 @@ export const Landing: React.FC = () => {
           <div className="tools-tabbed-container">
             {/* Tool Tabs */}
             <div className="tools-tabs">
-              <button 
+              <button
                 className={`tools-tab-btn ${activeToolTab === 'color' ? 'active' : ''}`}
                 onClick={() => setActiveToolTab('color')}
               >
                 <Palette size={16} />
                 <span>Color Tones</span>
               </button>
-              <button 
+              <button
                 className={`tools-tab-btn ${activeToolTab === 'buttons' ? 'active' : ''}`}
                 onClick={() => setActiveToolTab('buttons')}
               >
                 <Paintbrush size={16} />
                 <span>Glossy Buttons</span>
               </button>
-              <button 
+              <button
                 className={`tools-tab-btn ${activeToolTab === 'typography' ? 'active' : ''}`}
                 onClick={() => setActiveToolTab('typography')}
               >
                 <Type size={16} />
                 <span>Type Scales</span>
               </button>
-              <button 
+              <button
                 className={`tools-tab-btn ${activeToolTab === 'shadows' ? 'active' : ''}`}
                 onClick={() => setActiveToolTab('shadows')}
               >
@@ -253,10 +253,10 @@ export const Landing: React.FC = () => {
                     <p>Adjust the slider to simulate HCT hue adjustments. See how the tonal scale values shift while maintaining consistent perceptual steps.</p>
                     <div className="hue-slider-wrapper">
                       <label>Hue: {pickerHue}°</label>
-                      <input 
-                        type="range" 
-                        min="0" 
-                        max="360" 
+                      <input
+                        type="range"
+                        min="0"
+                        max="360"
                         value={pickerHue}
                         onChange={(e) => setPickerHue(Number(e.target.value))}
                         className="hue-slider"
@@ -268,8 +268,8 @@ export const Landing: React.FC = () => {
                       const computedBg = `hsl(${pickerHue}, 45%, ${100 - tone}%)`;
                       const computedColor = tone > 50 ? '#000' : '#fff';
                       return (
-                        <div 
-                          key={tone} 
+                        <div
+                          key={tone}
                           className="sandbox-color-block"
                           style={{ backgroundColor: computedBg, color: computedColor }}
                         >
@@ -423,48 +423,68 @@ export const Landing: React.FC = () => {
         {/* 5. HOW IT WORKS SECTION */}
         <section id="how-it-works" className="how-it-works-section">
           <div className="how-it-works-header">
-            <Badge variant="primary" size="md">Workflow</Badge>
-            <h2 className="how-it-works-title">How it works</h2>
-            <p className="how-it-works-subtitle">
-              Three simple steps to transform your design palette into production-ready system tokens.
-            </p>
+            <h2 className="how-it-works-title">
+              <div className="title-line"></div>
+              <span>How It works</span>
+              <div className="title-line right"></div>
+            </h2>
           </div>
-          <div className="how-it-works-grid">
-            {[
-              {
-                step: '01',
-                title: 'Define Key Colors',
-                desc: 'Select primary, secondary, and tertiary seeds using visual pickers or custom hex color values directly.',
-                stepClass: 'workflow-card-01',
-                numClass: 'workflow-step-num-01',
-              },
-              {
-                step: '02',
-                title: 'Generate Tonal Scales',
-                desc: 'Matisse instantly maps all seed colors through the perceptual engine, target-generating 11 tones.',
-                stepClass: 'workflow-card-02',
-                numClass: 'workflow-step-num-02',
-              },
-              {
-                step: '03',
-                title: 'Export & Integrate',
-                desc: 'Download your files immediately. Available in clean CSS files, standard JSON format, or Tailwind maps.',
-                stepClass: 'workflow-card-03',
-                numClass: 'workflow-step-num-03',
-              },
-            ].map((item, idx) => (
-              <div key={idx} className={`workflow-card ${item.stepClass}`}>
-                <div className={`workflow-step-num ${item.numClass}`}>
-                  {item.step}
+
+          <div className="timeline-container">
+            <svg className="timeline-loop-svg" viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M 160 10 C 60 10, 20 50, 20 90 C 20 130, 60 150, 110 150 C 130 150, 140 140, 140 120" stroke="#76E037" strokeWidth="2" fill="none" />
+              <path d="M 135 125 L 140 120 L 145 125" stroke="#76E037" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+
+            <div className="timeline-start-node">
+              <div className="pulse-ring"><div className="pulse-dot"></div></div>
+              <span className="timeline-start-text">Start</span>
+            </div>
+
+            <div className="timeline-track">
+              <div className="timeline-line"></div>
+
+              <div className="timeline-item">
+                <div className="timeline-card">
+                  <div className="timeline-icon-box">
+                    <Palette size={20} />
+                  </div>
+                  <div className="timeline-content-box">
+                    <p>Select primary, secondary, and tertiary seeds using visual pickers or custom hex color values directly.</p>
+                  </div>
                 </div>
-                <h3 className="workflow-card-title">
-                  {item.title}
-                </h3>
-                <p className="workflow-card-desc">
-                  {item.desc}
-                </p>
               </div>
-            ))}
+
+              <div className="timeline-item">
+                <div className="timeline-card">
+                  <div className="timeline-icon-box">
+                    <Sparkles size={20} />
+                  </div>
+                  <div className="timeline-content-box">
+                    <p>Matisse instantly maps all seed colors through the perceptual engine, target-generating 11 tones.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="timeline-item">
+                <div className="timeline-card">
+                  <div className="timeline-icon-box">
+                    <Download size={20} />
+                  </div>
+                  <div className="timeline-content-box">
+                    <p>Download your files immediately. Available in clean CSS files, standard JSON format, or Tailwind maps.</p>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+            <div className="timeline-end-node">
+              <div className="timeline-check">
+                <Check size={16} strokeWidth={3} />
+              </div>
+              <p className="timeline-end-text">Ready to use, <span>Congratulations you have a new color system.</span></p>
+            </div>
           </div>
         </section>
 
