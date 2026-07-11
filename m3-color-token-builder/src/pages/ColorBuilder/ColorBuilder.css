@@ -1,0 +1,82 @@
+.color-builder-root {
+  min-height: 100vh;
+  transition: all 0.3s ease;
+}
+
+.color-builder-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 2rem;
+  border-bottom: 1px solid var(--md-ref-role-outlineVariant);
+  background: var(--md-ref-role-surface);
+}
+
+.color-builder-header-left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.color-builder-title {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.color-builder-main {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  padding: 2rem;
+  max-width: 1280px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.color-builder-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .color-builder-header {
+    padding: 0.75rem 1.25rem;
+  }
+  .color-builder-main {
+    padding: 1.5rem;
+    gap: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .color-builder-header {
+    padding: 0.625rem 1rem;
+  }
+  .color-builder-header-left {
+    gap: 0.625rem;
+  }
+  .color-builder-title {
+    font-size: 1.0625rem;
+  }
+  .color-builder-main {
+    padding: 1rem;
+    gap: 1.25rem;
+  }
+}
+
+@media (max-width: 375px) {
+  .color-builder-header {
+    padding: 0.5rem 0.75rem;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .color-builder-title {
+    font-size: 0.9375rem;
+  }
+  .color-builder-main {
+    padding: 0.75rem;
+    gap: 1rem;
+  }
+}

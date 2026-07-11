@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Palette, Type, LayoutGrid, Download, Save, Plus,
-  Bell, LogOut, Eye, Check,
-  History, FolderOpen, Settings, Zap, Layers, Box, Wind, Sparkles, Trash2,
+  Bell, LogOut, Eye, Menu, X,
+  History, Settings, Zap, Layers, Box, Wind, Sparkles, Trash2,
 } from 'lucide-react';
 import { KeyColorCard } from '../../components/KeyColorCard';
 import { TonalPaletteEditor } from '../../components/TonalPaletteEditor';
@@ -17,6 +17,7 @@ import { showAlert, showConfirm } from '../../store/useConfirmStore';
 import { GlossyButton } from '../../design-system/components/Button/GlossyButton';
 import { FontPicker } from '../../design-system/components/FontPicker/FontPicker';
 import { Dropdown } from '../../design-system/components';
+import { FeatureCheckbox } from '../../components/FeatureCheckbox';
 import './Dashboard.css';
 
 type Feature = 'color' | 'typography' | 'spacing' | 'shadows' | 'elevation' | 'borderRadius' | 'motion' | 'components';
@@ -60,7 +61,7 @@ export const Dashboard: React.FC = () => {
   const {
     projectName, setProjectName,
     history, pushHistory, deleteHistoryItem, clearHistory,
-    checklist, toggleChecklist,
+    checklist, toggleChecklist, checkFeature,
     typography, spacing, borderRadius, shadows, elevation,
     updateTypographyFamily, updateTypographySize, updateTypographyWeight,
     updateSpacingValue, updateSpacingUnit, updateBorderRadiusValue,
@@ -71,6 +72,20 @@ export const Dashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState<WorkspaceTab>('builder');
   const [exportScope, setExportScope] = useState<'all' | 'color' | null>(null);
   const [mobileNav, setMobileNav] = useState<Feature | 'preview'>('color');
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  const featureChecklistMap: Partial<Record<Feature, keyof typeof checklist>> = {
+    color: 'color',
+    typography: 'typography',
+    spacing: 'spacing',
+  };
+
+  useEffect(() => {
+    const key = featureChecklistMap[activeFeature];
+    if (key && !checklist[key]) {
+      checkFeature(key);
+    }
+  }, [activeFeature]);
 
   const handleSave = () => {
     const snapshot = {
@@ -96,6 +111,7 @@ export const Dashboard: React.FC = () => {
   const handleFeatureClick = (f: Feature) => {
     setActiveFeature(f);
     setActiveTab('builder');
+    setSidebarOpen(false);
   };
 
   const handleMobileNav = (nav: Feature | 'preview') => {
@@ -116,9 +132,16 @@ export const Dashboard: React.FC = () => {
       {/* ── Dark Header ──────────────────────────────── */}
       <header className="dashboard-header">
         <div className="dashboard-header-left">
-          <img src="/logo-wt.svg" alt="Matisse" onClick={() => navigate('/')} style={{ height: '54px', cursor: 'pointer', objectFit: 'contain' }} />
+          <button
+            className="dash-header-menu-btn"
+            onClick={() => setSidebarOpen(!sidebarOpen)}
+            aria-label="Toggle sidebar"
+          >
+            {sidebarOpen ? <X size={20} /> : <Menu size={20} />}
+          </button>
+          <img src="/logo-wt.svg" alt="Matisse" className="dash-logo-img" onClick={() => navigate('/')} />
           <input
-            className="dashboard-project-name"
+            className="dashboard-project-name desktop-only"
             value={projectName}
             onChange={(e) => setProjectName(e.target.value)}
             aria-label="Project name"
@@ -128,24 +151,22 @@ export const Dashboard: React.FC = () => {
         <div className="dashboard-header-right">
           <button className="dash-header-btn" onClick={handleSave}>
             <Save size={14} />
-            <span>Save</span>
+            <span className="dash-header-btn-label">Save</span>
           </button>
 
-          {/* Export Button */}
           <button
             className="dash-header-btn dash-header-btn--primary"
             onClick={() => setExportScope('all')}
           >
             <Download size={14} />
-            <span>Export</span>
+            <span className="dash-header-btn-label">Export</span>
           </button>
 
-          <button className="dash-header-icon-btn" onClick={() => navigate('/settings')} aria-label="Settings &amp; notifications">
+          <button className="dash-header-icon-btn desktop-only" onClick={() => navigate('/settings')} aria-label="Settings &amp; notifications">
             <Bell size={15} />
             <span className="dash-notif-dot" />
           </button>
 
-          {/* User avatar + dropdown */}
           <Dropdown
             align="right"
             trigger={
@@ -182,8 +203,25 @@ export const Dashboard: React.FC = () => {
 
       {/* ── Body ─────────────────────────────────────── */}
       <div className="dashboard-body">
+        {/* Mobile sidebar backdrop */}
+        {sidebarOpen && <div className="dashboard-sidebar-backdrop" onClick={() => setSidebarOpen(false)} />}
+
         {/* ── Floating Left Sidenav ─────────────────── */}
-        <aside className="dashboard-sidenav">
+        <aside className={`dashboard-sidenav${sidebarOpen ? ' dashboard-sidenav--open' : ''}`}>
+          {/* New Project */}
+          <button className="sidenav-new-project-btn" onClick={handleNewProject}>
+            <Plus size={16} />
+            New Project
+          </button>
+
+          <input
+            className="dashboard-project-name mobile-only"
+            value={projectName}
+            onChange={(e) => setProjectName(e.target.value)}
+            aria-label="Project name"
+            style={{ width: '100%', textAlign: 'center', marginBottom: '0.25rem' }}
+          />
+
           {/* Feature Navigation */}
           <div className="sidenav-panel">
             <p className="sidenav-section-label">Features</p>
@@ -205,18 +243,12 @@ export const Dashboard: React.FC = () => {
             <p className="sidenav-section-label">Progress</p>
             <div className="sidenav-checklist">
               {(Object.keys(checklist) as (keyof typeof checklist)[]).map((key) => (
-                <div
+                <FeatureCheckbox
                   key={key}
-                  className={`checklist-item${checklist[key] ? ' done' : ''}`}
-                  onClick={() => toggleChecklist(key)}
-                >
-                  <div className={`checklist-box${checklist[key] ? ' checked' : ''}`}>
-                    {checklist[key] && <Check size={11} strokeWidth={3} />}
-                  </div>
-                  <span className="checklist-label">
-                    {key.charAt(0).toUpperCase() + key.slice(1)}
-                  </span>
-                </div>
+                  checked={checklist[key]}
+                  label={key.charAt(0).toUpperCase() + key.slice(1)}
+                  onChange={() => toggleChecklist(key)}
+                />
               ))}
             </div>
           </div>
@@ -271,11 +303,6 @@ export const Dashboard: React.FC = () => {
             </div>
           </div>
 
-          {/* New Project */}
-          <button className="sidenav-new-project-btn" onClick={handleNewProject}>
-            <Plus size={16} />
-            New Project
-          </button>
         </aside>
 
         {/* ── Workspace ─────────────────────────────── */}
@@ -303,7 +330,7 @@ export const Dashboard: React.FC = () => {
             {activeTab === 'builder' && (
               <>
                 {activeFeature === 'color' && (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                  <div className="color-feature-wrapper">
                     <KeyColorCard />
                     <TonalPaletteEditor />
                     <RoleMappingTable />
@@ -333,8 +360,8 @@ export const Dashboard: React.FC = () => {
                       <div className="builder-section">
                         <h4 className="builder-section-title">Scale Generator</h4>
                         <p className="builder-section-desc">Generate standard typographic hierarchy sizes using a mathematical scale factor.</p>
-                        <div className="builder-row" style={{ gap: '1rem', marginBottom: '1rem', display: 'flex' }}>
-                          <div className="builder-field" style={{ flex: 1 }}>
+                        <div className="builder-row">
+                          <div className="builder-field">
                             <label className="builder-field-label">Base Size (px)</label>
                             <input
                               type="number"
@@ -343,7 +370,7 @@ export const Dashboard: React.FC = () => {
                               id="typo-base-input"
                             />
                           </div>
-                          <div className="builder-field" style={{ flex: 1 }}>
+                          <div className="builder-field">
                             <label className="builder-field-label">Scale Factor</label>
                             <select className="builder-field-input" id="typo-scale-select" defaultValue="1.25">
                               <option value="1.067">Minor Second (1.067)</option>
@@ -460,7 +487,7 @@ export const Dashboard: React.FC = () => {
 
                       <div className="builder-section">
                         <h4 className="builder-section-title">Manual Spacing Steps</h4>
-                        <div className="builder-grid-2col" style={{ maxHeight: '300px', overflowY: 'auto', paddingRight: '0.5rem' }}>
+                        <div className="builder-grid-2col spacing-steps-grid">
                           {Object.entries(spacing).map(([key, val]) => (
                             <div key={key} className="builder-field">
                               <label className="builder-field-label">Step {key}</label>
@@ -544,24 +571,15 @@ export const Dashboard: React.FC = () => {
                     {/* Preview */}
                     <div className="builder-preview-panel">
                       <h4 className="builder-section-title">Glow Previews</h4>
-                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(130px, 1fr))', gap: '1.25rem' }}>
+                      <div className="builder-preview-grid builder-preview-grid--glows">
                         {Object.entries(shadows.glow).map(([name, shadowValue]) => (
                           <div
                             key={name}
-                            style={{
-                              padding: '1.5rem 1rem',
-                              background: 'var(--md-ref-role-surface)',
-                              borderRadius: 'var(--matisse-radius-md)',
-                              boxShadow: shadowValue,
-                              textAlign: 'center',
-                              border: '1px solid var(--md-ref-role-outlineVariant)',
-                              display: 'flex',
-                              flexDirection: 'column',
-                              gap: '0.25rem',
-                            }}
+                            className="builder-preview-card"
+                            style={{ boxShadow: shadowValue, borderRadius: 'var(--matisse-radius-md)' }}
                           >
-                            <span style={{ fontWeight: 700, fontSize: '0.875rem', textTransform: 'capitalize' }}>{name}</span>
-                            <span style={{ fontSize: '0.75rem', color: 'var(--md-ref-role-onSurfaceVariant)' }}>Active Glow</span>
+                            <span className="builder-preview-card-title">{name}</span>
+                            <span className="builder-preview-card-sub">Active Glow</span>
                           </div>
                         ))}
                       </div>
@@ -596,19 +614,14 @@ export const Dashboard: React.FC = () => {
                         {Object.entries(elevation).map(([level, val]) => (
                           <div
                             key={level}
+                            className="elevation-tier-row"
                             style={{
-                              padding: '1.25rem 2rem',
-                              background: 'var(--md-ref-role-surface)',
-                              borderRadius: 'var(--matisse-radius-md)',
                               boxShadow: val,
                               border: level === '0' ? '1px solid var(--md-ref-role-outlineVariant)' : 'none',
-                              display: 'flex',
-                              justifyContent: 'space-between',
-                              alignItems: 'center',
                             }}
                           >
-                            <span style={{ fontWeight: 700 }}>Elevation Tier {level}</span>
-                            <span style={{ fontSize: '0.75rem', fontFamily: 'monospace', color: 'var(--md-ref-role-outline)', textOverflow: 'ellipsis', overflow: 'hidden', maxWidth: '300px', whiteSpace: 'nowrap' }} title={val}>{val}</span>
+                            <span className="elevation-tier-row-label">Elevation Tier {level}</span>
+                            <span className="elevation-tier-row-value" title={val}>{val}</span>
                           </div>
                         ))}
                       </div>
@@ -640,24 +653,15 @@ export const Dashboard: React.FC = () => {
                     {/* Preview */}
                     <div className="builder-preview-panel">
                       <h4 className="builder-section-title">Corner Rounding Previews</h4>
-                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(130px, 1fr))', gap: '1rem' }}>
+                      <div className="builder-preview-grid builder-preview-grid--br">
                         {Object.entries(borderRadius).map(([key, val]) => (
                           <div
                             key={key}
-                            style={{
-                              padding: '1.5rem 1rem',
-                              background: 'var(--md-ref-role-surface)',
-                              border: '1px solid var(--md-ref-role-outlineVariant)',
-                              borderRadius: val,
-                              textAlign: 'center',
-                              boxShadow: '0 2px 8px rgba(0,0,0,0.02)',
-                              display: 'flex',
-                              flexDirection: 'column',
-                              gap: '0.5rem',
-                            }}
+                            className="builder-preview-card"
+                            style={{ borderRadius: val, gap: '0.5rem' }}
                           >
-                            <span style={{ fontWeight: 700, fontSize: '0.875rem' }}>{key}</span>
-                            <span style={{ fontSize: '0.75rem', fontFamily: 'monospace', color: 'var(--md-ref-role-outline)' }}>{val}</span>
+                            <span className="builder-preview-card-title" style={{ textTransform: 'none' }}>{key}</span>
+                            <span className="builder-preview-card-sub" style={{ fontFamily: 'monospace' }}>{val}</span>
                           </div>
                         ))}
                       </div>
@@ -687,16 +691,20 @@ export const Dashboard: React.FC = () => {
       {/* ── Mobile Bottom Nav ─────────────────────── */}
       <nav className="dashboard-mobile-nav">
         <div className="mobile-nav-inner">
-          {featureNav.map((f) => (
-            <button
-              key={f.id}
-              className={`mobile-nav-btn${mobileNav === f.id ? ' active' : ''}`}
-              onClick={() => handleMobileNav(f.id)}
-            >
-              {f.icon}
-              {f.label}
-            </button>
-          ))}
+          <button
+            className={`mobile-nav-btn${activeFeature === 'color' && activeTab === 'builder' ? ' active' : ''}`}
+            onClick={() => handleMobileNav('color')}
+          >
+            <Palette size={16} />
+            Color
+          </button>
+          <button
+            className={`mobile-nav-btn${activeFeature === 'typography' && activeTab === 'builder' ? ' active' : ''}`}
+            onClick={() => handleMobileNav('typography')}
+          >
+            <Type size={16} />
+            Type
+          </button>
           <button
             className={`mobile-nav-btn${mobileNav === 'preview' ? ' active' : ''}`}
             onClick={() => handleMobileNav('preview')}
@@ -706,10 +714,10 @@ export const Dashboard: React.FC = () => {
           </button>
           <button
             className="mobile-nav-btn"
-            onClick={() => { showAlert('Coming Soon', 'The Projects panel is coming soon.', 'info'); }}
+            onClick={() => navigate('/settings')}
           >
-            <FolderOpen size={16} />
-            Projects
+            <Settings size={16} />
+            Settings
           </button>
         </div>
       </nav>

@@ -100,3 +100,16 @@
   background: var(--md-ref-role-surface, #fff);
   color: inherit;
 }
+
+/* ── Responsive ── */
+@media (max-width: 375px) {
+  .color-picker-popover {
+    width: 200px;
+    padding: 8px;
+    right: 0;
+  }
+  .color-picker-hsl-row {
+    flex-direction: column;
+    gap: 4px;
+  }
+}
