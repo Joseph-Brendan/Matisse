@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Palette, Layers, Paintbrush, Grid3x3, Type, Download, ArrowUpRight,
-  ChevronDown, ChevronUp, Star, Check
+  ChevronDown, Star, Check
 } from 'lucide-react';
 import { GlossyButton } from '../../design-system/components/Button/GlossyButton';
 import type { GlossyVariant } from '../../design-system/components/Button/GlossyButton';
@@ -470,30 +470,41 @@ export const Landing: React.FC = () => {
 
         {/* 6. FAQ SECTION */}
         <section id="faq" className="faq-section">
-          <div className="section-header">
-            <Badge variant="primary" size="md">FAQ</Badge>
-            <h2 className="section-title">Frequently Asked Questions</h2>
-            <p className="section-subtitle">Got questions? We have got the answers.</p>
-          </div>
-          <div className="faq-accordion-stack">
-            {faqs.map((faq, i) => {
-              const isOpen = faqOpenIdx === i;
-              return (
-                <div key={i} className={`faq-accordion-item ${isOpen ? 'open' : ''}`} onClick={() => toggleFaq(i)}>
-                  <div className="faq-accordion-trigger">
-                    <span className="faq-question-text">{faq.q}</span>
-                    <span className="faq-icon-toggle">
-                      {isOpen ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
-                    </span>
-                  </div>
-                  {isOpen && (
-                    <div className="faq-accordion-panel">
-                      <p className="faq-answer-text">{faq.a}</p>
+          <div className="faq-split-layout">
+            <div className="faq-left-content">
+              <Badge variant="primary" size="md">FAQ</Badge>
+              <h2 className="section-title">Frequently Asked Questions</h2>
+              <p className="section-subtitle">Got questions? We have got the answers.</p>
+            </div>
+            <div className="faq-right-accordion">
+              <div className="faq-accordion-stack">
+                {faqs.map((faq, i) => {
+                  const isOpen = faqOpenIdx === i;
+                  return (
+                    <div key={i} className={`faq-accordion-item ${isOpen ? 'open' : ''}`}>
+                      <div
+                        className="faq-accordion-trigger"
+                        onClick={() => toggleFaq(i)}
+                        role="button"
+                        tabIndex={0}
+                        aria-expanded={isOpen}
+                        onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleFaq(i); } }}
+                      >
+                        <span className="faq-question-text" id={`faq-q-${i}`}>{faq.q}</span>
+                        <span className="faq-icon-toggle" aria-hidden="true">
+                          <ChevronDown size={18} />
+                        </span>
+                      </div>
+                      <div className={`faq-accordion-panel ${isOpen ? 'open' : ''}`} role="region" aria-labelledby={`faq-q-${i}`}>
+                        <div className="faq-accordion-panel-inner">
+                          <p className="faq-answer-text">{faq.a}</p>
+                        </div>
+                      </div>
                     </div>
-                  )}
-                </div>
-              );
-            })}
+                  );
+                })}
+              </div>
+            </div>
           </div>
         </section>
 
