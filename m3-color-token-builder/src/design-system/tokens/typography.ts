@@ -1,8 +1,8 @@
 export const typography = {
   fontFamily: {
-    sans: "'Open Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
-    display: "'Playfair Display', Georgia, serif",
-    mono: "'JetBrains Mono', 'Fira Code', monospace",
+    sans: 'Open Sans',
+    display: 'Playfair Display',
+    mono: 'JetBrains Mono',
   },
   fontSize: {
     xs: '0.75rem',

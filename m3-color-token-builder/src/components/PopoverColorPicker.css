@@ -1,0 +1,115 @@
+/* ============================================================
+   PopoverColorPicker — Vanilla CSS
+   All inline styles extracted (except dynamic backgroundColor on swatch)
+   ============================================================ */
+
+.color-picker-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* The colour swatch — backgroundColor stays inline (dynamic runtime value) */
+.color-picker-swatch {
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  border-radius: 0.375rem;
+  transition: box-shadow 0.15s;
+}
+
+.color-picker-swatch:hover {
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.15);
+}
+
+/* Floating popover panel */
+.color-picker-popover {
+  position: absolute;
+  z-index: 99999;
+  background-color: var(--md-ref-role-surface, #ffffff);
+  border-radius: 12px;
+  box-shadow:
+    0 20px 25px -5px rgba(0, 0, 0, 0.1),
+    0 8px 10px -6px rgba(0, 0, 0, 0.1);
+  padding: 12px;
+  width: 240px;
+  box-sizing: border-box;
+  border: 1px solid var(--md-ref-role-outlineVariant, rgba(0, 0, 0, 0.08));
+}
+
+/* HSL input row */
+.color-picker-hsl-row {
+  display: flex;
+  gap: 4px;
+  margin-top: 12px;
+}
+
+.color-picker-hsl-field {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  padding: 4px;
+  background: var(--md-ref-role-surface, #fff);
+}
+
+.color-picker-hsl-label {
+  font-size: 10px;
+  color: #6b7280;
+  font-weight: 600;
+  width: 12px;
+  flex-shrink: 0;
+}
+
+.color-picker-hsl-input {
+  width: 100%;
+  min-width: 0;
+  border: none;
+  background: transparent;
+  font-size: 12px;
+  outline: none;
+  padding: 0;
+  color: inherit;
+}
+
+/* Hex row */
+.color-picker-hex-row {
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.color-picker-hex-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #4b5563;
+  flex-shrink: 0;
+}
+
+.color-picker-hex-input {
+  width: 100%;
+  padding: 4px 8px;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  font-size: 12px;
+  font-family: monospace;
+  text-transform: uppercase;
+  outline: none;
+  background: var(--md-ref-role-surface, #fff);
+  color: inherit;
+}
+
+/* ── Responsive ── */
+@media (max-width: 375px) {
+  .color-picker-popover {
+    width: 200px;
+    padding: 8px;
+    right: 0;
+  }
+  .color-picker-hsl-row {
+    flex-direction: column;
+    gap: 4px;
+  }
+}
