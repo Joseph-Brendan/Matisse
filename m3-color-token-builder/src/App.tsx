@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useColorStore } from './store/useColorStore';
 import { ToastContainer } from './design-system/components/Toast/ToastContainer';
@@ -30,6 +30,21 @@ function buildFontStack(name: string, category: 'sans' | 'display' | 'mono'): st
 
 function AppShell() {
   const { theme, roles, typography, spacing, borderRadius, shadows, elevation } = useColorStore();
+
+  // Normalize for system DPI scaling (125%/150%/175% on Windows)
+  // Only compensates fractional DPR so Retina/Mac displays are unaffected
+  const dprRef = useRef<number>(0);
+  useEffect(() => {
+    const dpr = window.devicePixelRatio;
+    if (dpr === dprRef.current) return;
+    dprRef.current = dpr;
+    const rounded = Math.round(dpr);
+    const isFractional = Math.abs(dpr - rounded) > 0.01;
+    if (isFractional) {
+      document.documentElement.style.setProperty('--dpr-scale', `${1 / dpr}`);
+      (document.documentElement.style as Record<string, string>).zoom = `${1 / dpr}`;
+    }
+  }, []);
 
   useEffect(() => {
     // Sync theme colors
