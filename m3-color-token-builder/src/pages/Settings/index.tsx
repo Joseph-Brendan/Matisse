@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Moon, Sun, Bell, User, Info, Palette } from 'lucide-react';
+import { Moon, Sun, Bell, User, Info, Palette, ArrowLeft } from 'lucide-react';
 import { useAuthStore } from '../../store/useAuthStore';
 import { useColorStore } from '../../store/useColorStore';
 import { showAlert } from '../../store/useConfirmStore';
+import '../Dashboard/Dashboard.css';
 import './Settings.css';
 
 export const Settings: React.FC = () => {
@@ -26,34 +27,36 @@ export const Settings: React.FC = () => {
 
   return (
     <div className="settings-root">
-      {/* Header */}
-      <header className="settings-header">
-        <button
-          className="settings-header__back-btn"
-          onClick={() => navigate(-1)}
-          aria-label="Go back"
-        >
-          <ArrowLeft size={16} />
-          Back
-        </button>
-        <h1 className="settings-header__title">Settings</h1>
+      {/* Dark header — matches Dashboard */}
+      <header className="dashboard-header">
+        <div className="dashboard-header-left">
+          <button className="dash-header-btn" onClick={() => navigate(-1)} aria-label="Go back">
+            <ArrowLeft size={14} />
+            <span className="dash-header-btn-label">Back</span>
+          </button>
+          <img
+            src="/logo-wt.svg"
+            alt="Matisse"
+            className="dash-logo-img"
+            onClick={() => navigate('/')}
+          />
+          <span className="settings-header-title">Settings</span>
+        </div>
       </header>
 
       {/* Body */}
       <div className="settings-body">
-
         {/* Profile */}
         <section className="settings-section" aria-labelledby="settings-profile-heading">
           <div className="settings-section__heading" id="settings-profile-heading">
-            <User size={13} style={{ display: 'inline', marginRight: '0.375rem', verticalAlign: 'middle' }} />
+            <User
+              size={13}
+              style={{ display: 'inline', marginRight: '0.375rem', verticalAlign: 'middle' }}
+            />
             Profile
           </div>
           <div className="settings-profile-row">
-            <div
-              className="settings-avatar"
-              style={{ background: avatarColor }}
-              aria-hidden
-            >
+            <div className="settings-avatar" style={{ background: avatarColor }} aria-hidden>
               {displayInitials}
             </div>
             <div>
@@ -64,11 +67,16 @@ export const Settings: React.FC = () => {
           <div className="settings-row">
             <div className="settings-row__info">
               <span className="settings-row__label">Sign out</span>
-              <span className="settings-row__desc">Sign out of your Matisse account on this device.</span>
+              <span className="settings-row__desc">
+                Sign out of your Matisse account on this device.
+              </span>
             </div>
             <button
               className="glossy-btn glossy-btn--error glossy-btn--sm"
-              onClick={() => { logout(); navigate('/auth'); }}
+              onClick={() => {
+                logout();
+                navigate('/auth');
+              }}
             >
               Sign out
             </button>
@@ -78,7 +86,10 @@ export const Settings: React.FC = () => {
         {/* Appearance */}
         <section className="settings-section" aria-labelledby="settings-appearance-heading">
           <div className="settings-section__heading" id="settings-appearance-heading">
-            <Palette size={13} style={{ display: 'inline', marginRight: '0.375rem', verticalAlign: 'middle' }} />
+            <Palette
+              size={13}
+              style={{ display: 'inline', marginRight: '0.375rem', verticalAlign: 'middle' }}
+            />
             Appearance
           </div>
           <div className="settings-theme-options">
@@ -106,20 +117,25 @@ export const Settings: React.FC = () => {
         {/* Notifications */}
         <section className="settings-section" aria-labelledby="settings-notif-heading">
           <div className="settings-section__heading" id="settings-notif-heading">
-            <Bell size={13} style={{ display: 'inline', marginRight: '0.375rem', verticalAlign: 'middle' }} />
+            <Bell
+              size={13}
+              style={{ display: 'inline', marginRight: '0.375rem', verticalAlign: 'middle' }}
+            />
             Notifications
           </div>
           <div className="settings-row">
             <div className="settings-row__info">
               <span className="settings-row__label">In-app notifications</span>
-              <span className="settings-row__desc">Show confirmation dialogs for saves, exports, and actions.</span>
+              <span className="settings-row__desc">
+                Show confirmation dialogs for saves, exports, and actions.
+              </span>
             </div>
             <label className="settings-toggle" aria-label="Toggle toast notifications">
               <input
                 type="checkbox"
                 className="settings-toggle__input"
                 checked={notifToasts}
-                onChange={e => setNotifToasts(e.target.checked)}
+                onChange={(e) => setNotifToasts(e.target.checked)}
               />
               <span className="settings-toggle__track" />
               <span className="settings-toggle__thumb" />
@@ -128,14 +144,16 @@ export const Settings: React.FC = () => {
           <div className="settings-row">
             <div className="settings-row__info">
               <span className="settings-row__label">Sound alerts</span>
-              <span className="settings-row__desc">Play a subtle sound when an action completes.</span>
+              <span className="settings-row__desc">
+                Play a subtle sound when an action completes.
+              </span>
             </div>
             <label className="settings-toggle" aria-label="Toggle sound alerts">
               <input
                 type="checkbox"
                 className="settings-toggle__input"
                 checked={notifSounds}
-                onChange={e => setNotifSounds(e.target.checked)}
+                onChange={(e) => setNotifSounds(e.target.checked)}
               />
               <span className="settings-toggle__track" />
               <span className="settings-toggle__thumb" />
@@ -146,7 +164,10 @@ export const Settings: React.FC = () => {
         {/* About */}
         <section className="settings-section" aria-labelledby="settings-about-heading">
           <div className="settings-section__heading" id="settings-about-heading">
-            <Info size={13} style={{ display: 'inline', marginRight: '0.375rem', verticalAlign: 'middle' }} />
+            <Info
+              size={13}
+              style={{ display: 'inline', marginRight: '0.375rem', verticalAlign: 'middle' }}
+            />
             About
           </div>
           <div className="settings-row">
@@ -154,7 +175,9 @@ export const Settings: React.FC = () => {
               <span className="settings-row__label">Matisse</span>
               <span className="settings-row__desc">Design System Token Builder</span>
             </div>
-            <span className="settings-row__label" style={{ opacity: 0.5, fontSize: '0.8125rem' }}>v0.1.0</span>
+            <span className="settings-row__label" style={{ opacity: 0.5, fontSize: '0.8125rem' }}>
+              v0.1.0
+            </span>
           </div>
           <div className="settings-row">
             <div className="settings-row__info">

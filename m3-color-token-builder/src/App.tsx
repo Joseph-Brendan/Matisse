@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useColorStore } from './store/useColorStore';
 import { ToastContainer } from './design-system/components/Toast/ToastContainer';
 import { ConfirmModal } from './design-system/components/Modal/ConfirmModal';
@@ -8,7 +8,6 @@ import { Auth } from './pages/Auth';
 import { AuthCallback } from './pages/AuthCallback';
 import { SignUp } from './pages/SignUp';
 import { Dashboard } from './pages/Dashboard';
-import { ColorBuilder } from './pages/ColorBuilder';
 import { DesignSystem } from './pages/DesignSystem';
 import { Settings } from './pages/Settings';
 import { About } from './pages/About';
@@ -109,7 +108,7 @@ function AppShell() {
         <Route path="/auth/callback" element={<AuthCallback />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/color-builder" element={<ColorBuilder />} />
+        <Route path="/color-builder" element={<Navigate to="/dashboard" replace />} />
         <Route path="/components" element={<DesignSystem />} />
         <Route path="/settings" element={<Settings />} />
         <Route path="/privacy" element={<Privacy />} />
