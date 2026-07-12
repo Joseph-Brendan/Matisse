@@ -12,6 +12,10 @@ import { ColorBuilder } from './pages/ColorBuilder';
 import { DesignSystem } from './pages/DesignSystem';
 import { Settings } from './pages/Settings';
 import { About } from './pages/About';
+import { Privacy } from './pages/Privacy';
+import { Terms } from './pages/Terms';
+import { ScrollToTop } from './components/ScrollToTop';
+import { BackToTop } from './components/BackToTop';
 
 /** Build a CSS font-family stack from a plain font name */
 function buildFontStack(name: string, category: 'sans' | 'display' | 'mono'): string {
@@ -31,7 +35,7 @@ function AppShell() {
   useEffect(() => {
     // Sync theme colors
     const activeRoles = roles[theme];
-    activeRoles.forEach(r => {
+    activeRoles.forEach((r) => {
       document.documentElement.style.setProperty(`--md-ref-role-${r.name}`, r.resolvedValue);
     });
 
@@ -108,6 +112,8 @@ function AppShell() {
         <Route path="/color-builder" element={<ColorBuilder />} />
         <Route path="/components" element={<DesignSystem />} />
         <Route path="/settings" element={<Settings />} />
+        <Route path="/privacy" element={<Privacy />} />
+        <Route path="/terms" element={<Terms />} />
       </Routes>
       <ToastContainer />
       <ConfirmModal />
@@ -118,7 +124,9 @@ function AppShell() {
 function App() {
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <AppShell />
+      <BackToTop />
     </BrowserRouter>
   );
 }

@@ -1,8 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-  Palette, Layers, Paintbrush, Type, Download, ArrowUpRight, Sparkles,
-  ChevronDown, Star, Check
+  Palette,
+  Layers,
+  Paintbrush,
+  Type,
+  Download,
+  ArrowUpRight,
+  Sparkles,
+  Check,
 } from 'lucide-react';
 import { GlossyButton } from '../../design-system/components/Button/GlossyButton';
 import {
@@ -22,17 +28,51 @@ import { Footer } from '../../components/Footer';
 import { DockedHeader } from '../../components/DockedHeader';
 import { CTASection } from '../../components/CTASection';
 import { useAuthStore } from '../../store/useAuthStore';
+import { FAQSection } from '../../components/FAQSection';
+import { TestimonialSection } from '../../components/TestimonialSection';
 import './Landing.css';
 
 const features = [
-  { Illustration: ColorSystemIllustration, title: 'Color System', desc: 'Full Material 3 tonal palette with semantic role mapping for light and dark modes.' },
-  { Illustration: TypographyIllustration, title: 'Typography Scale', desc: 'Harmonious type system built on Open Sans with 11 sizes and 8 weights.' },
-  { Illustration: ComponentsIllustration, title: 'Component Library', desc: 'Production-ready components: tabs, alerts, modals, toasts, badges, cards, and inputs.' },
-  { Illustration: SpacingIllustration, title: 'Spacing & Grid', desc: 'Consistent 4px-based spacing scale and responsive grid system.' },
-  { Illustration: ExportIllustration, title: 'Multi-format Export', desc: 'Export tokens as JSON, CSS variables, or Tailwind config for any platform.' },
-  { Illustration: VersionHistoryIllustration, title: 'Version History', desc: 'Track every change to your design tokens with full semantic versioning.' },
-  { Illustration: PresetsIllustration, title: 'Smart Presets', desc: 'Start faster with pre-built design system templates for fintech, health, e-com, etc.' },
-  { Illustration: PreviewIllustration, title: 'Live Preview', desc: 'See your design system come to life with real-time previews.' },
+  {
+    Illustration: ColorSystemIllustration,
+    title: 'Color System',
+    desc: 'Full Material 3 tonal palette with semantic role mapping for light and dark modes.',
+  },
+  {
+    Illustration: TypographyIllustration,
+    title: 'Typography Scale',
+    desc: 'Harmonious type system built on Open Sans with 11 sizes and 8 weights.',
+  },
+  {
+    Illustration: ComponentsIllustration,
+    title: 'Component Library',
+    desc: 'Production-ready components: tabs, alerts, modals, toasts, badges, cards, and inputs.',
+  },
+  {
+    Illustration: SpacingIllustration,
+    title: 'Spacing & Grid',
+    desc: 'Consistent 4px-based spacing scale and responsive grid system.',
+  },
+  {
+    Illustration: ExportIllustration,
+    title: 'Multi-format Export',
+    desc: 'Export tokens as JSON, CSS variables, or Tailwind config for any platform.',
+  },
+  {
+    Illustration: VersionHistoryIllustration,
+    title: 'Version History',
+    desc: 'Track every change to your design tokens with full semantic versioning.',
+  },
+  {
+    Illustration: PresetsIllustration,
+    title: 'Smart Presets',
+    desc: 'Start faster with pre-built design system templates for fintech, health, e-com, etc.',
+  },
+  {
+    Illustration: PreviewIllustration,
+    title: 'Live Preview',
+    desc: 'See your design system come to life with real-time previews.',
+  },
 ];
 
 const buttonVariants: { variant: GlossyVariant; label: string }[] = [
@@ -44,57 +84,13 @@ const buttonVariants: { variant: GlossyVariant; label: string }[] = [
   { variant: 'outline', label: 'Outline' },
 ];
 
-// FAQS
-const faqs = [
-  {
-    q: 'What is the HCT color space and why does Matisse use it?',
-    a: 'HCT (Hue, Chroma, Tone) is the color model used by Material Design 3. Unlike RGB or HSL, HCT aligns perfectly with human physiological vision. It guarantees consistent, predictable contrast ratios between backgrounds, texts, and accents, making accessibility checks automatic.'
-  },
-  {
-    q: 'Can I export Matisse design tokens for multiple platforms?',
-    a: 'Absolutely. Matisse is designed for immediate web and mobile deployment. You can export generated scale variables as standard CSS custom properties, a formatted JSON token file, or a modular Tailwind configuration object.'
-  },
-  {
-    q: 'Does Matisse handle both Light and Dark semantic modes?',
-    a: 'Yes. Matisse computes tone targets for both environments. When you select a key seed color, it maps it to Material 3 standard roles like onPrimary, primaryContainer, onPrimaryContainer, surface, and outline for both themes simultaneously.'
-  },
-  {
-    q: 'Is Matisse suitable for custom enterprise design systems?',
-    a: 'Yes, Matisse allows you to add optional custom color roles outside the standard primary/secondary core palette. These custom roles are passed through the same Material tonal scaling engine, outputting matching semantic tokens.'
-  }
-];
-
-// Testimonials
-const testimonials = [
-  {
-    quote: "Matisse solved our designer-to-developer transition. We mapped our legacy color scheme into strict Material 3 scales in under ten minutes.",
-    author: "Elena Rostova",
-    role: "Design System Lead",
-    company: "Vectra Inc.",
-    avatar: "E"
-  },
-  {
-    quote: "The HCT tone visualizer is a game-changer. Our accessibility errors plummeted to zero because the contrast target ratios are mathematically guaranteed.",
-    author: "Marcus Chen",
-    role: "Principal Frontend Engineer",
-    company: "ApexFlow",
-    avatar: "M"
-  },
-  {
-    quote: "As a product manager, I love that we can download clean JSON tokens that immediately integrate into our cross-platform React Native and web builds.",
-    author: "Sarah Jenkins",
-    role: "VP of Product",
-    company: "PulseTech",
-    avatar: "S"
-  }
-];
-
 export const Landing: React.FC = () => {
   const navigate = useNavigate();
   const { user } = useAuthStore();
   const [scrollY, setScrollY] = useState(0);
-  const [activeToolTab, setActiveToolTab] = useState<'color' | 'buttons' | 'typography' | 'shadows'>('color');
-  const [faqOpenIdx, setFaqOpenIdx] = useState<number | null>(null);
+  const [activeToolTab, setActiveToolTab] = useState<
+    'color' | 'buttons' | 'typography' | 'shadows'
+  >('color');
 
   // Mini state for color picker tool
   const [pickerHue, setPickerHue] = useState(256);
@@ -104,10 +100,6 @@ export const Landing: React.FC = () => {
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
-
-  const toggleFaq = (idx: number) => {
-    setFaqOpenIdx(faqOpenIdx === idx ? null : idx);
-  };
 
   return (
     <div className="landing-body-wrapper">
@@ -126,7 +118,8 @@ export const Landing: React.FC = () => {
             </div>
 
             <h1 className="hero-headline">
-              The <span className="hero-headline-gradient">beautiful way</span> to build design systems.
+              The <span className="hero-headline-gradient">beautiful way</span> to build design
+              systems.
             </h1>
 
             <button
@@ -144,7 +137,8 @@ export const Landing: React.FC = () => {
             <div className="hero-summary-card">
               <h3 className="hero-summary-card-title">Color Science & Aesthetics</h3>
               <p className="hero-summary-card-text">
-                Matisse makes it easy to generate custom Material 3 color scales, map semantic design system roles, and export tokens for instant web deployment.
+                Matisse makes it easy to generate custom Material 3 color scales, map semantic
+                design system roles, and export tokens for instant web deployment.
               </p>
             </div>
           </div>
@@ -153,42 +147,44 @@ export const Landing: React.FC = () => {
 
       {/* Indented Landing Content below the fold */}
       <div className="landing-content-sections">
-        
-         {/* 2. TOOLS SECTION */}
+        {/* 2. TOOLS SECTION */}
         <section id="tools" className="tools-section">
           <div className="section-header">
-            <Badge variant="primary" size="md">Interactive Toolkit</Badge>
+            <Badge variant="primary" size="md">
+              Interactive Toolkit
+            </Badge>
             <h2 className="section-title">Explore our design tools</h2>
             <p className="section-subtitle">
-              Interact with the Matisse token generation sandbox. Real-time scales, responsive layouts, and modern components.
+              Interact with the Matisse token generation sandbox. Real-time scales, responsive
+              layouts, and modern components.
             </p>
           </div>
 
           <div className="tools-tabbed-container">
             {/* Tool Tabs */}
             <div className="tools-tabs">
-              <button 
+              <button
                 className={`tools-tab-btn ${activeToolTab === 'color' ? 'active' : ''}`}
                 onClick={() => setActiveToolTab('color')}
               >
                 <Palette size={16} />
                 <span>Color Tones</span>
               </button>
-              <button 
+              <button
                 className={`tools-tab-btn ${activeToolTab === 'buttons' ? 'active' : ''}`}
                 onClick={() => setActiveToolTab('buttons')}
               >
                 <Paintbrush size={16} />
                 <span>Glossy Buttons</span>
               </button>
-              <button 
+              <button
                 className={`tools-tab-btn ${activeToolTab === 'typography' ? 'active' : ''}`}
                 onClick={() => setActiveToolTab('typography')}
               >
                 <Type size={16} />
                 <span>Type Scales</span>
               </button>
-              <button 
+              <button
                 className={`tools-tab-btn ${activeToolTab === 'shadows' ? 'active' : ''}`}
                 onClick={() => setActiveToolTab('shadows')}
               >
@@ -203,13 +199,16 @@ export const Landing: React.FC = () => {
                 <div className="tool-sandbox-color">
                   <div className="tool-sandbox-meta">
                     <h4>Interactive Tone Generator</h4>
-                    <p>Adjust the slider to simulate HCT hue adjustments. See how the tonal scale values shift while maintaining consistent perceptual steps.</p>
+                    <p>
+                      Adjust the slider to simulate HCT hue adjustments. See how the tonal scale
+                      values shift while maintaining consistent perceptual steps.
+                    </p>
                     <div className="hue-slider-wrapper">
                       <label>Hue: {pickerHue}°</label>
-                      <input 
-                        type="range" 
-                        min="0" 
-                        max="360" 
+                      <input
+                        type="range"
+                        min="0"
+                        max="360"
                         value={pickerHue}
                         onChange={(e) => setPickerHue(Number(e.target.value))}
                         className="hue-slider"
@@ -223,8 +222,8 @@ export const Landing: React.FC = () => {
                       const computedBg = `hsl(${pickerHue}, 45%, ${lightness}%)`;
                       const useDark = lightness > 55;
                       return (
-                        <div 
-                          key={tone} 
+                        <div
+                          key={tone}
                           className="sandbox-color-block"
                           style={{
                             backgroundColor: computedBg,
@@ -246,7 +245,10 @@ export const Landing: React.FC = () => {
                 <div className="tool-sandbox-buttons">
                   <div className="tool-sandbox-meta">
                     <h4>M3 Glossy System</h4>
-                    <p>Preview six modern glossy button variants styled directly from the Material 3 design token system.</p>
+                    <p>
+                      Preview six modern glossy button variants styled directly from the Material 3
+                      design token system.
+                    </p>
                   </div>
                   <div className="btn-showcase-grid">
                     {buttonVariants.map(({ variant, label }) => (
@@ -262,7 +264,10 @@ export const Landing: React.FC = () => {
                 <div className="tool-sandbox-typography">
                   <div className="tool-sandbox-meta">
                     <h4>Typography Heirarchy</h4>
-                    <p>Sample scales based on a clean hierarchy. Balanced font size scaling for standard layouts.</p>
+                    <p>
+                      Sample scales based on a clean hierarchy. Balanced font size scaling for
+                      standard layouts.
+                    </p>
                   </div>
                   <div className="typography-specimen-stack">
                     <div className="specimen-row">
@@ -279,7 +284,9 @@ export const Landing: React.FC = () => {
                     </div>
                     <div className="specimen-row">
                       <span className="specimen-label">Body</span>
-                      <span className="specimen-body-text">Body default description text size.</span>
+                      <span className="specimen-body-text">
+                        Body default description text size.
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -289,14 +296,22 @@ export const Landing: React.FC = () => {
                 <div className="tool-sandbox-shadows">
                   <div className="tool-sandbox-meta">
                     <h4>Shadow Elevations</h4>
-                    <p>Visual preview of card elevations based on calculated Material 3 shadow styles.</p>
+                    <p>
+                      Visual preview of card elevations based on calculated Material 3 shadow
+                      styles.
+                    </p>
                   </div>
                   <div className="shadow-cards-row">
-                    {['E0 Flat', 'E1 Soft', 'E2 Elevated', 'E3 Floating', 'E4 Overlay'].map((label, idx) => (
-                      <div key={idx} className={`shadow-sandbox-card shadow-card-elevation-${idx}`}>
-                        <span>{label}</span>
-                      </div>
-                    ))}
+                    {['E0 Flat', 'E1 Soft', 'E2 Elevated', 'E3 Floating', 'E4 Overlay'].map(
+                      (label, idx) => (
+                        <div
+                          key={idx}
+                          className={`shadow-sandbox-card shadow-card-elevation-${idx}`}
+                        >
+                          <span>{label}</span>
+                        </div>
+                      ),
+                    )}
                   </div>
                 </div>
               )}
@@ -304,30 +319,40 @@ export const Landing: React.FC = () => {
           </div>
         </section>
 
-
         {/* 3. ABOUT SECTION */}
         <section id="about" className="about-section">
           <div className="about-split-layout">
             <div className="about-left-text">
-              <Badge variant="primary" size="md">Philosophy</Badge>
+              <Badge variant="primary" size="md">
+                Philosophy
+              </Badge>
               <h2 className="about-title">Automating design scales</h2>
               <p className="about-paragraph">
-                Building design systems can be a chaotic process. Designers hand off arbitrary colors, while developers struggle to keep themes consistent. Matisse bridges this gap.
+                Building design systems can be a chaotic process. Designers hand off arbitrary
+                colors, while developers struggle to keep themes consistent. Matisse bridges this
+                gap.
               </p>
               <p className="about-paragraph">
-                By translating raw values into strict Material Design 3 structures, Matisse ensures HCT-guided mathematical consistency for primary, secondary, and background palettes.
+                By translating raw values into strict Material Design 3 structures, Matisse ensures
+                HCT-guided mathematical consistency for primary, secondary, and background palettes.
               </p>
               <div className="about-bullets">
                 <div className="about-bullet-item">
-                  <div className="about-bullet-check"><Check size={14} /></div>
+                  <div className="about-bullet-check">
+                    <Check size={14} />
+                  </div>
                   <span>100% compliant with MD3 specs</span>
                 </div>
                 <div className="about-bullet-item">
-                  <div className="about-bullet-check"><Check size={14} /></div>
+                  <div className="about-bullet-check">
+                    <Check size={14} />
+                  </div>
                   <span>Perceptual contrast for accessibility</span>
                 </div>
                 <div className="about-bullet-item">
-                  <div className="about-bullet-check"><Check size={14} /></div>
+                  <div className="about-bullet-check">
+                    <Check size={14} />
+                  </div>
                   <span>Zero-config drop-in exports</span>
                 </div>
               </div>
@@ -346,13 +371,17 @@ export const Landing: React.FC = () => {
                     <br />
                     <span className="code-key">:root</span> {'{'}
                     <div className="code-indent">
-                      <span className="code-var">--md-sys-color-primary:</span> <span className="code-val">hsl(256, 34%, 48%);</span>
+                      <span className="code-var">--md-sys-color-primary:</span>{' '}
+                      <span className="code-val">hsl(256, 34%, 48%);</span>
                       <br />
-                      <span className="code-var">--md-sys-color-onPrimary:</span> <span className="code-val">#ffffff;</span>
+                      <span className="code-var">--md-sys-color-onPrimary:</span>{' '}
+                      <span className="code-val">#ffffff;</span>
                       <br />
-                      <span className="code-var">--md-sys-color-primaryContainer:</span> <span className="code-val">hsl(256, 34%, 90%);</span>
+                      <span className="code-var">--md-sys-color-primaryContainer:</span>{' '}
+                      <span className="code-val">hsl(256, 34%, 90%);</span>
                       <br />
-                      <span className="code-var">--md-sys-color-surface:</span> <span className="code-val">hsl(256, 12%, 99%);</span>
+                      <span className="code-var">--md-sys-color-surface:</span>{' '}
+                      <span className="code-val">hsl(256, 12%, 99%);</span>
                     </div>
                     {'}'}
                   </div>
@@ -362,17 +391,31 @@ export const Landing: React.FC = () => {
           </div>
         </section>
 
-
         {/* 4. FEATURE SECTION */}
         <section id="features" className="features-section">
           <div className="section-header">
-            <Badge variant="primary" size="md">Features</Badge>
-            <h2 className="section-title">Everything You Need To Build a Design System That Ships</h2>
-            <p className="section-subtitle">Create consistent colors, typography, spacing, motion components and design tokens.</p>
+            <Badge variant="primary" size="md">
+              Features
+            </Badge>
+            <h2 className="section-title">
+              Everything You Need To Build a Design System That Ships
+            </h2>
+            <p className="section-subtitle">
+              Create consistent colors, typography, spacing, motion components and design tokens.
+            </p>
           </div>
           <div className="features-grid">
             {features.map((f, i) => (
-              <div key={i} className="feature-card" data-color={['purple', 'pink', 'blue', 'teal', 'green', 'orange', 'indigo', 'rose'][i]} data-size={['large', 'medium', 'medium', 'medium', 'medium', 'half', 'half', 'medium'][i]}>
+              <div
+                key={i}
+                className="feature-card"
+                data-color={
+                  ['purple', 'pink', 'blue', 'teal', 'green', 'orange', 'indigo', 'rose'][i]
+                }
+                data-size={
+                  ['large', 'medium', 'medium', 'medium', 'medium', 'half', 'half', 'medium'][i]
+                }
+              >
                 <div className="feature-card-illustration">
                   <f.Illustration />
                 </div>
@@ -387,7 +430,9 @@ export const Landing: React.FC = () => {
         <section id="how-it-works" className="how-it-works-section">
           <div className="how-it-works-header">
             <div className="how-it-works-badge-row">
-              <Badge variant="primary" size="md">How It Works</Badge>
+              <Badge variant="primary" size="md">
+                How It Works
+              </Badge>
             </div>
             <h2 className="how-it-works-title">
               <div className="title-line"></div>
@@ -400,13 +445,31 @@ export const Landing: React.FC = () => {
           </div>
 
           <div className="timeline-container">
-            <svg className="timeline-loop-svg" viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M 160 10 C 60 10, 20 50, 20 90 C 20 130, 60 150, 110 150 C 130 150, 140 140, 140 120" stroke="#d26dff" strokeWidth="2" fill="none" />
-              <path d="M 135 125 L 140 120 L 145 125" stroke="#d26dff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            <svg
+              className="timeline-loop-svg"
+              viewBox="0 0 160 160"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M 160 10 C 60 10, 20 50, 20 90 C 20 130, 60 150, 110 150 C 130 150, 140 140, 140 120"
+                stroke="#d26dff"
+                strokeWidth="2"
+                fill="none"
+              />
+              <path
+                d="M 135 125 L 140 120 L 145 125"
+                stroke="#d26dff"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
             </svg>
 
             <div className="timeline-start-node">
-              <div className="pulse-ring"><div className="pulse-dot"></div></div>
+              <div className="pulse-ring">
+                <div className="pulse-dot"></div>
+              </div>
               <span className="timeline-start-text">Start</span>
             </div>
 
@@ -419,7 +482,10 @@ export const Landing: React.FC = () => {
                     <Palette size={20} />
                   </div>
                   <div className="timeline-content-box">
-                    <p>Select primary, secondary, and tertiary seeds using visual pickers or custom hex color values directly.</p>
+                    <p>
+                      Select primary, secondary, and tertiary seeds using visual pickers or custom
+                      hex color values directly.
+                    </p>
                   </div>
                 </div>
               </div>
@@ -430,7 +496,10 @@ export const Landing: React.FC = () => {
                     <Sparkles size={20} />
                   </div>
                   <div className="timeline-content-box">
-                    <p>Matisse instantly maps all seed colors through the perceptual engine, target-generating 11 tones.</p>
+                    <p>
+                      Matisse instantly maps all seed colors through the perceptual engine,
+                      target-generating 11 tones.
+                    </p>
                   </div>
                 </div>
               </div>
@@ -441,105 +510,31 @@ export const Landing: React.FC = () => {
                     <Download size={20} />
                   </div>
                   <div className="timeline-content-box">
-                    <p>Download your files immediately. Available in clean CSS files, standard JSON format, or Tailwind maps.</p>
+                    <p>
+                      Download your files immediately. Available in clean CSS files, standard JSON
+                      format, or Tailwind maps.
+                    </p>
                   </div>
                 </div>
               </div>
-
             </div>
 
             <div className="timeline-end-node">
               <div className="timeline-check">
                 <Check size={16} strokeWidth={3} />
               </div>
-              <p className="timeline-end-text">Ready to use, <span>Congratulations you have a new color system.</span></p>
+              <p className="timeline-end-text">
+                Ready to use, <span>Congratulations you have a new color system.</span>
+              </p>
             </div>
           </div>
         </section>
 
         {/* 6. FAQ SECTION */}
-        <section id="faq" className="faq-section">
-          <div className="faq-split-layout">
-            <div className="faq-left-content">
-              <Badge variant="primary" size="md">FAQ</Badge>
-              <h2 className="section-title">Frequently Asked Questions</h2>
-              <p className="section-subtitle">Got questions? We have got the answers.</p>
-            </div>
-            <div className="faq-right-accordion">
-              <div className="faq-accordion-stack">
-                {faqs.map((faq, i) => {
-                  const isOpen = faqOpenIdx === i;
-                  return (
-                    <div key={i} className={`faq-accordion-item ${isOpen ? 'open' : ''}`}>
-                      <div
-                        className="faq-accordion-trigger"
-                        onClick={() => toggleFaq(i)}
-                        role="button"
-                        tabIndex={0}
-                        aria-expanded={isOpen}
-                        onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleFaq(i); } }}
-                      >
-                        <span className="faq-question-text" id={`faq-q-${i}`}>{faq.q}</span>
-                        <span className="faq-icon-toggle" aria-hidden="true">
-                          <ChevronDown size={18} />
-                        </span>
-                      </div>
-                      <div className={`faq-accordion-panel ${isOpen ? 'open' : ''}`} role="region" aria-labelledby={`faq-q-${i}`}>
-                        <div className="faq-accordion-panel-inner">
-                          <p className="faq-answer-text">{faq.a}</p>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
-        </section>
+        <FAQSection />
 
         {/* 7. TESTIMONIAL SECTION */}
-        <section id="testimonials" className="testimonials-section">
-          <div className="testimonials-contour testimonials-contour--tl">
-            <svg viewBox="0 0 300 300" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ width: '100%', height: '100%' }}>
-              <path d="M-20 60 C80 60 120 100 140 200" stroke="hsla(256, 34%, 48%, 0.04)" strokeWidth="1.5" fill="none" strokeLinecap="round" />
-              <path d="M-20 120 C40 120 70 160 80 240" stroke="hsla(256, 100%, 87%, 0.05)" strokeWidth="1.5" fill="none" strokeLinecap="round" />
-              <path d="M60 -20 C60 80 100 120 200 140" stroke="hsla(256, 34%, 48%, 0.03)" strokeWidth="1" fill="none" strokeLinecap="round" />
-              <path d="M120 -20 C120 40 160 70 240 80" stroke="hsla(256, 100%, 87%, 0.04)" strokeWidth="1" fill="none" strokeLinecap="round" />
-            </svg>
-          </div>
-          <div className="testimonials-contour testimonials-contour--br">
-            <svg viewBox="0 0 300 300" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ width: '100%', height: '100%' }}>
-              <path d="M-20 60 C80 60 120 100 140 200" stroke="hsla(256, 34%, 48%, 0.04)" strokeWidth="1.5" fill="none" strokeLinecap="round" />
-              <path d="M-20 120 C40 120 70 160 80 240" stroke="hsla(256, 100%, 87%, 0.05)" strokeWidth="1.5" fill="none" strokeLinecap="round" />
-              <path d="M60 -20 C60 80 100 120 200 140" stroke="hsla(256, 34%, 48%, 0.03)" strokeWidth="1" fill="none" strokeLinecap="round" />
-              <path d="M120 -20 C120 40 160 70 240 80" stroke="hsla(256, 100%, 87%, 0.04)" strokeWidth="1" fill="none" strokeLinecap="round" />
-            </svg>
-          </div>
-          <div className="section-header">
-            <Badge variant="primary" size="md">Testimonials</Badge>
-            <h2 className="section-title">Trusted by teams building better design systems</h2>
-            <p className="section-subtitle">See how designers, developers, and vibe coders use Matisse to build consistent design systems faster from colors and typography to components and design tokens all without starting from scratch.</p>
-          </div>
-          <div className="testimonials-grid">
-            {testimonials.map((t, idx) => (
-              <div key={idx} className="testimonial-card">
-                <div className="testimonial-stars">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} size={14} className="star-icon-filled" />
-                  ))}
-                </div>
-                <p className="testimonial-quote">"{t.quote}"</p>
-                <div className="testimonial-user-row">
-                  <div className="testimonial-avatar">{t.avatar}</div>
-                  <div className="testimonial-user-meta">
-                    <span className="testimonial-user-name">{t.author}</span>
-                    <span className="testimonial-user-role">{t.role}, {t.company}</span>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
+        <TestimonialSection />
 
         {/* 8. CTA SECTION */}
         <CTASection
@@ -548,7 +543,6 @@ export const Landing: React.FC = () => {
           subtitle="Generate mathematically precise Material 3 tonal scales and export production-ready tokens for any platform in seconds."
           buttonText="Start Designing Free"
         />
-
       </div>
 
       {/* 9. FOOTER SECTION */}

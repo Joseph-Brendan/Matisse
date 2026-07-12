@@ -1,5 +1,6 @@
 import React from 'react';
 import { ArrowUpRight } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { Github, Twitter, Linkedin } from './SocialIcons';
 import './Footer.css';
 
@@ -24,7 +25,9 @@ export const Footer: React.FC = () => {
                 required
                 className="footer-form-input"
               />
-              <button type="submit" className="footer-form-submit">Join</button>
+              <button type="submit" className="footer-form-submit">
+                Join
+              </button>
             </form>
           </div>
 
@@ -32,10 +35,26 @@ export const Footer: React.FC = () => {
           <div className="footer-col">
             <h4 className="footer-col-title">Product</h4>
             <ul className="footer-links">
-              <li><a href="#features" className="footer-link">Color Builder</a></li>
-              <li><a href="#tools" className="footer-link">Typography System</a></li>
-              <li><a href="#tools" className="footer-link">Spacing Scale</a></li>
-              <li><a href="#tools" className="footer-link">Elevation & Shadows</a></li>
+              <li>
+                <Link to="/#features" className="footer-link">
+                  Color Builder
+                </Link>
+              </li>
+              <li>
+                <Link to="/#tools" className="footer-link">
+                  Typography System
+                </Link>
+              </li>
+              <li>
+                <Link to="/#tools" className="footer-link">
+                  Spacing Scale
+                </Link>
+              </li>
+              <li>
+                <Link to="/#tools" className="footer-link">
+                  Elevation & Shadows
+                </Link>
+              </li>
             </ul>
           </div>
 
@@ -43,10 +62,31 @@ export const Footer: React.FC = () => {
           <div className="footer-col">
             <h4 className="footer-col-title">Resources</h4>
             <ul className="footer-links">
-              <li><a href="https://m3.material.io" target="_blank" rel="noopener noreferrer" className="footer-link footer-link--external">M3 Guidelines <ArrowUpRight size={12} /></a></li>
-              <li><a href="#how-it-works" className="footer-link">How it works</a></li>
-              <li><a href="#faq" className="footer-link">FAQ Support</a></li>
-              <li><a href="https://github.com" className="footer-link">Github Repo</a></li>
+              <li>
+                <a
+                  href="https://m3.material.io"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="footer-link footer-link--external"
+                >
+                  M3 Guidelines <ArrowUpRight size={12} />
+                </a>
+              </li>
+              <li>
+                <Link to="/#how-it-works" className="footer-link">
+                  How it works
+                </Link>
+              </li>
+              <li>
+                <Link to="/#faq" className="footer-link">
+                  FAQ Support
+                </Link>
+              </li>
+              <li>
+                <a href="https://github.com" className="footer-link">
+                  Github Repo
+                </a>
+              </li>
             </ul>
           </div>
 
@@ -54,17 +94,43 @@ export const Footer: React.FC = () => {
           <div className="footer-col">
             <h4 className="footer-col-title">Legal</h4>
             <ul className="footer-links">
-              <li><a href="#privacy" className="footer-link">Privacy Policy</a></li>
-              <li><a href="#terms" className="footer-link">Terms of Service</a></li>
+              <li>
+                <Link to="/privacy" className="footer-link">
+                  Privacy Policy
+                </Link>
+              </li>
+              <li>
+                <Link to="/terms" className="footer-link">
+                  Terms of Service
+                </Link>
+              </li>
             </ul>
             <div className="footer-social">
-              <a href="https://github.com" target="_blank" rel="noopener noreferrer" className="footer-social-btn" aria-label="GitHub">
+              <a
+                href="https://github.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="footer-social-btn"
+                aria-label="GitHub"
+              >
                 <Github size={18} />
               </a>
-              <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="footer-social-btn" aria-label="Twitter">
+              <a
+                href="https://twitter.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="footer-social-btn"
+                aria-label="Twitter"
+              >
                 <Twitter size={18} />
               </a>
-              <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="footer-social-btn" aria-label="LinkedIn">
+              <a
+                href="https://linkedin.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="footer-social-btn"
+                aria-label="LinkedIn"
+              >
                 <Linkedin size={18} />
               </a>
             </div>

@@ -1,14 +1,24 @@
 import React, { useEffect, useState } from 'react';
 import {
-  ArrowRight, Zap, Eye, Code, Users,
-  Globe, Palette, Layers, CheckCircle2, Clock
+  ArrowRight,
+  Zap,
+  Eye,
+  Code,
+  Users,
+  Globe,
+  Palette,
+  Layers,
+  CheckCircle2,
+  Clock,
 } from 'lucide-react';
 import { Badge } from '../../design-system/components/Badge/Badge';
 import { Card } from '../../design-system/components/Card/Card';
 import { Navbar } from '../../components/Navbar';
-import { DockedHeader } from '../../components/DockedHeader';
 import { CTASection } from '../../components/CTASection';
 import { Footer } from '../../components/Footer';
+import { SubpageHero } from '../../components/SubpageHero';
+import { FAQSection } from '../../components/FAQSection';
+import { TestimonialSection } from '../../components/TestimonialSection';
 import './About.css';
 
 // Premium values with technical/design system alignment (No AI slop)
@@ -80,15 +90,13 @@ export const About: React.FC = () => {
           }
         });
       },
-      { threshold: 0.12 }
+      { threshold: 0.12 },
     );
 
     const els = document.querySelectorAll('[data-reveal]');
     els.forEach((el) => observer.observe(el));
     return () => observer.disconnect();
   }, []);
-
-
 
   const scrollToManifesto = () => {
     const element = document.getElementById('manifesto');
@@ -102,9 +110,8 @@ export const About: React.FC = () => {
       <Navbar />
 
       {/* ═══ 1. Redesigned Hero Container (Matches Landing Hero Layout) ═══ */}
-      <section className="about-hero-container">
-        <DockedHeader scrollY={scrollY} />
-
+      {/* ═══ 1. Redesigned Hero Container (Matches Landing Hero Layout) ═══ */}
+      <SubpageHero scrollY={scrollY}>
         <div className="about-hero-bottom-grid">
           <div className="about-hero-left-content">
             <div className="about-hero-badge">
@@ -117,10 +124,7 @@ export const About: React.FC = () => {
               meets <span className="about-hero-headline-gradient">predictable code</span>.
             </h1>
 
-            <button
-              className="about-hero-btn-pill"
-              onClick={scrollToManifesto}
-            >
+            <button className="about-hero-btn-pill" onClick={scrollToManifesto}>
               <span>Read Our Manifesto</span>
               <div className="about-hero-btn-pill-circle">
                 <ArrowRight size={20} />
@@ -132,34 +136,39 @@ export const About: React.FC = () => {
             <div className="about-hero-summary-card">
               <h3 className="about-hero-summary-card-title">Perceptual Foundation</h3>
               <p className="about-hero-summary-card-text">
-                Traditional color scaling tools treat hues uniformly, ignoring human contrast sensitivity. Matisse leverages the HCT color space to output mathematically guaranteed accessible themes automatically.
+                Traditional color scaling tools treat hues uniformly, ignoring human contrast
+                sensitivity. Matisse leverages the HCT color space to output mathematically
+                guaranteed accessible themes automatically.
               </p>
             </div>
           </div>
         </div>
-      </section>
+      </SubpageHero>
 
       <div className="about-content-sections">
         {/* ═══ 2. Manifesto / Mission ═══ */}
         <section id="manifesto" className="about-section" data-reveal>
           <div className="about-section-header">
-            <Badge variant="primary" size="md">Our Manifesto</Badge>
+            <Badge variant="primary" size="md">
+              Our Manifesto
+            </Badge>
           </div>
           <blockquote className="about-mission-quote">
             <span className="about-mission-quote-mark">"</span>
-            We believe design systems should be deterministic, accessible, and mathematically coherent. 
-            By aligning token properties directly with human visual perception, we eliminate designer-to-developer friction and build UI foundations that scale natively.
+            We believe design systems should be deterministic, accessible, and mathematically
+            coherent. By aligning token properties directly with human visual perception, we
+            eliminate designer-to-developer friction and build UI foundations that scale natively.
             <span className="about-mission-quote-mark">"</span>
           </blockquote>
           <p className="about-mission-author">— The Matisse Team</p>
         </section>
 
-
-
         {/* ═══ 4. By The Numbers ═══ */}
         <section className="about-alt-section" data-reveal>
           <div className="about-section-header">
-            <Badge variant="primary" size="md">Framework Target</Badge>
+            <Badge variant="primary" size="md">
+              Framework Target
+            </Badge>
             <h2 className="about-section-title">Built to design system standards</h2>
             <p className="about-section-subtitle">
               We compile code to fit strict production specifications out of the box.
@@ -179,7 +188,9 @@ export const About: React.FC = () => {
         {/* ═══ 5. Our Values ═══ */}
         <section className="about-values-section" data-reveal>
           <div className="about-section-header">
-            <Badge variant="primary" size="md">Core Pillars</Badge>
+            <Badge variant="primary" size="md">
+              Core Pillars
+            </Badge>
             <h2 className="about-section-title">Engineered for builders</h2>
             <p className="about-section-subtitle">
               The architecture principles that drive every token compiled in Matisse.
@@ -187,7 +198,11 @@ export const About: React.FC = () => {
           </div>
           <div className="about-values-grid">
             {values.map((value, i) => (
-              <div className="about-value-card-wrap" key={value.title} style={{ '--i': i } as React.CSSProperties}>
+              <div
+                className="about-value-card-wrap"
+                key={value.title}
+                style={{ '--i': i } as React.CSSProperties}
+              >
                 <div className="about-value-card">
                   <div className="about-value-card-icon">{value.icon}</div>
                   <h3 className="about-value-card-title">{value.title}</h3>
@@ -201,7 +216,9 @@ export const About: React.FC = () => {
         {/* ═══ 6. How We Think ═══ */}
         <section className="about-section" data-reveal>
           <div className="about-section-header">
-            <Badge variant="primary" size="md">How We Think</Badge>
+            <Badge variant="primary" size="md">
+              How We Think
+            </Badge>
             <h2 className="about-section-title">Empowering designers and engineers</h2>
             <p className="about-section-subtitle">
               Matisse unites styling abstractions under a single deterministic compiler.
@@ -209,12 +226,14 @@ export const About: React.FC = () => {
           </div>
           <div className="about-philosophy-grid">
             {teamPhilosophy.map((item, i) => (
-              <div className="about-philosophy-card-wrap" key={item.title} style={{ '--i': i } as React.CSSProperties}>
+              <div
+                className="about-philosophy-card-wrap"
+                key={item.title}
+                style={{ '--i': i } as React.CSSProperties}
+              >
                 <Card variant="elevated" padding="none" hoverable>
                   <div className="about-philosophy-card-inner">
-                    <div className="about-philosophy-icon-wrap">
-                      {item.icon}
-                    </div>
+                    <div className="about-philosophy-icon-wrap">{item.icon}</div>
                     <h3 className="about-philosophy-card-title">{item.title}</h3>
                     <p className="about-philosophy-card-desc">{item.desc}</p>
                   </div>
@@ -224,14 +243,19 @@ export const About: React.FC = () => {
           </div>
         </section>
 
-        {/* ═══ 7. CTA ═══ */}
+        {/* ═══ 7. FAQ ═══ */}
+        <FAQSection />
+
+        {/* ═══ 8. Testimonials ═══ */}
+        <TestimonialSection />
+
+        {/* ═══ 9. CTA ═══ */}
         <CTASection
           badgeText="Matisse Color Token Builder"
           title="Ready to build your design system?"
           subtitle="Generate mathematically consistent tonal scales and export production-ready variables in seconds."
           buttonText="Get Started Free"
         />
-
       </div>
 
       <Footer />
