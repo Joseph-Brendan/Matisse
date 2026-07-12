@@ -32,7 +32,8 @@ function AppShell() {
   const { theme, roles, typography, spacing, borderRadius, shadows, elevation } = useColorStore();
 
   // Normalize for system DPI scaling (125%/150%/175% on Windows)
-  // Only compensates fractional DPR so Retina/Mac displays are unaffected
+  // Shrinks root font-size at fractional DPR so rem-based sizes match
+  // the same physical size as 100% displays, without affecting vh/vw/%
   const dprRef = useRef<number>(0);
   useEffect(() => {
     const dpr = window.devicePixelRatio;
@@ -40,9 +41,12 @@ function AppShell() {
     dprRef.current = dpr;
     const rounded = Math.round(dpr);
     const isFractional = Math.abs(dpr - rounded) > 0.01;
+    document.documentElement.style.setProperty('--dpr-scale', isFractional ? `${1 / dpr}` : '1');
     if (isFractional) {
-      document.documentElement.style.setProperty('--dpr-scale', `${1 / dpr}`);
-      (document.documentElement.style as Record<string, string>).zoom = `${1 / dpr}`;
+      const baseFontSize = 16 / dpr;
+      document.documentElement.style.fontSize = `${baseFontSize}px`;
+    } else {
+      document.documentElement.style.fontSize = '';
     }
   }, []);
 
