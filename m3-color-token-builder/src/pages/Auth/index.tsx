@@ -146,7 +146,6 @@ const SignupForm: React.FC<{ onSuccess: () => void; onSwitchToLogin: () => void 
   const login = useAuthStore((state) => state.login);
 
   const passwordMismatch = passwordTouched && confirmPasswordTouched && password && confirmPassword && password !== confirmPassword;
-  const checkboxError = error === 'Please agree to the Terms and Conditions and Privacy Policy.';
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

@@ -19,6 +19,8 @@ import type { GlossyVariant } from '../../design-system/components/Button/Glossy
 import { Badge } from '../../design-system/components/Badge/Badge';
 import { Navbar } from '../../components/Navbar';
 import { Footer } from '../../components/Footer';
+import { DockedHeader } from '../../components/DockedHeader';
+import { CTASection } from '../../components/CTASection';
 import { useAuthStore } from '../../store/useAuthStore';
 import './Landing.css';
 
@@ -114,67 +116,7 @@ export const Landing: React.FC = () => {
 
       {/* 1. HERO SECTION */}
       <section className="hero-container">
-        <header className="hero-docked-header"
-          style={{
-            opacity: Math.max(0, 1 - scrollY / 20),
-            pointerEvents: scrollY > 20 ? 'none' as const : 'auto' as const,
-          }}>
-          <div className="docked-navbar-left">
-            <div className="hero-brand-container" onClick={() => navigate('/')}>
-              <img src="/logo-drk.svg" alt="Matisse" style={{ height: '38px', display: 'block', objectFit: 'contain' }} />
-            </div>
-            <nav className="desktop-only docked-nav-links">
-              <a
-                href="#tools"
-                className="navbar-link"
-                onClick={(e) => {
-                  e.preventDefault();
-                  document.getElementById('tools')?.scrollIntoView({ behavior: 'smooth' });
-                }}
-              >
-                Tools
-              </a>
-              <a
-                href="#about"
-                className="navbar-link"
-                onClick={(e) => {
-                  e.preventDefault();
-                  document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' });
-                }}
-              >
-                About
-              </a>
-              <a
-                href="#features"
-                className="navbar-link"
-                onClick={(e) => {
-                  e.preventDefault();
-                  document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' });
-                }}
-              >
-                Features
-              </a>
-            </nav>
-          </div>
-
-          <div className="docked-navbar-right">
-            {user ? (
-              <button className="hero-btn-pill" onClick={() => navigate('/dashboard')}>
-                <span>Dashboard</span>
-                <div className="hero-btn-pill-circle">
-                  <ArrowUpRight size={16} />
-                </div>
-              </button>
-            ) : (
-              <button className="hero-btn-pill" onClick={() => navigate('/auth')}>
-                <span>Log In</span>
-                <div className="hero-btn-pill-circle">
-                  <ArrowUpRight size={16} />
-                </div>
-              </button>
-            )}
-          </div>
-        </header>
+        <DockedHeader scrollY={scrollY} />
 
         <div className="hero-bottom-grid">
           <div className="hero-left-content">
@@ -425,7 +367,7 @@ export const Landing: React.FC = () => {
         <section id="features" className="features-section">
           <div className="section-header">
             <Badge variant="primary" size="md">Features</Badge>
-            <h2 className="section-title" style={{ fontWeight: 700 }}>Everything You Need To Build a Design System That Ships</h2>
+            <h2 className="section-title">Everything You Need To Build a Design System That Ships</h2>
             <p className="section-subtitle">Create consistent colors, typography, spacing, motion components and design tokens.</p>
           </div>
           <div className="features-grid">
@@ -444,17 +386,23 @@ export const Landing: React.FC = () => {
         {/* 5. HOW IT WORKS SECTION */}
         <section id="how-it-works" className="how-it-works-section">
           <div className="how-it-works-header">
+            <div className="how-it-works-badge-row">
+              <Badge variant="primary" size="md">How It Works</Badge>
+            </div>
             <h2 className="how-it-works-title">
               <div className="title-line"></div>
-              <span>How It works</span>
+              <span>From seed to system in three steps</span>
               <div className="title-line right"></div>
             </h2>
+            <p className="how-it-works-subtitle">
+              No complexity, no guesswork. Just pick your colors and let the engine do the rest.
+            </p>
           </div>
 
           <div className="timeline-container">
             <svg className="timeline-loop-svg" viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M 160 10 C 60 10, 20 50, 20 90 C 20 130, 60 150, 110 150 C 130 150, 140 140, 140 120" stroke="#76E037" strokeWidth="2" fill="none" />
-              <path d="M 135 125 L 140 120 L 145 125" stroke="#76E037" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              <path d="M 160 10 C 60 10, 20 50, 20 90 C 20 130, 60 150, 110 150 C 130 150, 140 140, 140 120" stroke="#d26dff" strokeWidth="2" fill="none" />
+              <path d="M 135 125 L 140 120 L 145 125" stroke="#d26dff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
 
             <div className="timeline-start-node">
@@ -594,46 +542,12 @@ export const Landing: React.FC = () => {
         </section>
 
         {/* 8. CTA SECTION */}
-        <section className="cta-section">
-          <div className="cta-inner-card">
-            {/* Left Decorative Arc */}
-            <svg className="cta-decor-left" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M 10 180 A 110 110 0 0 1 170 40" stroke="url(#cta-left-grad)" strokeWidth="28" strokeLinecap="round" />
-              <defs>
-                <linearGradient id="cta-left-grad" x1="0%" y1="100%" x2="80%" y2="0%">
-                  <stop offset="0%" stopColor="var(--md-ref-role-primary)" />
-                  <stop offset="100%" stopColor="var(--md-ref-role-primary)" stopOpacity="0" />
-                </linearGradient>
-              </defs>
-            </svg>
-
-            {/* Right Decorative Arc */}
-            <svg className="cta-decor-right" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M 20 180 A 90 90 0 0 1 180 180" stroke="url(#cta-right-grad)" strokeWidth="28" strokeLinecap="round" />
-              <defs>
-                <linearGradient id="cta-right-grad" x1="0%" y1="100%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="var(--md-ref-role-primary)" stopOpacity="0" />
-                  <stop offset="100%" stopColor="var(--md-ref-role-primary)" />
-                </linearGradient>
-              </defs>
-            </svg>
-
-            <div className="cta-content-wrapper">
-              <Badge variant="primary" size="md" dot className="cta-badge">
-                Matisse Color Token Builder
-              </Badge>
-              <h2 className="cta-title">Start building your design system</h2>
-              <p className="cta-subtitle">
-                Generate mathematically precise Material 3 tonal scales and export production-ready tokens for any platform in seconds.
-              </p>
-              <div className="cta-buttons-row">
-                <GlossyButton variant="primary" size="lg" onClick={() => navigate(user ? '/dashboard' : '/auth')}>
-                  Start Designing Free
-                </GlossyButton>
-              </div>
-            </div>
-          </div>
-        </section>
+        <CTASection
+          badgeText="Matisse Color Token Builder"
+          title="Start building your design system"
+          subtitle="Generate mathematically precise Material 3 tonal scales and export production-ready tokens for any platform in seconds."
+          buttonText="Start Designing Free"
+        />
 
       </div>
 
