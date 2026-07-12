@@ -1,0 +1,134 @@
+.docked-header {
+  width: 100%;
+  max-width: 1880px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: absolute;
+  top: 1.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 0 2.5rem;
+  z-index: 10;
+  box-sizing: border-box;
+}
+
+.docked-header-left {
+  background: rgba(255, 255, 255, 0.45);
+  backdrop-filter: blur(12px) saturate(180%);
+  -webkit-backdrop-filter: blur(12px) saturate(180%);
+  padding: 0.5rem 0.75rem 0.5rem 0.5rem;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  gap: 2.5rem;
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+}
+
+.docked-header-right {
+  display: flex;
+  align-items: center;
+  z-index: 11;
+}
+
+.docked-header-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  cursor: pointer;
+}
+
+.docked-header-links {
+  display: flex;
+  gap: 2rem;
+}
+
+.docked-header-link {
+  text-decoration: none;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: #374151;
+  transition: color 0.2s ease;
+  position: relative;
+}
+
+.docked-header-link:hover {
+  color: #111827;
+}
+
+.docked-header-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: #ffffff;
+  border: none;
+  padding: 0.65rem 0.65rem 0.65rem 1.5rem;
+  border-radius: 9999px;
+  font-family: inherit;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: #111827;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  line-height: 1;
+}
+
+.docked-header-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  background-color: #fafafa;
+}
+
+.docked-header-btn-circle {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #111827;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.docked-header-btn:hover .docked-header-btn-circle {
+  background: var(--md-ref-role-primary);
+  transform: translate(1px, -1px);
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+  .docked-header {
+    padding: 0 1.5rem;
+  }
+  .docked-header-left {
+    gap: 1.25rem;
+    padding: 0.4rem 0.6rem 0.4rem 0.4rem;
+  }
+  .docked-header-links {
+    gap: 1.25rem;
+  }
+}
+
+@media (max-width: 991px) {
+  .docked-header {
+    top: 1rem;
+    padding: 0 1.5rem;
+  }
+  .docked-header-left {
+    padding: 0.4rem 0.6rem 0.4rem 0.4rem;
+    gap: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .docked-header {
+    padding: 0 1rem;
+  }
+  .docked-header-left {
+    padding: 0.35rem 0.5rem 0.35rem 0.35rem;
+    gap: 1rem;
+  }
+}
