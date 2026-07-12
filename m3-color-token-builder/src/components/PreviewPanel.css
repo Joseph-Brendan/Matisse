@@ -28,7 +28,7 @@
 
 .preview-preset-selector select {
   padding: 0.5rem 0.75rem;
-  border: 1px solid rgba(0,0,0,0.1);
+  border: 1px solid rgba(0, 0, 0, 0.1);
   border-radius: 0.5rem;
   font-size: 0.875rem;
   background: #fcfcfd;
@@ -156,5 +156,94 @@
   .preview-preset-selector select {
     font-size: 0.8125rem;
     padding: 0.4rem 0.625rem;
+  }
+}
+
+/* ── Shared preview card styles (shared with Dashboard) ─── */
+.builder-preview-grid {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.builder-preview-grid--glows {
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 1.25rem;
+}
+
+.builder-preview-grid--br {
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 1rem;
+}
+
+.builder-preview-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 1.5rem 1rem;
+  background: var(--md-ref-role-surface);
+  text-align: center;
+  border: 1px solid var(--md-ref-role-outlineVariant);
+}
+
+.builder-preview-card-title {
+  font-weight: 700;
+  font-size: 0.875rem;
+  text-transform: capitalize;
+}
+
+.builder-preview-card-sub {
+  font-size: 0.75rem;
+  color: var(--md-ref-role-onSurfaceVariant);
+}
+
+.elevation-tier-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.25rem 2rem;
+  background: var(--md-ref-role-surface);
+  border-radius: var(--matisse-radius-md);
+  gap: 1rem;
+}
+
+.elevation-tier-row-label {
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.elevation-tier-row-value {
+  font-size: 0.75rem;
+  font-family: monospace;
+  color: var(--md-ref-role-outline);
+  text-overflow: ellipsis;
+  overflow: hidden;
+  max-width: 300px;
+  white-space: nowrap;
+  text-align: right;
+}
+
+@media (max-width: 768px) {
+  .elevation-tier-row {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 1rem;
+    gap: 0.5rem;
+  }
+  .elevation-tier-row-value {
+    max-width: 100%;
+    white-space: normal;
+    word-break: break-all;
+    text-align: left;
+  }
+}
+
+@media (max-width: 375px) {
+  .builder-preview-grid--glows,
+  .builder-preview-grid--br {
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 0.75rem;
+  }
+  .builder-preview-card {
+    padding: 1rem 0.75rem;
   }
 }

@@ -1,20 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-  Palette, Layers, Paintbrush, Type, Download, ArrowUpRight,
-  ChevronDown, Star, Check, Sparkles
+  Palette, Layers, Paintbrush, Type, Download, ArrowUpRight, Sparkles,
+  ChevronDown, Star, Check
 } from 'lucide-react';
 import { GlossyButton } from '../../design-system/components/Button/GlossyButton';
-import {
-  ColorSystemIllustration,
-  TypographyIllustration,
-  ComponentsIllustration,
-  SpacingIllustration,
-  ExportIllustration,
-  VersionHistoryIllustration,
-  PreviewIllustration,
-  PresetsIllustration,
-} from './FeatureIllustration';
 import type { GlossyVariant } from '../../design-system/components/Button/GlossyButton';
 import { Badge } from '../../design-system/components/Badge/Badge';
 import { Navbar } from '../../components/Navbar';
@@ -23,14 +13,12 @@ import { useAuthStore } from '../../store/useAuthStore';
 import './Landing.css';
 
 const features = [
-  { Illustration: ColorSystemIllustration, title: 'Color System', desc: 'Full Material 3 tonal palette with semantic role mapping for light and dark modes.' },
-  { Illustration: TypographyIllustration, title: 'Typography Scale', desc: 'Harmonious type system built on Open Sans with 11 sizes and 8 weights.' },
-  { Illustration: ComponentsIllustration, title: 'Component Library', desc: 'Production-ready components: tabs, alerts, modals, toasts, badges, cards, and inputs.' },
-  { Illustration: SpacingIllustration, title: 'Spacing & Grid', desc: 'Consistent 4px-based spacing scale and responsive grid system.' },
-  { Illustration: ExportIllustration, title: 'Multi-format Export', desc: 'Export tokens as JSON, CSS variables, or Tailwind config for any platform.' },
-  { Illustration: VersionHistoryIllustration, title: 'Version History', desc: 'Track every change to your design tokens with full semantic versioning.' },
-  { Illustration: PresetsIllustration, title: 'Smart Presets', desc: 'Start faster with pre-built design system templates for fintech, health, e-com, and more.' },
-  { Illustration: PreviewIllustration, title: 'Live Preview', desc: 'See your design system come to life with real-time previews of colors, typography, and components.' },
+  { icon: <Palette size={24} />, title: 'Color System', desc: 'Full Material 3 tonal palette with semantic role mapping for light and dark modes.' },
+  { icon: <Paintbrush size={24} />, title: 'Glossy Components', desc: 'Modern glossy button system with primary, secondary, tertiary, and error variants.' },
+  { icon: <Type size={24} />, title: 'Typography Scale', desc: 'Harmonious type system built on Open Sans with 11 sizes and 8 weights.' },
+  { icon: <Grid3x3 size={24} />, title: 'Spacing & Grid', desc: 'Consistent 4px-based spacing scale and responsive grid system.' },
+  { icon: <Layers size={24} />, title: 'Component Library', desc: 'Production-ready components: tabs, alerts, modals, toasts, badges, cards, and inputs.' },
+  { icon: <Download size={24} />, title: 'Multi-format Export', desc: 'Export tokens as JSON, CSS variables, or Tailwind config for any platform.' },
 ];
 
 const buttonVariants: { variant: GlossyVariant; label: string }[] = [
@@ -181,7 +169,7 @@ export const Landing: React.FC = () => {
           <div className="hero-left-content">
             <div className="hero-badge-shopify">
               <Palette size={14} className="hero-badge-icon-color" />
-              <span>Powered by Dev and Design</span>
+              <span>Powered by Matisse</span>
             </div>
 
             <h1 className="hero-headline">
@@ -272,26 +260,18 @@ export const Landing: React.FC = () => {
                         value={pickerHue}
                         onChange={(e) => setPickerHue(Number(e.target.value))}
                         className="hue-slider"
-                        style={{ accentColor: `hsl(${pickerHue}, 60%, 50%)` }}
                       />
                     </div>
                   </div>
                   <div className="tool-sandbox-preview-colors">
                     {[0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 95, 99, 100].map((tone) => {
-                      const lightness = 100 - tone;
-                      const computedBg = `hsl(${pickerHue}, 45%, ${lightness}%)`;
-                      const useDark = lightness > 55;
+                      const computedBg = `hsl(${pickerHue}, 45%, ${100 - tone}%)`;
+                      const computedColor = tone > 50 ? '#000' : '#fff';
                       return (
                         <div
                           key={tone}
                           className="sandbox-color-block"
-                          style={{
-                            backgroundColor: computedBg,
-                            color: useDark ? '#000' : '#fff',
-                            textShadow: useDark
-                              ? '0 0 3px rgba(255,255,255,0.4), 0 0 1px rgba(255,255,255,0.6)'
-                              : '0 0 3px rgba(0,0,0,0.35), 0 0 1px rgba(0,0,0,0.5)',
-                          }}
+                          style={{ backgroundColor: computedBg, color: computedColor }}
                         >
                           <span className="sandbox-tone-num">{tone}</span>
                         </div>
@@ -363,7 +343,6 @@ export const Landing: React.FC = () => {
           </div>
         </section>
 
-
         {/* 3. ABOUT SECTION */}
         <section id="about" className="about-section">
           <div className="about-split-layout">
@@ -421,19 +400,18 @@ export const Landing: React.FC = () => {
           </div>
         </section>
 
-
         {/* 4. FEATURE SECTION */}
         <section id="features" className="features-section">
           <div className="section-header">
             <Badge variant="primary" size="md">Features</Badge>
-            <h2 className="section-title" style={{ fontWeight: 700 }}>Everything You Need To Build a Design System That Ships</h2>
-            <p className="section-subtitle">Create consistent colors, typography, spacing, motion components and design tokens.</p>
+            <h2 className="section-title">Everything you need</h2>
+            <p className="section-subtitle">A complete toolkit for building consistent, beautiful interfaces.</p>
           </div>
           <div className="features-grid">
             {features.map((f, i) => (
-              <div key={i} className="feature-card" data-color={['purple', 'pink', 'blue', 'teal', 'green', 'orange', 'indigo', 'rose'][i]} data-size={['large', 'medium', 'medium', 'medium', 'medium', 'half', 'half', 'medium'][i]}>
-                <div className="feature-card-illustration">
-                  <f.Illustration />
+              <div key={i} className="feature-card">
+                <div className="feature-icon-wrapper">
+                  {f.icon}
                 </div>
                 <h3 className="feature-card-title">{f.title}</h3>
                 <p className="feature-card-desc">{f.desc}</p>
@@ -512,66 +490,39 @@ export const Landing: React.FC = () => {
 
         {/* 6. FAQ SECTION */}
         <section id="faq" className="faq-section">
-          <div className="faq-split-layout">
-            <div className="faq-left-content">
-              <Badge variant="primary" size="md">FAQ</Badge>
-              <h2 className="section-title">Frequently Asked Questions</h2>
-              <p className="section-subtitle">Got questions? We have got the answers.</p>
-            </div>
-            <div className="faq-right-accordion">
-              <div className="faq-accordion-stack">
-                {faqs.map((faq, i) => {
-                  const isOpen = faqOpenIdx === i;
-                  return (
-                    <div key={i} className={`faq-accordion-item ${isOpen ? 'open' : ''}`}>
-                      <div
-                        className="faq-accordion-trigger"
-                        onClick={() => toggleFaq(i)}
-                        role="button"
-                        tabIndex={0}
-                        aria-expanded={isOpen}
-                        onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleFaq(i); } }}
-                      >
-                        <span className="faq-question-text" id={`faq-q-${i}`}>{faq.q}</span>
-                        <span className="faq-icon-toggle" aria-hidden="true">
-                          <ChevronDown size={18} />
-                        </span>
-                      </div>
-                      <div className={`faq-accordion-panel ${isOpen ? 'open' : ''}`} role="region" aria-labelledby={`faq-q-${i}`}>
-                        <div className="faq-accordion-panel-inner">
-                          <p className="faq-answer-text">{faq.a}</p>
-                        </div>
-                      </div>
+          <div className="section-header">
+            <Badge variant="primary" size="md">FAQ</Badge>
+            <h2 className="section-title">Frequently Asked Questions</h2>
+            <p className="section-subtitle">Got questions? We have got the answers.</p>
+          </div>
+          <div className="faq-accordion-stack">
+            {faqs.map((faq, i) => {
+              const isOpen = faqOpenIdx === i;
+              return (
+                <div key={i} className={`faq-accordion-item ${isOpen ? 'open' : ''}`} onClick={() => toggleFaq(i)}>
+                  <div className="faq-accordion-trigger">
+                    <span className="faq-question-text">{faq.q}</span>
+                    <span className="faq-icon-toggle">
+                      {isOpen ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+                    </span>
+                  </div>
+                  {isOpen && (
+                    <div className="faq-accordion-panel">
+                      <p className="faq-answer-text">{faq.a}</p>
                     </div>
-                  );
-                })}
-              </div>
-            </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
         </section>
 
         {/* 7. TESTIMONIAL SECTION */}
         <section id="testimonials" className="testimonials-section">
-          <div className="testimonials-contour testimonials-contour--tl">
-            <svg viewBox="0 0 300 300" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ width: '100%', height: '100%' }}>
-              <path d="M-20 60 C80 60 120 100 140 200" stroke="hsla(256, 34%, 48%, 0.04)" strokeWidth="1.5" fill="none" strokeLinecap="round" />
-              <path d="M-20 120 C40 120 70 160 80 240" stroke="hsla(256, 100%, 87%, 0.05)" strokeWidth="1.5" fill="none" strokeLinecap="round" />
-              <path d="M60 -20 C60 80 100 120 200 140" stroke="hsla(256, 34%, 48%, 0.03)" strokeWidth="1" fill="none" strokeLinecap="round" />
-              <path d="M120 -20 C120 40 160 70 240 80" stroke="hsla(256, 100%, 87%, 0.04)" strokeWidth="1" fill="none" strokeLinecap="round" />
-            </svg>
-          </div>
-          <div className="testimonials-contour testimonials-contour--br">
-            <svg viewBox="0 0 300 300" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ width: '100%', height: '100%' }}>
-              <path d="M-20 60 C80 60 120 100 140 200" stroke="hsla(256, 34%, 48%, 0.04)" strokeWidth="1.5" fill="none" strokeLinecap="round" />
-              <path d="M-20 120 C40 120 70 160 80 240" stroke="hsla(256, 100%, 87%, 0.05)" strokeWidth="1.5" fill="none" strokeLinecap="round" />
-              <path d="M60 -20 C60 80 100 120 200 140" stroke="hsla(256, 34%, 48%, 0.03)" strokeWidth="1" fill="none" strokeLinecap="round" />
-              <path d="M120 -20 C120 40 160 70 240 80" stroke="hsla(256, 100%, 87%, 0.04)" strokeWidth="1" fill="none" strokeLinecap="round" />
-            </svg>
-          </div>
           <div className="section-header">
-            <Badge variant="primary" size="md">Testimonials</Badge>
-            <h2 className="section-title">Trusted by teams building better design systems</h2>
-            <p className="section-subtitle">See how designers, developers, and vibe coders use Matisse to build consistent design systems faster from colors and typography to components and design tokens all without starting from scratch.</p>
+            <Badge variant="primary" size="md">Wall of Fame</Badge>
+            <h2 className="section-title">Loved by product builders</h2>
+            <p className="section-subtitle">Here is what developers and design system managers think of Matisse.</p>
           </div>
           <div className="testimonials-grid">
             {testimonials.map((t, idx) => (
@@ -597,41 +548,15 @@ export const Landing: React.FC = () => {
         {/* 8. CTA SECTION */}
         <section className="cta-section">
           <div className="cta-inner-card">
-            {/* Left Decorative Arc */}
-            <svg className="cta-decor-left" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M 10 180 A 110 110 0 0 1 170 40" stroke="url(#cta-left-grad)" strokeWidth="28" strokeLinecap="round" />
-              <defs>
-                <linearGradient id="cta-left-grad" x1="0%" y1="100%" x2="80%" y2="0%">
-                  <stop offset="0%" stopColor="var(--md-ref-role-primary)" />
-                  <stop offset="100%" stopColor="var(--md-ref-role-primary)" stopOpacity="0" />
-                </linearGradient>
-              </defs>
-            </svg>
-
-            {/* Right Decorative Arc */}
-            <svg className="cta-decor-right" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M 20 180 A 90 90 0 0 1 180 180" stroke="url(#cta-right-grad)" strokeWidth="28" strokeLinecap="round" />
-              <defs>
-                <linearGradient id="cta-right-grad" x1="0%" y1="100%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="var(--md-ref-role-primary)" stopOpacity="0" />
-                  <stop offset="100%" stopColor="var(--md-ref-role-primary)" />
-                </linearGradient>
-              </defs>
-            </svg>
-
-            <div className="cta-content-wrapper">
-              <Badge variant="primary" size="md" dot className="cta-badge">
-                Matisse Color Token Builder
-              </Badge>
-              <h2 className="cta-title">Start building your design system</h2>
-              <p className="cta-subtitle">
-                Generate mathematically precise Material 3 tonal scales and export production-ready tokens for any platform in seconds.
-              </p>
-              <div className="cta-buttons-row">
-                <GlossyButton variant="primary" size="lg" onClick={() => navigate(user ? '/dashboard' : '/auth')}>
-                  Start Designing Free
-                </GlossyButton>
-              </div>
+            <div className="cta-glow-overlay" />
+            <h2 className="cta-title">Upgrade your design workflow</h2>
+            <p className="cta-subtitle">
+              Join thousands of UI engineers creating custom, accessible scales. Free forever for individual projects.
+            </p>
+            <div className="cta-buttons-row">
+              <GlossyButton variant="primary" size="lg" onClick={() => navigate(user ? '/dashboard' : '/auth')}>
+                Start Designing Free
+              </GlossyButton>
             </div>
           </div>
         </section>
