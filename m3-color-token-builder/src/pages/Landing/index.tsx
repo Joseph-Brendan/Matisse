@@ -29,8 +29,8 @@ const features = [
   { Illustration: SpacingIllustration, title: 'Spacing & Grid', desc: 'Consistent 4px-based spacing scale and responsive grid system.' },
   { Illustration: ExportIllustration, title: 'Multi-format Export', desc: 'Export tokens as JSON, CSS variables, or Tailwind config for any platform.' },
   { Illustration: VersionHistoryIllustration, title: 'Version History', desc: 'Track every change to your design tokens with full semantic versioning.' },
-  { Illustration: PresetsIllustration, title: 'Smart Presets', desc: 'Start faster with pre-built design system templates for fintech, health, e-com, and more.' },
-  { Illustration: PreviewIllustration, title: 'Live Preview', desc: 'See your design system come to life with real-time previews of colors, typography, and components.' },
+  { Illustration: PresetsIllustration, title: 'Smart Presets', desc: 'Start faster with pre-built design system templates for fintech, health, e-com, etc.' },
+  { Illustration: PreviewIllustration, title: 'Live Preview', desc: 'See your design system come to life with real-time previews.' },
 ];
 
 const buttonVariants: { variant: GlossyVariant; label: string }[] = [
