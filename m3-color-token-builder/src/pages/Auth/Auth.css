@@ -302,6 +302,38 @@
 }
 
 /* ── Sign Up Text ─────────────────────────────────────── */
+.auth-consent-label {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  font-size: 0.8125rem;
+  color: #6b7280;
+  cursor: pointer;
+}
+
+.auth-consent-checkbox {
+  margin-top: 2px;
+  accent-color: hsl(256, 34%, 48%);
+}
+
+.auth-consent-link {
+  color: hsl(256, 34%, 48%);
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.auth-consent-link:hover {
+  text-decoration: underline;
+  opacity: 0.8;
+}
+
+.auth-consent-link:focus-visible {
+  outline: 2px solid hsl(256, 34%, 48%);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
 .auth-signup-text {
   text-align: center;
   font-size: 0.875rem;

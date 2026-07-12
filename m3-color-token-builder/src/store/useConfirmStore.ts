@@ -59,6 +59,6 @@ export function showConfirm(options: ConfirmOptions): Promise<boolean> {
 /**
  * Convenience wrapper — shows a single-button info alert.
  */
-export function showAlert(title: string, message: string, variant: ConfirmVariant = 'info'): Promise<boolean> {
-  return useConfirmStore.getState().open({ title, message, variant, alertOnly: true, confirmLabel: 'OK' });
+export function showAlert(title: string, message: string, variant: ConfirmVariant = 'info', confirmLabel = 'OK'): Promise<boolean> {
+  return useConfirmStore.getState().open({ title, message, variant, alertOnly: true, confirmLabel });
 }
