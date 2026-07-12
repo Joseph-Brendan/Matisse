@@ -5,6 +5,8 @@ import { ToastContainer } from './design-system/components/Toast/ToastContainer'
 import { ConfirmModal } from './design-system/components/Modal/ConfirmModal';
 import { Landing } from './pages/Landing';
 import { Auth } from './pages/Auth';
+import { AuthCallback } from './pages/AuthCallback';
+import { SignUp } from './pages/SignUp';
 import { Dashboard } from './pages/Dashboard';
 import { ColorBuilder } from './pages/ColorBuilder';
 import { DesignSystem } from './pages/DesignSystem';
@@ -100,6 +102,8 @@ function AppShell() {
         <Route path="/" element={<Landing />} />
         <Route path="/about" element={<About />} />
         <Route path="/auth" element={<Auth />} />
+        <Route path="/auth/callback" element={<AuthCallback />} />
+        <Route path="/signup" element={<SignUp />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/color-builder" element={<ColorBuilder />} />
         <Route path="/components" element={<DesignSystem />} />

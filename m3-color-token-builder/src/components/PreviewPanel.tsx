@@ -198,12 +198,6 @@ export const PreviewPanel: React.FC = () => {
                                         </>
                                     ) : 'Sign in'}
                                 </button>
-
-                                <div style={{ textAlign: 'center', marginTop: '1rem' }}>
-                                    <span style={{ fontSize: '0.875rem', color: 'var(--role-onSurfaceVariant)' }}>
-                                        Don't have an account? <a href="#" style={{ color: 'var(--role-primary)', textDecoration: 'none', fontWeight: 600 }}>Create one</a>
-                                    </span>
-                                </div>
                             </form>
                         )}
 
