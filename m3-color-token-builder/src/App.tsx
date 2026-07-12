@@ -10,6 +10,7 @@ import { ColorBuilder } from './pages/ColorBuilder';
 import { DesignSystem } from './pages/DesignSystem';
 import { Settings } from './pages/Settings';
 import { About } from './pages/About';
+import { DesignRecommendations } from './pages/DesignRecommendations';
 
 /** Build a CSS font-family stack from a plain font name */
 function buildFontStack(name: string, category: 'sans' | 'display' | 'mono'): string {
@@ -104,6 +105,7 @@ function AppShell() {
         <Route path="/color-builder" element={<ColorBuilder />} />
         <Route path="/components" element={<DesignSystem />} />
         <Route path="/settings" element={<Settings />} />
+        <Route path="/design-recommendations" element={<DesignRecommendations />} />
       </Routes>
       <ToastContainer />
       <ConfirmModal />

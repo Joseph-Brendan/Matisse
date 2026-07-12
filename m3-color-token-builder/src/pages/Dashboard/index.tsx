@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Palette, Type, LayoutGrid, Download, Save, Plus,
-  Bell, LogOut, Eye, Menu, X,
-  History, Settings, Zap, Layers, Box, Wind, Sparkles, Trash2,
+  Bell, LogOut, Eye, Menu, X, ArrowRight,
+  History, Settings, Zap, Layers, Box, Wind, Sparkles, Trash2, Check,
 } from 'lucide-react';
 import { KeyColorCard } from '../../components/KeyColorCard';
 import { TonalPaletteEditor } from '../../components/TonalPaletteEditor';
@@ -45,6 +45,17 @@ const featureLabels: Record<Feature, string> = {
   components:   'Components',
 };
 
+const industries = [
+  'FinTech',
+  'Healthcare',
+  'E-commerce',
+  'Education',
+  'AI',
+  'SaaS',
+  'Travel',
+  'Logistics',
+];
+
 function formatRelativeTime(timestamp: number): string {
   const diff = Date.now() - timestamp;
   const mins = Math.floor(diff / 60000);
@@ -73,6 +84,8 @@ export const Dashboard: React.FC = () => {
   const [exportScope, setExportScope] = useState<'all' | 'color' | null>(null);
   const [mobileNav, setMobileNav] = useState<Feature | 'preview'>('color');
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [presetsDrawerOpen, setPresetsDrawerOpen] = useState(false);
+  const [selectedIndustry, setSelectedIndustry] = useState<string | null>(null);
 
   const featureChecklistMap: Partial<Record<Feature, keyof typeof checklist>> = {
     color: 'color',
@@ -121,6 +134,19 @@ export const Dashboard: React.FC = () => {
     } else {
       handleFeatureClick(nav as Feature);
     }
+  };
+
+  const handleCancelPresets = () => {
+    setSelectedIndustry(null);
+    setPresetsDrawerOpen(false);
+  };
+
+  const handleViewRecommendations = () => {
+    if (!selectedIndustry) return;
+    setPresetsDrawerOpen(false);
+    setTimeout(() => {
+      navigate('/design-recommendations', { state: { industry: selectedIndustry } });
+    }, 250);
   };
 
   const displayName = user?.name ?? 'User';
@@ -307,22 +333,33 @@ export const Dashboard: React.FC = () => {
 
         {/* ── Workspace ─────────────────────────────── */}
         <div className="dashboard-workspace">
-          {/* Tab Bar */}
-          <div className="workspace-tab-bar">
-            <button
-              className={`workspace-tab${activeTab === 'builder' ? ' active' : ''}`}
-              onClick={() => setActiveTab('builder')}
-            >
-              {activeFeature === 'color' && <span className="workspace-tab-dot" />}
-              {featureLabels[activeFeature]}
-            </button>
-            <button
-              className={`workspace-tab${activeTab === 'preview' ? ' active' : ''}`}
-              onClick={() => setActiveTab('preview')}
-            >
-              <Eye size={14} />
-              Preview
-            </button>
+          {/* Tab Bar Row */}
+          <div className="workspace-tab-row">
+            <div className="workspace-tab-bar">
+              <button
+                className={`workspace-tab${activeTab === 'builder' ? ' active' : ''}`}
+                onClick={() => setActiveTab('builder')}
+              >
+                {activeFeature === 'color' && <span className="workspace-tab-dot" />}
+                {featureLabels[activeFeature]}
+              </button>
+              <button
+                className={`workspace-tab${activeTab === 'preview' ? ' active' : ''}`}
+                onClick={() => setActiveTab('preview')}
+              >
+                <Eye size={14} />
+                Preview
+              </button>
+            </div>
+
+            {activeFeature === 'color' && (
+              <button
+                className="explore-presets-btn"
+                onClick={() => setPresetsDrawerOpen(true)}
+              >
+                Explore Presets <ArrowRight size={14} />
+              </button>
+            )}
           </div>
 
           {/* Panel */}
@@ -721,6 +758,53 @@ export const Dashboard: React.FC = () => {
           </button>
         </div>
       </nav>
+
+      {presetsDrawerOpen && <div className="presets-drawer-backdrop" onClick={handleCancelPresets} />}
+      <aside className={`presets-drawer${presetsDrawerOpen ? ' presets-drawer--open' : ''}`}>
+        <div className="presets-drawer-header">
+          <div>
+            <h3>Explore Design Presets</h3>
+            <p className="presets-drawer-subtitle">Choose the industry you're building for to receive professionally curated design recommendations.</p>
+          </div>
+          <button className="presets-drawer-close" onClick={handleCancelPresets}>
+            <X size={16} />
+          </button>
+        </div>
+        <div className="presets-drawer-body">
+          <div className="presets-industry-list">
+            {industries.map((industry) => (
+              <button
+                key={industry}
+                className={`presets-industry-card${selectedIndustry === industry ? ' presets-industry-card--selected' : ''}`}
+                onClick={() => setSelectedIndustry(industry)}
+                type="button"
+              >
+                <span className="presets-industry-label">{industry}</span>
+                {selectedIndustry === industry && (
+                  <span className="presets-industry-check">
+                    <Check size={14} />
+                  </span>
+                )}
+              </button>
+            ))}
+          </div>
+        </div>
+        <div className="presets-drawer-footer">
+          <GlossyButton variant="outline" size="md" onClick={handleCancelPresets}>
+            Cancel
+          </GlossyButton>
+          <GlossyButton
+            variant="primary"
+            size="md"
+            disabled={!selectedIndustry}
+            onClick={handleViewRecommendations}
+            icon={<ArrowRight size={14} />}
+            iconPosition="right"
+          >
+            View Recommendations
+          </GlossyButton>
+        </div>
+      </aside>
 
       <ExportPanel isOpen={exportScope !== null} defaultScope={exportScope || 'all'} onClose={() => setExportScope(null)} />
     </div>
