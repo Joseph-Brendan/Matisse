@@ -1,0 +1,186 @@
+/* ══════════════════════════════════════════════════════
+   FAQ Section Styles
+   ══════════════════════════════════════════════════════ */
+
+.faq-section {
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+}
+
+.faq-split-layout {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--matisse-spacing-20);
+}
+
+.faq-left-content {
+  flex: 2;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1rem;
+  position: sticky;
+  top: 8rem;
+}
+
+.faq-left-content .section-title {
+  font-family: var(--matisse-font-family-sans);
+  font-size: clamp(2rem, 4vw, 2.75rem);
+  font-weight: 300;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+  color: var(--md-ref-role-onSurface);
+  margin: 0;
+}
+
+.faq-left-content .section-subtitle {
+  font-family: var(--matisse-font-family-sans);
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--md-ref-role-onSurfaceVariant);
+  margin: 0;
+  max-width: 360px;
+}
+
+.faq-right-accordion {
+  flex: 3;
+  min-width: 0;
+  width: 100%;
+}
+
+.faq-accordion-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+}
+
+.faq-accordion-item {
+  background: var(--md-ref-role-surfaceContainerLow);
+  border: 1px solid var(--md-ref-role-outlineVariant);
+  border-radius: 1.5rem;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.01);
+}
+
+.faq-accordion-item:hover {
+  background: var(--md-ref-role-surface);
+  border-color: rgba(105, 56, 189, 0.2);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(105, 56, 189, 0.03);
+}
+
+.faq-accordion-item.open {
+  background: var(--md-ref-role-surfaceContainerLowest);
+  border-color: var(--md-ref-role-primary);
+  box-shadow:
+    0 15px 30px rgba(105, 56, 189, 0.06),
+    inset 0 1px 1px rgba(255, 255, 255, 0.6);
+}
+
+.faq-accordion-trigger {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--matisse-spacing-4);
+  padding: 1.75rem 2rem;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.faq-question-text {
+  font-family: var(--matisse-font-family-sans);
+  font-size: 1.0625rem;
+  font-weight: var(--matisse-font-weight-bold);
+  color: var(--md-ref-role-onSurface);
+  flex: 1;
+  transition: color 0.25s ease;
+}
+
+.faq-accordion-item.open .faq-question-text {
+  color: var(--md-ref-role-primary);
+}
+
+.faq-icon-toggle {
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  background: rgba(105, 56, 189, 0.05);
+  color: var(--md-ref-role-primary);
+  border-radius: var(--matisse-radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+  border: 1px solid rgba(105, 56, 189, 0.08);
+}
+
+.faq-accordion-item:hover .faq-icon-toggle {
+  background: rgba(105, 56, 189, 0.1);
+  transform: scale(1.05);
+}
+
+.faq-accordion-item.open .faq-icon-toggle {
+  transform: rotate(180deg);
+  background: var(--md-ref-role-primary);
+  color: var(--md-ref-role-onPrimary);
+  border-color: var(--md-ref-role-primary);
+}
+
+/* Fluid Height CSS Grid Transition */
+.faq-accordion-panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  overflow: hidden;
+}
+
+.faq-accordion-panel.open {
+  grid-template-rows: 1fr;
+}
+
+.faq-accordion-panel-inner {
+  min-height: 0;
+  opacity: 0;
+  transform: translateY(-8px);
+  transition:
+    opacity 0.25s ease,
+    transform 0.25s ease;
+  padding: 0 2rem 1.75rem;
+}
+
+.faq-accordion-panel.open .faq-accordion-panel-inner {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 0.05s;
+}
+
+.faq-answer-text {
+  font-family: var(--matisse-font-family-sans);
+  font-size: 0.9375rem;
+  line-height: 1.65;
+  color: var(--md-ref-role-onSurfaceVariant);
+  margin: 0;
+}
+
+@media (max-width: 768px) {
+  .faq-split-layout {
+    flex-direction: column;
+    gap: 2.5rem;
+  }
+  .faq-left-content {
+    flex: 1 1 100%;
+    text-align: center;
+    align-items: center;
+    position: relative;
+    top: 0;
+  }
+  .faq-right-accordion {
+    flex: 1 1 100%;
+    width: 100%;
+  }
+}
