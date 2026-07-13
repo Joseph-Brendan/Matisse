@@ -1,0 +1,62 @@
+/* ══════════════════════════════════════════════════════
+   Back to Top Floating Button Styles
+   ══════════════════════════════════════════════════════ */
+
+.back-to-top-btn {
+  position: fixed;
+  bottom: 2.5rem;
+  right: 2.5rem;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: var(--md-ref-role-surfaceContainerHighest);
+  color: var(--md-ref-role-primary);
+  border: 1px solid var(--md-ref-role-outlineVariant);
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.08),
+    0 12px 30px rgba(105, 56, 189, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 999;
+  opacity: 0;
+  transform: translateY(20px) scale(0.8);
+  pointer-events: none;
+  transition:
+    opacity 0.4s cubic-bezier(0.2, 0.8, 0.2, 1),
+    transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1),
+    background-color 0.3s,
+    color 0.3s,
+    border-color 0.3s,
+    box-shadow 0.3s;
+}
+
+.back-to-top-btn.visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
+
+.back-to-top-btn:hover {
+  background: var(--md-ref-role-primary);
+  color: var(--md-ref-role-onPrimary);
+  border-color: var(--md-ref-role-primary);
+  transform: translateY(-4px) scale(1.05);
+  box-shadow:
+    0 8px 20px rgba(105, 56, 189, 0.25),
+    0 0 15px rgba(105, 56, 189, 0.2);
+}
+
+.back-to-top-btn:active {
+  transform: translateY(-2px) scale(0.98);
+}
+
+@media (max-width: 768px) {
+  .back-to-top-btn {
+    bottom: 1.5rem;
+    right: 1.5rem;
+    width: 44px;
+    height: 44px;
+  }
+}

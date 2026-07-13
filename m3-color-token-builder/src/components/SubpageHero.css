@@ -1,0 +1,83 @@
+/* ══════════════════════════════════════════════════════
+   Subpage Hero Styles
+   ══════════════════════════════════════════════════════ */
+
+.subpage-hero-container {
+  position: relative;
+  width: 100%;
+  padding: 8rem 3.5rem 5rem;
+  background: var(--md-ref-role-surfaceContainerLowest) url('/hero-bg.svg') no-repeat center;
+  background-size: cover;
+  border-bottom: 1px solid var(--md-ref-role-outlineVariant);
+  border-radius: 2rem;
+  margin-bottom: 4rem;
+  box-sizing: border-box;
+  overflow: hidden;
+  box-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.04),
+    0 8px 24px rgba(0, 0, 0, 0.06),
+    0 24px 60px rgba(0, 0, 0, 0.08),
+    0 0 0 1px rgba(0, 0, 0, 0.03);
+}
+
+/* Frosted glass overlay on top of the bg image for text contrast & readability */
+.subpage-hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  z-index: 1;
+  pointer-events: none;
+}
+
+.subpage-hero-content {
+  position: relative;
+  z-index: 2; /* Sits above the overlay */
+  width: 100%;
+}
+
+.subpage-hero-container.centered .subpage-hero-content {
+  text-align: center;
+}
+
+.subpage-hero-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.subpage-hero-title {
+  font-family: var(--matisse-font-family-sans);
+  font-size: clamp(2.75rem, 6.5vw, 6.25rem);
+  font-weight: 300;
+  letter-spacing: -0.03em;
+  margin: 0;
+  color: var(--md-ref-role-onSurface);
+  line-height: 1.15;
+}
+
+.subpage-hero-subtitle {
+  font-family: var(--matisse-font-family-sans);
+  font-size: 0.9375rem;
+  color: var(--md-ref-role-onSurfaceVariant);
+  margin: 0;
+}
+
+/* Adjustments for legal pages padding inside subpage hero container */
+.legal-page-wrapper .subpage-hero-container {
+  padding: 11rem 2.5rem 6rem;
+}
+
+@media (max-width: 768px) {
+  .subpage-hero-container {
+    padding: 6rem 1.5rem 4rem;
+    border-radius: 1.5rem;
+  }
+  .legal-page-wrapper .subpage-hero-container {
+    padding: 8rem 1.5rem 5rem;
+  }
+}
