@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Palette, Layers, Paintbrush, Type, Download, ArrowUpRight, Sparkles,
-  ChevronDown, Star, Check
+  ChevronDown, Star, Check, Grid3x3
 } from 'lucide-react';
 import { GlossyButton } from '../../design-system/components/Button/GlossyButton';
 import type { GlossyVariant } from '../../design-system/components/Button/GlossyButton';
