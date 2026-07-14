@@ -54,6 +54,7 @@ interface ColorState {
   elevation: Record<string, string>;
 
   updateKeyColor: (name: KeyColorName, value: string) => void;
+  updateMultipleKeyColors: (colors: Record<string, string>) => void;
   addOptionalColor: (name: string, value: string) => void;
   removeOptionalColor: (name: string) => void;
   updateRoleReference: (theme: 'light' | 'dark', name: string, reference: string) => void;
@@ -194,6 +195,29 @@ export const useColorStore = create<ColorState>((set) => {
         const newPalettes = state.palettes.map((p) =>
           p.keyColor === name ? { ...p, tones: generateTones(value) } : p,
         );
+
+        const newLightRoles = resolveAllRoles(state.roles.light, newKeyColors, newPalettes);
+        const newDarkRoles = resolveAllRoles(state.roles.dark, newKeyColors, newPalettes);
+
+        return {
+          keyColors: newKeyColors,
+          palettes: newPalettes,
+          roles: { light: newLightRoles, dark: newDarkRoles },
+          checklist: state.checklist.color ? state.checklist : { ...state.checklist, color: true },
+        };
+      });
+    },
+
+    updateMultipleKeyColors: (colors) => {
+      set((state) => {
+        const newKeyColors = state.keyColors.map((c) => {
+          const val = colors[c.name];
+          return val !== undefined ? { ...c, value: val } : c;
+        });
+        const newPalettes = state.palettes.map((p) => {
+          const val = colors[p.keyColor];
+          return val !== undefined ? { ...p, tones: generateTones(val) } : p;
+        });
 
         const newLightRoles = resolveAllRoles(state.roles.light, newKeyColors, newPalettes);
         const newDarkRoles = resolveAllRoles(state.roles.dark, newKeyColors, newPalettes);
