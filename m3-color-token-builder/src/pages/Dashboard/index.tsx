@@ -180,9 +180,7 @@ export const Dashboard: React.FC = () => {
   const handleViewRecommendations = () => {
     if (!selectedIndustry) return;
     setPresetsDrawerOpen(false);
-    setTimeout(() => {
-      navigate('/design-recommendations', { state: { industry: selectedIndustry } });
-    }, 250);
+    navigate('/design-recommendations', { state: { industry: selectedIndustry } });
   };
 
   const displayName = user?.name ?? 'User';
@@ -400,7 +398,7 @@ export const Dashboard: React.FC = () => {
               </button>
             </div>
 
-            {activeFeature === 'color' && (
+            {activeFeature !== 'motion' && (
               <button className="explore-presets-btn" onClick={() => setPresetsDrawerOpen(true)}>
                 Explore Presets <ArrowRight size={14} />
               </button>
