@@ -15,6 +15,7 @@ import { Privacy } from './pages/Privacy';
 import { Terms } from './pages/Terms';
 import { ScrollToTop } from './components/ScrollToTop';
 import { BackToTop } from './components/BackToTop';
+import { DesignRecommendations } from './pages/DesignRecommendations';
 
 /** Build a CSS font-family stack from a plain font name */
 function buildFontStack(name: string, category: 'sans' | 'display' | 'mono'): string {
@@ -132,6 +133,7 @@ function AppShell() {
         <Route path="/settings" element={<Settings />} />
         <Route path="/privacy" element={<Privacy />} />
         <Route path="/terms" element={<Terms />} />
+        <Route path="/design-recommendations" element={<DesignRecommendations />} />
       </Routes>
       <ToastContainer />
       <ConfirmModal />
