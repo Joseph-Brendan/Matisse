@@ -5,6 +5,7 @@ import { GlossyButton } from '../../design-system/components/Button/GlossyButton
 import { Input } from '../../design-system/components/Input/Input';
 import { Alert } from '../../design-system/components/Alert/Alert';
 import { useAuthStore } from '../../store/useAuthStore';
+import { showAlert, useConfirmStore } from '../../store/useConfirmStore';
 import { openOAuthPopup, generateState } from '../../lib/oauth';
 import './Auth.css';
 
@@ -136,15 +137,25 @@ const SignupForm: React.FC<{ onSuccess: () => void; onSwitchToLogin: () => void 
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [agreeTerms, setAgreeTerms] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [passwordTouched, setPasswordTouched] = useState(false);
+  const [confirmPasswordTouched, setConfirmPasswordTouched] = useState(false);
   const login = useAuthStore((state) => state.login);
+
+  const passwordMismatch = passwordTouched && confirmPasswordTouched && password && confirmPassword && password !== confirmPassword;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     if (!name || !email || !password) {
       setError('Please fill in all fields.');
+      return;
+    }
+    if (!agreeTerms) {
+      setError('Please agree to the Terms and Conditions and Privacy Policy.');
       return;
     }
     setLoading(true);
@@ -160,7 +171,16 @@ const SignupForm: React.FC<{ onSuccess: () => void; onSwitchToLogin: () => void 
       {error && <Alert variant="error" dismissible onDismiss={() => setError('')}>{error}</Alert>}
       <Input label="Full name" type="text" placeholder="Jane Doe" value={name} onChange={(e) => setName(e.target.value)} fullWidth />
       <Input label="Email address" type="email" placeholder="jane@example.com" value={email} onChange={(e) => setEmail(e.target.value)} fullWidth />
-      <Input label="Password" type="password" placeholder="Create a password" value={password} onChange={(e) => setPassword(e.target.value)} fullWidth />
+      <Input label="Password" type="password" placeholder="Create a password" value={password} onChange={(e) => setPassword(e.target.value)} onBlur={() => setPasswordTouched(true)} fullWidth />
+      <Input label="Confirm Password" type="password" placeholder="Confirm your password" error={passwordMismatch ? 'Passwords do not match' : undefined} value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} onBlur={() => setConfirmPasswordTouched(true)} fullWidth />
+      
+      <label className="auth-consent-label">
+        <input type="checkbox" checked={agreeTerms} onChange={(e) => setAgreeTerms(e.target.checked)} className="auth-consent-checkbox" />
+        <span className="auth-consent-text">
+          I agree to the <a href="/terms" className="auth-consent-link">Terms and Conditions</a> and <a href="/privacy" className="auth-consent-link">Privacy Policy</a>.
+        </span>
+      </label>
+      
       <div className="auth-submit-row">
         <GlossyButton type="submit" loading={loading} fullWidth size="lg">
           Create Account
@@ -194,12 +214,19 @@ const SignupForm: React.FC<{ onSuccess: () => void; onSwitchToLogin: () => void 
 
 export const Auth: React.FC = () => {
   const navigate = useNavigate();
-  const [success, setSuccess] = useState(false);
   const [mode, setMode] = useState<'login' | 'signup'>('login');
 
   const handleSuccess = () => {
-    setSuccess(true);
-    setTimeout(() => navigate('/dashboard'), 800);
+    showAlert(
+      'Success!',
+      mode === 'login' ? 'Welcome back!' : 'Account created!',
+      'success',
+      'Continue to Dashboard'
+    );
+    setTimeout(() => {
+      useConfirmStore.getState()._resolve(false);
+      navigate('/dashboard');
+    }, 1000);
   };
 
   return (
@@ -212,7 +239,7 @@ export const Auth: React.FC = () => {
 
         <div className="auth-glass-card">
           <div className="auth-brand">
-            <img src="/logo-drk.svg" alt="Matisse" className="auth-brand-logo" />
+            <img src="/login.icon.svg" alt="Matisse" className="auth-brand-logo" />
             <h1 className="auth-brand-title">{mode === 'login' ? 'Welcome back!' : 'Create your account'}</h1>
             <p className="auth-brand-subtitle">
               {mode === 'login'
@@ -221,23 +248,9 @@ export const Auth: React.FC = () => {
             </p>
           </div>
 
-          {success ? (
-            <div className="auth-success">
-              <Alert variant="success" title="Success!">{mode === 'login' ? 'Welcome back!' : 'Account created!'} Redirecting...</Alert>
-            </div>
-          ) : mode === 'login' ? (
+          {mode === 'login' ? (
             <div className="auth-tab-area">
               <LoginForm onSuccess={handleSuccess} onSwitchToSignup={() => setMode('signup')} />
-              <div style={{ textAlign: 'center', marginTop: '0.75rem' }}>
-                <button
-                  type="button"
-                  className="auth-signup-link"
-                  onClick={() => setMode('signup')}
-                  style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '0.875rem' }}
-                >
-                  Don&apos;t have an account? <span style={{ fontWeight: 600 }}>Sign Up</span>
-                </button>
-              </div>
             </div>
           ) : (
             <div className="auth-tab-area">

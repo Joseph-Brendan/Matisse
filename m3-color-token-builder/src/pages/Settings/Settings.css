@@ -8,42 +8,11 @@
   color: var(--md-ref-role-onBackground);
 }
 
-/* ── Header ── */
-.settings-header {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  padding: 1.25rem 2rem;
-  background: var(--md-ref-role-surfaceContainer);
-  border-bottom: 1px solid var(--md-ref-role-outlineVariant);
-}
-
-.settings-header__back-btn {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: var(--md-ref-role-onSurfaceVariant);
-  font-size: 0.875rem;
+.settings-header-title {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.9375rem;
   font-weight: 500;
-  padding: 0.375rem 0.625rem;
-  border-radius: 0.5rem;
-  transition: background 0.15s, color 0.15s;
-  font-family: inherit;
-}
-
-.settings-header__back-btn:hover {
-  background: var(--md-ref-role-surfaceContainerHigh);
-  color: var(--md-ref-role-onSurface);
-}
-
-.settings-header__title {
-  font-size: 1.125rem;
-  font-weight: 700;
-  margin: 0;
-  color: var(--md-ref-role-onSurface);
+  letter-spacing: -0.01em;
 }
 
 /* ── Body ── */
@@ -67,7 +36,7 @@
 .settings-section__heading {
   padding: 1rem 1.5rem 0.75rem;
   font-size: 0.75rem;
-  font-weight: 700;
+  font-weight: 400;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: var(--md-ref-role-primary);
@@ -206,7 +175,9 @@
   border: 2px solid var(--md-ref-role-outlineVariant);
   border-radius: 0.75rem;
   cursor: pointer;
-  transition: border-color 0.15s, background 0.15s;
+  transition:
+    border-color 0.15s,
+    background 0.15s;
   background: none;
   font-family: inherit;
 }
@@ -256,24 +227,12 @@
     max-width: 600px;
     padding: 1.5rem 1.25rem;
   }
-
-  .settings-header {
-    padding: 1rem 1.5rem;
-  }
 }
 
 @media (max-width: 480px) {
   .settings-body {
     padding: 1.25rem 1rem;
     gap: 1.25rem;
-  }
-
-  .settings-header {
-    padding: 0.875rem 1rem;
-  }
-
-  .settings-header__title {
-    font-size: 1rem;
   }
 
   .settings-row {
@@ -329,11 +288,11 @@
     gap: 1rem;
   }
 
-  .settings-header {
-    padding: 0.75rem;
-  }
-
   .settings-row {
     padding: 0.625rem 0.75rem;
+  }
+
+  .settings-header-title {
+    font-size: 0.8125rem;
   }
 }

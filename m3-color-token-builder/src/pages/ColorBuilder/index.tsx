@@ -16,18 +16,14 @@ export const ColorBuilder: React.FC = () => {
   const navigate = useNavigate();
 
   return (
-    <div
-      className={`color-builder-root ${theme === 'dark' ? 'dark-theme' : ''}`}
-    >
+    <div className={`color-builder-root ${theme === 'dark' ? 'dark-theme' : ''}`}>
       <header className="color-builder-header">
         <div className="color-builder-header-left">
           <GlossyButton variant="ghost" size="sm" onClick={() => navigate('/')}>
             <ArrowLeft size={18} />
             Home
           </GlossyButton>
-          <h1 className="color-builder-title">
-            Color Builder
-          </h1>
+          <h1 className="color-builder-title">Color Builder</h1>
         </div>
         <GlossyButton size="sm" onClick={() => setIsExportOpen(true)}>
           <Download size={18} />
@@ -43,10 +39,14 @@ export const ColorBuilder: React.FC = () => {
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
           <RoleMappingTable />
         </div>
-        <PreviewPanel />
+        <PreviewPanel activeFeature="color" />
       </main>
 
-      <ExportPanel isOpen={isExportOpen} defaultScope="color" onClose={() => setIsExportOpen(false)} />
+      <ExportPanel
+        isOpen={isExportOpen}
+        defaultScope="color"
+        onClose={() => setIsExportOpen(false)}
+      />
     </div>
   );
 };

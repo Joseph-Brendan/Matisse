@@ -20,19 +20,19 @@ export interface InputProps extends Omit<React.InputHTMLAttributes<HTMLInputElem
 const variantBorder = {
   outlined: {
     default: '1px solid var(--md-ref-role-outline)',
-    hover: '1px solid var(--md-ref-role-onSurface)',
+    hover: '1px solid rgba(114, 62, 195, 0.3)',
     focus: '2px solid var(--md-ref-role-primary)',
     error: '2px solid var(--md-ref-role-error)',
   },
   filled: {
     default: '1px solid transparent',
-    hover: '1px solid var(--md-ref-role-onSurface)',
+    hover: '1px solid rgba(114, 62, 195, 0.3)',
     focus: '2px solid var(--md-ref-role-primary)',
     error: '2px solid var(--md-ref-role-error)',
   },
   underlined: {
     default: '0 0 1px 0 solid var(--md-ref-role-outline)',
-    hover: '0 0 2px 0 solid var(--md-ref-role-onSurface)',
+    hover: '0 0 2px 0 solid rgba(114, 62, 195, 0.3)',
     focus: '0 0 2px 0 solid var(--md-ref-role-primary)',
     error: '0 0 2px 0 solid var(--md-ref-role-error)',
   },
