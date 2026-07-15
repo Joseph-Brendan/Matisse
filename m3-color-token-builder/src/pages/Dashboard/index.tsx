@@ -1,5 +1,5 @@
-import React, { useState, useCallback, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import {
   Palette,
   Type,
@@ -83,6 +83,9 @@ const industries = [
   'SaaS',
   'Travel',
   'Logistics',
+  'Food',
+  'Beauty',
+  'Social',
 ];
 
 function formatRelativeTime(timestamp: number): string {
@@ -97,6 +100,7 @@ function formatRelativeTime(timestamp: number): string {
 
 export const Dashboard: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { user, logout } = useAuthStore();
   const {
     projectName,
@@ -117,6 +121,15 @@ export const Dashboard: React.FC = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [presetsDrawerOpen, setPresetsDrawerOpen] = useState(false);
   const [selectedIndustry, setSelectedIndustry] = useState<string | null>(null);
+
+  useEffect(() => {
+    const locState = location.state as { openPresets?: boolean; industry?: string } | null;
+    if (locState?.openPresets) {
+      setPresetsDrawerOpen(true);
+      if (locState.industry) setSelectedIndustry(locState.industry);
+      navigate('/dashboard', { replace: true, state: null });
+    }
+  }, [location.state, navigate]);
 
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const handleSave = useCallback(() => {
