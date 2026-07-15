@@ -1,6 +1,6 @@
 /* ── Auth Page Layout ─────────────────────────────────── */
 .auth-page {
-  --md-ref-role-primary: #723EC3;
+  --md-ref-role-primary: #723ec3;
   --md-ref-role-outline: rgba(255, 255, 255, 0.55);
   --md-ref-role-surface: rgba(255, 255, 255, 0.3);
   min-height: 100vh;
@@ -123,7 +123,12 @@
     rgba(255, 255, 255, 0.1) 60%,
     rgba(255, 255, 255, 0.5) 100%
   );
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
   mask-composite: exclude;
   pointer-events: none;
@@ -137,11 +142,7 @@
   left: -50%;
   width: 200%;
   height: 200%;
-  background: radial-gradient(
-    circle at 30% 20%,
-    rgba(255, 255, 255, 0.15) 0%,
-    transparent 60%
-  );
+  background: radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.15) 0%, transparent 60%);
   pointer-events: none;
   z-index: 0;
 }
@@ -193,18 +194,24 @@
 /* Glass input fields */
 .auth-form .input-container > div {
   backdrop-filter: blur(6px) !important;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04), inset 0 0 0 1px rgba(255, 255, 255, 0.3) !important;
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.04),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.3) !important;
   transition: all 0.25s ease !important;
 }
 
 .auth-form .input-container > div:hover {
   border-color: rgba(114, 62, 195, 0.35) !important;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06), inset 0 0 0 1px rgba(255, 255, 255, 0.5) !important;
+  box-shadow:
+    0 1px 4px rgba(0, 0, 0, 0.06),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.5) !important;
 }
 
 .auth-form .input-container:focus-within > div {
   border-color: rgba(114, 62, 195, 0.6) !important;
-  box-shadow: 0 0 0 3px rgba(114, 62, 195, 0.12), inset 0 0 0 1px rgba(255, 255, 255, 0.3) !important;
+  box-shadow:
+    0 0 0 3px rgba(114, 62, 195, 0.12),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.3) !important;
 }
 
 .auth-form-row {

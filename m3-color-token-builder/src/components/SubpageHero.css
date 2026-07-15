@@ -52,7 +52,7 @@
 
 .subpage-hero-title {
   font-family: var(--matisse-font-family-sans);
-  font-size: clamp(2.75rem, 6.5vw, 6.25rem);
+  font-size: clamp(2.75rem, 6.5vw, 5.6rem);
   font-weight: 300;
   letter-spacing: -0.03em;
   margin: 0;

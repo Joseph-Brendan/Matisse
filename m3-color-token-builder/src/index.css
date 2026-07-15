@@ -15,7 +15,11 @@ body {
   width: 100%;
   max-width: 100%;
   overflow-x: hidden;
-  font-family: 'Open Sans', system-ui, -apple-system, sans-serif;
+  font-family:
+    'Open Sans',
+    system-ui,
+    -apple-system,
+    sans-serif;
   font-weight: 400;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
@@ -33,16 +37,27 @@ body {
   min-height: 100vh;
   background: var(--md-ref-role-background);
   color: var(--md-ref-role-onBackground);
-  font-family: 'Open Sans', system-ui, -apple-system, sans-serif;
-  transition: background 0.3s ease, color 0.3s ease;
+  font-family:
+    'Open Sans',
+    system-ui,
+    -apple-system,
+    sans-serif;
+  transition:
+    background 0.3s ease,
+    color 0.3s ease;
 }
 
-img, svg, video {
+img,
+svg,
+video {
   max-width: 100%;
   display: block;
 }
 
-button, input, select, textarea {
+button,
+input,
+select,
+textarea {
   font-family: inherit;
 }
 
@@ -151,7 +166,7 @@ a {
 }
 
 /* ── Light Theme (default) ───────────────────────────── */
-[data-theme="light"],
+[data-theme='light'],
 :root {
   --md-ref-role-primary: hsl(256, 34%, 48%);
   --md-ref-role-onPrimary: hsl(0, 0%, 100%);
@@ -190,7 +205,7 @@ a {
 }
 
 /* ── Dark Theme ──────────────────────────────────────── */
-[data-theme="dark"] {
+[data-theme='dark'] {
   --md-ref-role-primary: hsl(256, 100%, 87%);
   --md-ref-role-onPrimary: hsl(258, 57%, 28%);
   --md-ref-role-primaryContainer: hsl(256, 42%, 38%);
@@ -229,8 +244,12 @@ a {
 
 /* ── Animations ──────────────────────────────────────── */
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes modalSlideUp {
@@ -267,13 +286,21 @@ a {
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 @keyframes shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
 }
 
 /* ── Utility Classes ─────────────────────────────────── */
@@ -304,14 +331,19 @@ a {
 
 .glossy-btn:hover:not(:disabled) {
   filter: brightness(1.1);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15), inset 0 1px 1px rgba(255, 255, 255, 0.4), inset 0 -1px 1px rgba(0, 0, 0, 0.15) !important;
+  box-shadow:
+    0 4px 10px rgba(0, 0, 0, 0.15),
+    inset 0 1px 1px rgba(255, 255, 255, 0.4),
+    inset 0 -1px 1px rgba(0, 0, 0, 0.15) !important;
   transform: translateY(-1px);
 }
 
 .glossy-btn:active:not(:disabled) {
   filter: brightness(0.92);
   transform: translateY(1px) scale(0.98);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1), inset 0 1px 1px rgba(0, 0, 0, 0.2) !important;
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.1),
+    inset 0 1px 1px rgba(0, 0, 0, 0.2) !important;
 }
 
 .glossy-btn--ghost:hover:not(:disabled),
@@ -424,7 +456,9 @@ a {
 }
 
 .navbar-header--scrolled {
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.02);
+  box-shadow:
+    0 10px 30px rgba(0, 0, 0, 0.08),
+    0 1px 3px rgba(0, 0, 0, 0.02);
 }
 
 .navbar-container {
@@ -462,6 +496,7 @@ a {
   letter-spacing: -0.03em;
   background: linear-gradient(135deg, #111827, #374151);
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
@@ -551,7 +586,9 @@ a {
   background: #ffffff;
   border-radius: 1rem;
   border: 1px solid rgba(0, 0, 0, 0.08);
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1), 0 2px 8px rgba(0, 0, 0, 0.04);
+  box-shadow:
+    0 12px 32px rgba(0, 0, 0, 0.1),
+    0 2px 8px rgba(0, 0, 0, 0.04);
   padding: 0.5rem;
   z-index: 100;
   animation: modalSlideUp 0.2s ease-out;
@@ -754,12 +791,10 @@ a {
 }
 
 @keyframes toastBackdropIn {
-  from { opacity: 0; }
-  to   { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
-
-
-
-
-
-

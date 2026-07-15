@@ -154,7 +154,7 @@
 }
 
 .about-hero-headline {
-  font-size: clamp(2.5rem, 5.5vw, 5.5rem);
+  font-size: clamp(2.5rem, 5.5vw, 5rem);
   font-weight: 300;
   line-height: 1.1;
   letter-spacing: -0.03em;
@@ -165,6 +165,7 @@
 .about-hero-headline-gradient {
   background: linear-gradient(135deg, hsl(256, 100%, 55%), hsl(340, 100%, 50%));
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 

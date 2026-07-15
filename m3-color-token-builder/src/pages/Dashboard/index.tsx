@@ -13,6 +13,7 @@ import {
   Menu,
   X,
   ArrowRight,
+  Check,
   History,
   Settings,
   Zap,
@@ -21,7 +22,6 @@ import {
   Wind,
   Sparkles,
   Trash2,
-  Check,
 } from 'lucide-react';
 import { KeyColorCard } from '../../components/KeyColorCard';
 import { TonalPaletteEditor } from '../../components/TonalPaletteEditor';
@@ -192,9 +192,7 @@ export const Dashboard: React.FC = () => {
   const handleViewRecommendations = () => {
     if (!selectedIndustry) return;
     setPresetsDrawerOpen(false);
-    setTimeout(() => {
-      navigate('/design-recommendations', { state: { industry: selectedIndustry } });
-    }, 250);
+    navigate('/design-recommendations', { state: { industry: selectedIndustry } });
   };
 
   const displayName = user?.name ?? 'User';
@@ -412,11 +410,8 @@ export const Dashboard: React.FC = () => {
               </button>
             </div>
 
-            {activeFeature === 'color' && (
-              <button
-                className="explore-presets-btn"
-                onClick={() => setPresetsDrawerOpen(true)}
-              >
+            {activeFeature !== 'motion' && (
+              <button className="explore-presets-btn" onClick={() => setPresetsDrawerOpen(true)}>
                 Explore Presets <ArrowRight size={14} />
               </button>
             )}
@@ -499,7 +494,10 @@ export const Dashboard: React.FC = () => {
         <div className="presets-drawer-header">
           <div>
             <h3>Explore Design Presets</h3>
-            <p className="presets-drawer-subtitle">Choose the industry you're building for to receive professionally curated design recommendations.</p>
+            <p className="presets-drawer-subtitle">
+              Choose the industry you're building for to receive professionally curated design
+              recommendations.
+            </p>
           </div>
           <button className="presets-drawer-close" onClick={handleCancelPresets}>
             <X size={16} />
