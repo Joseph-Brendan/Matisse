@@ -24,7 +24,6 @@ function buildFontStack(name: string, category: 'sans' | 'display' | 'mono'): st
     display: `'${name}', Georgia, serif`,
     mono: `'${name}', 'Fira Code', 'Courier New', monospace`,
   };
-  // If it's already a stack (contains comma), use as-is
   if (name.includes(',')) return name;
   return fallbacks[category] ?? `'${name}', sans-serif`;
 }
