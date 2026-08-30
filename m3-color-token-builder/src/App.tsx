@@ -1,14 +1,21 @@
-import { useEffect } from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { useEffect, useRef } from 'react';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useColorStore } from './store/useColorStore';
 import { ToastContainer } from './design-system/components/Toast/ToastContainer';
 import { ConfirmModal } from './design-system/components/Modal/ConfirmModal';
 import { Landing } from './pages/Landing';
 import { Auth } from './pages/Auth';
+import { AuthCallback } from './pages/AuthCallback';
+import { SignUp } from './pages/SignUp';
 import { Dashboard } from './pages/Dashboard';
-import { ColorBuilder } from './pages/ColorBuilder';
 import { DesignSystem } from './pages/DesignSystem';
 import { Settings } from './pages/Settings';
+import { About } from './pages/About';
+import { Privacy } from './pages/Privacy';
+import { Terms } from './pages/Terms';
+import { ScrollToTop } from './components/ScrollToTop';
+import { BackToTop } from './components/BackToTop';
+import { DesignRecommendations } from './pages/DesignRecommendations';
 
 /** Build a CSS font-family stack from a plain font name */
 function buildFontStack(name: string, category: 'sans' | 'display' | 'mono'): string {
@@ -25,10 +32,29 @@ function buildFontStack(name: string, category: 'sans' | 'display' | 'mono'): st
 function AppShell() {
   const { theme, roles, typography, spacing, borderRadius, shadows, elevation } = useColorStore();
 
+  // Normalize for system DPI scaling (125%/150%/175% on Windows)
+  // Shrinks root font-size at fractional DPR so rem-based sizes match
+  // the same physical size as 100% displays, without affecting vh/vw/%
+  const dprRef = useRef<number>(0);
+  useEffect(() => {
+    const dpr = window.devicePixelRatio;
+    if (dpr === dprRef.current) return;
+    dprRef.current = dpr;
+    const rounded = Math.round(dpr);
+    const isFractional = Math.abs(dpr - rounded) > 0.01;
+    document.documentElement.style.setProperty('--dpr-scale', isFractional ? `${1 / dpr}` : '1');
+    if (isFractional) {
+      const baseFontSize = 16 / dpr;
+      document.documentElement.style.fontSize = `${baseFontSize}px`;
+    } else {
+      document.documentElement.style.fontSize = '';
+    }
+  }, []);
+
   useEffect(() => {
     // Sync theme colors
     const activeRoles = roles[theme];
-    activeRoles.forEach(r => {
+    activeRoles.forEach((r) => {
       document.documentElement.style.setProperty(`--md-ref-role-${r.name}`, r.resolvedValue);
     });
 
@@ -97,11 +123,17 @@ function AppShell() {
     <div className="app-shell" data-theme={theme}>
       <Routes>
         <Route path="/" element={<Landing />} />
+        <Route path="/about" element={<About />} />
         <Route path="/auth" element={<Auth />} />
+        <Route path="/auth/callback" element={<AuthCallback />} />
+        <Route path="/signup" element={<SignUp />} />
         <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/color-builder" element={<ColorBuilder />} />
+        <Route path="/color-builder" element={<Navigate to="/dashboard" replace />} />
         <Route path="/components" element={<DesignSystem />} />
         <Route path="/settings" element={<Settings />} />
+        <Route path="/privacy" element={<Privacy />} />
+        <Route path="/terms" element={<Terms />} />
+        <Route path="/design-recommendations" element={<DesignRecommendations />} />
       </Routes>
       <ToastContainer />
       <ConfirmModal />
@@ -112,7 +144,9 @@ function AppShell() {
 function App() {
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <AppShell />
+      <BackToTop />
     </BrowserRouter>
   );
 }

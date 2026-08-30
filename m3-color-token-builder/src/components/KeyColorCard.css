@@ -101,3 +101,36 @@
   box-shadow: 0 0 0 3px hsla(256, 34%, 55%, 0.12);
   background: #ffffff;
 }
+
+/* ── Responsive ──────────────────────────────────────────── */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .key-color-grid {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  }
+}
+
+@media (max-width: 480px) {
+  .key-color-grid {
+    grid-template-columns: 1fr;
+  }
+  .key-color-card {
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 375px) {
+  .key-color-card {
+    padding: 0.75rem;
+    border-radius: 0.75rem;
+  }
+  .key-color-title {
+    font-size: 0.9375rem;
+  }
+  .key-color-input-row {
+    flex-wrap: wrap;
+  }
+  .key-color-text-input {
+    font-size: 0.75rem;
+    padding: 0.4rem 0.5rem;
+  }
+}

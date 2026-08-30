@@ -1,0 +1,2 @@
+cd m3-color-token-builder
+npx lint-staged
